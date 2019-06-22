@@ -94,7 +94,7 @@ function getCurVol {
 
 function getCurSink {
     o_pulseaudio=$(pacmd list-sinks| grep -e 'index' -e 'device.description')
-    curSink=$(echo "$o_pulseaudio" | grep "* index" | cut -d: -f2)
+    curSink=$(echo "$o_pulseaudio" | grep "\* index" | cut -d: -f2)
 }
 
 function volMute {
@@ -127,7 +127,7 @@ function changeDevice {
   nSinks=$(echo "$o_pulseaudio" | grep index | cut -d: -f2 | sed '$!d')
 
   # Gets present default sink index
-  curSink=$(echo "$o_pulseaudio" | grep "* index" | cut -d: -f2)
+  curSink=$(echo "$o_pulseaudio" | grep "\* index" | cut -d: -f2)
 
   # Sets new sink index
   newSink=$((curSink + 1))
@@ -142,7 +142,7 @@ function changeDevice {
   # Moves all audio threads to new sink
   inputs=$(pactl list sink-inputs short | cut -f 1)
   for i in $inputs; do
-    pacmd move-sink-input $i $newSink
+    pacmd move-sink-input "$i" "$newSink"
   done
 
   if [ $notifications = "yes" ]; then
