@@ -120,39 +120,39 @@ function volMute {
 
 # Changing the audio device, from 
 function changeDevice {
-  # Treats pulseaudio sink list to avoid calling pacmd list-sinks twice
-  o_pulseaudio=$(pacmd list-sinks| grep -e 'index' -e 'device.description')
+    # Treats pulseaudio sink list to avoid calling pacmd list-sinks twice
+    o_pulseaudio=$(pacmd list-sinks| grep -e 'index' -e 'device.description')
 
-  # Gets max sink index
-  nSinks=$(echo "$o_pulseaudio" | grep index | cut -d: -f2 | sed '$!d')
+    # Gets max sink index
+    nSinks=$(echo "$o_pulseaudio" | grep index | cut -d: -f2 | sed '$!d')
 
-  # Gets present default sink index
-  curSink=$(echo "$o_pulseaudio" | grep "\* index" | cut -d: -f2)
+    # Gets present default sink index
+    curSink=$(echo "$o_pulseaudio" | grep "\* index" | cut -d: -f2)
 
-  # Sets new sink index
-  newSink=$((curSink + 1))
-  if [ "$newSink" -gt "$nSinks" ]; then
-    newSink=0
-  fi
+    # Sets new sink index
+    newSink=$((curSink + 1))
+    if [ "$newSink" -gt "$nSinks" ]; then
+        newSink=0
+    fi
 
-  # New sink and print number on bar
-  pacmd set-default-sink $newSink
+    # New sink
+    pacmd set-default-sink $newSink
 
-  # Moves all audio threads to new sink
-  inputs=$(pactl list sink-inputs short | cut -f 1)
-  for i in $inputs; do
-    pacmd move-sink-input "$i" "$newSink"
-  done
+    # Moves all audio threads to new sink
+    inputs=$(pactl list sink-inputs short | cut -f 1)
+    for i in $inputs; do
+        pacmd move-sink-input "$i" "$newSink"
+    done
 
-  if [ $notifications = "yes" ]; then
-    sendNotification
-  fi
+    if [ $notifications = "yes" ]; then
+        sendNotification
+    fi
 }
 
 function sendNotification {
-  o_pulseaudio=$(pacmd list-sinks| grep -e 'index' -e 'device.description')
-  deviceName=$(echo "$o_pulseaudio" | sed -n '/* index/{n;p;}' | grep -o '".*"' | sed 's/"//g')
-  notify-send "Output cycle" "Changed output to ${deviceName}" --icon=audio-headphones-symbolic
+    o_pulseaudio=$(pacmd list-sinks| grep -e 'index' -e 'device.description')
+    deviceName=$(echo "$o_pulseaudio" | sed -n '/* index/{n;p;}' | grep -o '".*"' | sed 's/"//g')
+    notify-send "Output cycle" "Changed output to ${deviceName}" --icon=audio-headphones-symbolic
 }
 
 
@@ -201,7 +201,7 @@ function output() {
     else
         echo "${volIcon}${curVol}%   ${sinkIcon}${curSink}"
     fi
-} #}}}
+}
 
 reloadSink
 case "$1" in
