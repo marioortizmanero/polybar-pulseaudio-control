@@ -137,7 +137,6 @@ function changeDevice {
 
   # New sink and print number on bar
   pacmd set-default-sink $newSink
-  echo "Old sink: $curSink, new sink: $newSink"
 
   # Moves all audio threads to new sink
   inputs=$(pactl list sink-inputs short | cut -f 1)

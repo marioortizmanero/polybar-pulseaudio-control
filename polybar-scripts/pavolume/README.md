@@ -45,10 +45,11 @@ The example from the screenshot can:
 ```ini
 [module/pavolume]
 type = custom/script
-interval = 0.5
+tail = true
 label=%output%
+format-underline = ${colors.blue}
 
-exec = ~/.config/polybar/scripts/pavolume.sh
+exec = ~/.config/polybar/scripts/pavolume.sh --listen
 click-right = exec pavucontrol
 click-left = ~/.config/polybar/scripts/pavolume.sh --togmute
 click-middle = ~/.config/polybar/scripts/pavolume.sh --change
@@ -58,9 +59,11 @@ label-padding = 2
 label-foreground = ${colors.foreground}
 ```
 
-*Note that you will have to change the paths above to where your script is saved. You might want to change the colors too.*
+*Note that you will have to change the paths above to where your script is saved. You might want to change or remove the colors too.*
 
 ##  Sources
 
-Part of the script and of this README's info was taken from [customlinux.blogspot.com](http://customlinux.blogspot.com/2013/02/pavolumesh-control-active-sink-volume.html), the creator. It was later adaped to fit polybar. It is also mixed with another script to switch between devices from [here](https://gist.github.com/Jguer/3443e23145902ff30481). The latter was also modified to suit polybar and with the main script. Any more contributions are welcome.
+Part of the script and of this README's info was taken from [customlinux.blogspot.com](http://customlinux.blogspot.com/2013/02/pavolumesh-control-active-sink-volume.html), the creator. It was later adaped to fit polybar. It is also mixed with [the ArcoLinux version](https://github.com/arcolinux/arcolinux-polybar/blob/master/etc/skel/.config/polybar/scripts/pavolume.sh) to use the --listen flag and have a faster refresh.
+
+Pavolume is also mixed with another script to switch between devices from [here](https://gist.github.com/Jguer/3443e23145902ff30481). The latter was also modified to suit polybar and with the main script.
 
