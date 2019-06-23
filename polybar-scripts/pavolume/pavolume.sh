@@ -7,11 +7,12 @@ capVol="no"
 maxVol=200
 autosync="yes"
 notifications="no"
+deviceBlacklist=( )
 
 # Polbar-specific configuration
 volIcon=" "
 mutedIcon=" "
-sinkIcon=""
+sinkIcon=" "
 mutedColor="%{F#6b6b6b}"
 
 
@@ -22,7 +23,7 @@ limit=$((100 - inc))
 maxLimit=$((maxVol - inc))
 endColor="%{F-}"
 
-reloadSink() {
+function getCurSink {
     activeSink=$(pacmd list-sinks | awk '/* index:/{print $3}')
 }
 
@@ -92,11 +93,6 @@ function getCurVol {
     curVol=$(pacmd list-sinks | grep -A 15 'index: '"$activeSink"'' | grep 'volume:' | grep -E -v 'base volume:' | awk -F : '{print $3}' | grep -o -P '.{0,3}%'| sed s/.$// | tr -d ' ')
 }
 
-function getCurSink {
-    o_pulseaudio=$(pacmd list-sinks| grep -e 'index' -e 'device.description')
-    curSink=$(echo "$o_pulseaudio" | grep "\* index" | cut -d: -f2)
-}
-
 function volMute {
     case "$1" in
         mute)
@@ -127,13 +123,24 @@ function changeDevice {
     nSinks=$(echo "$o_pulseaudio" | grep index | cut -d: -f2 | sed '$!d')
 
     # Gets present default sink index
-    curSink=$(echo "$o_pulseaudio" | grep "\* index" | cut -d: -f2)
+    activeSink=$(echo "$o_pulseaudio" | grep "\* index" | cut -d: -f2)
 
-    # Sets new sink index
-    newSink=$((curSink + 1))
-    if [ "$newSink" -gt "$nSinks" ]; then
-        newSink=0
-    fi
+    # Sets new sink index, checks that it's not in the blacklist
+    newSink=$activeSink
+    i=0
+    found=0
+    while [ $i -le "$nSinks" ] && [ "$found" -ne 1 ]; do
+        found=1
+        newSink=$((newSink + 1))
+        if [ "$newSink" -gt "$nSinks" ]; then newSink=0; fi
+        for el in "${deviceBlacklist[@]}"; do
+            if [ "$el" -eq "${newSink}" ]; then 
+                found=0
+                break
+            fi
+        done
+        i=$((i+1))
+    done
 
     # New sink
     pacmd set-default-sink $newSink
@@ -178,7 +185,7 @@ function listen {
                     firstrun=1
                 else
                     read -r event || break
-                    if ! echo "$event" | grep -e "on card" -e "on sink"
+                    if ! echo "$event" | grep -e "on card" -e "on sink" -e "on server"
                     then
                         # Avoid double events
                         continue
@@ -191,19 +198,18 @@ function listen {
 }
 
 function output() {
-    reloadSink
+    getCurSink
     getCurVol
-	getCurSink
     volMuteStatus
     if [ "${isMuted}" = "yes" ]
     then
-        echo "${mutedColor}${mutedIcon}${curVol}%   ${sinkIcon}${curSink}${endColor}"
+        echo "${mutedColor}${mutedIcon}${curVol}%   ${sinkIcon}${activeSink}${endColor}"
     else
-        echo "${volIcon}${curVol}%   ${sinkIcon}${curSink}"
+        echo "${volIcon}${curVol}%   ${sinkIcon}${activeSink}"
     fi
 }
 
-reloadSink
+getCurSink
 case "$1" in
     --up)
         volUp

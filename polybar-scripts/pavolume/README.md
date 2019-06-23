@@ -3,8 +3,8 @@
 A full volume control module for PulseAudio. It can:
 
 * Increase/Decrease and Mute the default sink's audio
-* Open pavucontrol with a click
-* Switch between sinks easily, with optional notifications
+* Work as a shortcut to pavucontrol
+* Switch between sinks easily, with optional notifications. You can also blacklist useless devices
 
 
 ![example](screenshots/example.png)
@@ -32,6 +32,7 @@ To be able to switch the default sinks from this script you may need to disable 
 | `mutedIcon`     | string           | Icon used for the muted volume (default is from FontAwesome)|
 | `sinkIcon`      | string           | Icon used for the sink (default is from FontAwesome)|
 | `mutedColor`    | Polybar color    | Color used when the audio is muted |
+| `deviceBlacklist`     | Bash array like `( 0 1 2 )` | A blacklist for whenever you switch sinks. You should put in the array the indexes of the devices you want to blaclist. Use `pacmd list-sinks` to see all device names in order to get its index. The list should also be sorted for a small performance improvement. |
 
 ## Module
 
