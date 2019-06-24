@@ -192,15 +192,19 @@ function output() {
     volMuteStatus
     
     # Fixed volume icons over max volume
-    if [ "$capVol" = "yes" ]; then maxVol=100; fi
     iconsLen="${#volIcons[@]}"
-    volSplit=$(( maxVol / iconsLen ))
-    for (( i=1; i<=iconsLen; i++ )); do
-        if (( i*volSplit >= curVol )); then
-            volIcon="${volIcons[$((i-1))]}"
-            break
-        fi
-    done
+    if [ "$iconsLen" -ne 0 ]; then
+        if [ "$capVol" = "yes" ]; then maxVol=100; fi
+        volSplit=$(( maxVol / iconsLen ))
+        for (( i=1; i<=iconsLen; i++ )); do
+            if (( i*volSplit >= curVol )); then
+                volIcon="${volIcons[$((i-1))]}"
+                break
+            fi
+        done
+    else
+        volIcon=""
+    fi
 
     if [ "${isMuted}" = "yes" ]; then
         echo "${mutedColor}${mutedIcon}${curVol}%   ${sinkIcon}${activeSink}${endColor}"
