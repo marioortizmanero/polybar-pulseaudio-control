@@ -4,13 +4,13 @@
 osd="no"
 inc=2
 capVol="no"
-maxVol=200
-autosync="yes"
+maxVol=130
+autosync="no"
 notifications="no"
 deviceBlacklist=( )
 
 # Polbar-specific configuration
-volIcon=" "
+volIcons=( " " " " )
 mutedIcon=" "
 sinkIcon=" "
 mutedColor="%{F#6b6b6b}"
@@ -19,8 +19,6 @@ mutedColor="%{F#6b6b6b}"
 # Script variables
 isMuted="no"
 activeSink=""
-limit=$((100 - inc))
-maxLimit=$((maxVol - inc))
 endColor="%{F-}"
 
 
@@ -42,12 +40,14 @@ function getSinkInputs {
 
 function volUp {
     getCurVol
+    limit=$((100 - inc))
+    maxLimit=$((maxVol - inc))
 
     if [ "$capVol" = "yes" ]; then
         if [ "$curVol" -le 100 ] && [ "$curVol" -ge "$limit" ]; then
-            pactl set-sink-volume "$activeSink" -- 100%
+            pactl set-sink-volume "$activeSink" 100%
         elif [ "$curVol" -lt "$limit" ]; then
-            pactl set-sink-volume "$activeSink" -- "+$inc%"
+            pactl set-sink-volume "$activeSink" "+$inc%"
         fi
     elif [ "$curVol" -le "$maxVol" ] && [ "$curVol" -ge "$maxLimit" ]; then
         pactl set-sink-volume "$activeSink" "$maxVol%"
@@ -87,7 +87,6 @@ function volSync {
         pactl set-sink-input-volume "$each" "$curVol%"
     done
 }
-
 
 function volMute {
     case "$1" in
@@ -157,8 +156,6 @@ function sendNotification {
     notify-send "Output cycle" "Changed output to ${deviceName}" --icon=audio-headphones-symbolic
 }
 
-
-
 # Prints output for bar
 # Listens for events for fast update speed
 function listen {
@@ -193,12 +190,25 @@ function output() {
     getCurSink
     getCurVol
     volMuteStatus
+    
+    # Fixed volume icons over max volume
+    if [ "$capVol" = "yes" ]; then maxVol=100; fi
+    iconsLen="${#volIcons[@]}"
+    volSplit=$(( maxVol / iconsLen ))
+    for (( i=1; i<=iconsLen; i++ )); do
+        if (( i*volSplit >= curVol )); then
+            volIcon="${volIcons[$((i-1))]}"
+            break
+        fi
+    done
+
     if [ "${isMuted}" = "yes" ]; then
         echo "${mutedColor}${mutedIcon}${curVol}%   ${sinkIcon}${activeSink}${endColor}"
     else
         echo "${volIcon}${curVol}%   ${sinkIcon}${activeSink}"
     fi
 }
+
 
 getCurSink
 case "$1" in

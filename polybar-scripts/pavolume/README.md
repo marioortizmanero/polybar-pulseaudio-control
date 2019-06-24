@@ -28,7 +28,7 @@ To be able to switch the default sinks from this script you may need to disable 
 | `maxvol`        | numerical        | Maximum volume (overrided by `capvol`) |
 | `autosync`      | `"yes"` / `"no"` | Will automatically sync all sink-inputs (apps) with the current volume of your output (speakers) whenever you change the volume. This is useful if you manage multiple outputs and have issues with the app volumes becoming out of sync with the output (they should move up/down together). If you like keeping apps at different volumes then you should change this to "no" |
 | `notifications` | `"yes"` / `"no"` | Sends a notifcation when the sink is changed |
-| `volIcon`       | string           | Icon used for the volume (default is from FontAwesome) |
+| `volIcons`      | Bash array like `( "🔉" "🔊" )` | Icons used for the volume (ordered by sound). It uses an array to divide the volume levels by the number of icons you want. For example, if you are using 4 icons and maxVol is 100, they will show up in order when the volume is lower than 25, 50, 75 and 100. This is useful because some fonts only have 2 volume levels while others can have up to 4 |
 | `mutedIcon`     | string           | Icon used for the muted volume (default is from FontAwesome)|
 | `sinkIcon`      | string           | Icon used for the sink (default is from FontAwesome)|
 | `mutedColor`    | Polybar color    | Color used when the audio is muted |
