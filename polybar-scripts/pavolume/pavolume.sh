@@ -48,7 +48,7 @@ function volUp {
     getCurVol
 
     if [ ${OSD} = "yes" ]; then
-        qdbus org.kde.kded /modules/kOSD showVolume "$curVol" 0
+        qdbus org.kde.kded /modules/kosd showVolume "$curVol" 0
     fi
 
     if [ ${AUTOSYNC} = "yes" ]; then
@@ -61,7 +61,7 @@ function volDown {
     getCurVol
 
     if [ ${OSD} = "yes" ]; then
-        qdbus org.kde.kded /modules/kOSD showVolume "$curVol" 0
+        qdbus org.kde.kded /modules/kosd showVolume "$curVol" 0
     fi
 
     if [ ${AUTOSYNC} = "yes" ]; then
@@ -93,7 +93,7 @@ function volMute {
     esac
 
     if [ ${OSD} = "yes" ]; then
-        qdbus org.kde.kded /modules/kOSD showVolume ${curVol} ${status}
+        qdbus org.kde.kded /modules/kosd showVolume ${curVol} ${status}
     fi
 
 }
