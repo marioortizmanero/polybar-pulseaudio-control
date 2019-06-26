@@ -30,7 +30,7 @@ To be able to switch the default sinks from this script you may need to disable 
 | `MUTED_ICON`        | string           | Icon used for the muted volume |
 | `MUTED_COLOR`       | Polybar color    | Color used when the audio is muted |
 | `DEFAULT_SINK_ICON` | string           | Icon used for the sink |
-| `CUSTOM_SINK_ICON` | string           | Icon used for the sink |
+| `CUSTOM_SINK_ICON`  | string           | Custom icons for each of your sinks. If a custom icon isn't found, the default one will be used instead |
 | `NOTIFICATIONS`     | `"yes"` / `"no"` | Sends a notifcation when the sink is changed |
 | `SINK_BLACKLIST`    | Bash array like `( 0 1 2 )` | A blacklist for whenever you switch sinks. You should put in the array the indexes of the devices you want to blaclist. Use `pacmd list-sinks` to see all device names in order to get its index. The list should also be sorted for a small performance improvement. |
 
