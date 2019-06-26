@@ -20,19 +20,19 @@ To be able to switch the default sinks from this script you may need to disable 
 
 ## Configuration
 
-| Name            |  Values          | Description |
-| --------------- | :--------------: | ----------- |
-| `osd`           | `"yes"` / `"no"` | Will display an OSD message when changing volume if set to true |
-| `inc`           | numerical        | Sets the increment/decrease that each volume up/down will perform |
-| `capvol`        | `"yes"` / `"no"` | Will limit volume to 100 if set to true |
-| `maxvol`        | numerical        | Maximum volume (overrided by `capvol`) |
-| `autosync`      | `"yes"` / `"no"` | Will automatically sync all sink-inputs (apps) with the current volume of your output (speakers) whenever you change the volume. This is useful if you manage multiple outputs and have issues with the app volumes becoming out of sync with the output (they should move up/down together). If you like keeping apps at different volumes then you should change this to "no" |
-| `notifications` | `"yes"` / `"no"` | Sends a notifcation when the sink is changed |
-| `volIcons`      | Bash array like `( "🔉" "🔊" )` | Icons used for the volume (ordered by sound). It uses an array to divide the volume levels by the number of icons you want. For example, if you are using 4 icons and maxVol is 100, they will show up in order when the volume is lower than 25, 50, 75 and 100. This is useful because some fonts only have 2 volume levels while others can have up to 4 |
-| `mutedIcon`     | string           | Icon used for the muted volume (default is from FontAwesome)|
-| `sinkIcon`      | string           | Icon used for the sink (default is from FontAwesome)|
-| `mutedColor`    | Polybar color    | Color used when the audio is muted |
-| `deviceBlacklist`     | Bash array like `( 0 1 2 )` | A blacklist for whenever you switch sinks. You should put in the array the indexes of the devices you want to blaclist. Use `pacmd list-sinks` to see all device names in order to get its index. The list should also be sorted for a small performance improvement. |
+| Name                |  Values          | Description |
+| ------------------- | :--------------: | ----------- |
+| `OSD`               | `"yes"` / `"no"` | Will display an OSD message when changing volume if set to true |
+| `INC`               | numerical        | Sets the increment/decrease that each volume up/down will perform |
+| `MAX_VOL`           | numerical        | Maximum volume |
+| `AUTOSYNC`          | `"yes"` / `"no"` | Will automatically sync all program volumes with the volume of your current sink (output) whenever you change the volume. This is useful if you manage multiple outputs and have issues with the app volumes becoming out of sync with the output |
+| `VOLUME_ICONS`      | Bash array like `( "🔉" "🔊" )` | Icons used for the volume (ordered by sound). It uses an array to divide the volume levels by the number of icons you want. For example, if you are using 4 icons and `MAX_VOL` is 100, they will show up in order when the volume is lower than 25, 50, 75 and 100. This is useful because some fonts only have 2 volume levels while others can have up to 4 |
+| `MUTED_ICON`        | string           | Icon used for the muted volume |
+| `MUTED_COLOR`       | Polybar color    | Color used when the audio is muted |
+| `DEFAULT_SINK_ICON` | string           | Icon used for the sink |
+| `CUSTOM_SINK_ICON` | string           | Icon used for the sink |
+| `NOTIFICATIONS`     | `"yes"` / `"no"` | Sends a notifcation when the sink is changed |
+| `SINK_BLACKLIST`    | Bash array like `( 0 1 2 )` | A blacklist for whenever you switch sinks. You should put in the array the indexes of the devices you want to blaclist. Use `pacmd list-sinks` to see all device names in order to get its index. The list should also be sorted for a small performance improvement. |
 
 ## Module
 
