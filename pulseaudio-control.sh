@@ -177,6 +177,8 @@ function listen {
 }
 
 function output() {
+    if [ -z $(pgrep pulseaudio) ]; then echo "Pulseaudio not running"; return 1; fi
+
     getCurSink
     getCurVol
     volMuteStatus
