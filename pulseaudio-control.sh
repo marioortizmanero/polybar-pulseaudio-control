@@ -98,7 +98,7 @@ function volMute {
 
 }
 
-# change the audio Device
+# Change the audio device
 function changeDevice {
     # Treats pulseaudio sink list to avoid calling pacmd list-sinks twice
     o_pulseaudio=$(pacmd list-sinks| grep -e 'index' -e 'device.description')
@@ -109,7 +109,7 @@ function changeDevice {
     # Gets present default sink index
     activeSink=$(echo "$o_pulseaudio" | grep "\* index" | cut -d: -f2)
 
-    # Sets new sink index, checks that it's not in the blacklist
+    # Looks for a new sink index, checking that it's not in the blacklist
     newSink=$activeSink
     for sink in $sinks; do
         if [ $sink -eq $activeSink ]; then
@@ -125,10 +125,10 @@ function changeDevice {
         newSink=$sink
     done
 
-    # New sink
+    # The new sink is set
     pacmd set-default-sink $newSink
 
-    # Moves all audio threads to new sink
+    # Moves all audio threads to the new sink
     inputs=$(pactl list sink-inputs short | cut -f 1)
     for i in $inputs; do
         pacmd move-sink-input "$i" "$newSink"
