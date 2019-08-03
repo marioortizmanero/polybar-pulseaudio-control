@@ -98,37 +98,43 @@ function volMute {
 
 }
 
-# Change the audio device
+# Changing the audio device
 function changeDevice {
     # Treats pulseaudio sink list to avoid calling pacmd list-sinks twice
     o_pulseaudio=$(pacmd list-sinks| grep -e 'index' -e 'device.description')
 
-    # Gets all sink indices
-    sinks=$(echo "$o_pulseaudio" | grep index | cut -d: -f2)
+    # Gets all sink indices in a list
+    sinks=($(echo "$o_pulseaudio" | grep index | awk -F': ' '{print $2}'))
 
     # Gets present default sink index
-    activeSink=$(echo "$o_pulseaudio" | grep "\* index" | cut -d: -f2)
+    activeSink=$(echo "$o_pulseaudio" | grep "\* index" | awk -F': ' '{$0=$2}1')
 
-    # Looks for a new sink index, checking that it's not in the blacklist
+    # Sets new sink index, checks that it's not in the blacklist
     newSink=$activeSink
-    for sink in $sinks; do
-        if [ $sink -eq $activeSink ]; then
-            continue
-        else
-            for el in "${SINK_BLACKLIST[@]}"; do
-                if [ "$el" -eq "${sink}" ]; then
-                    continue
-                fi
-            done
-        fi
 
-        newSink=$sink
-    done
+    # Remove blacklist devices from the sink list
+    sinks=($(echo "${sinks[@]} ${SINK_BLACKLIST[@]}" | tr ' ' '\n' | sort | uniq -u | tr '\n' ' '))
 
-    # The new sink is set
+    # If the resulting list is empty, do nothing
+    if [ -z "$sinks" ]; then exit; fi
+
+    # If the current sink is greater or equal than last one, pick the first
+    # sink in the list. Otherwise just pick the next sink avaliable.
+    if [ $activeSink -ge ${sinks[-1]} ]; then
+        newSink=${sinks[0]}
+    else
+        for sink in ${sinks[@]}; do
+            if [ $activeSink -lt $sink ]; then
+                newSink=$sink
+                break
+            fi
+        done
+    fi
+
+    # New sink
     pacmd set-default-sink $newSink
 
-    # Moves all audio threads to the new sink
+    # Moves all audio threads to new sink
     inputs=$(pactl list sink-inputs short | cut -f 1)
     for i in $inputs; do
         pacmd move-sink-input "$i" "$newSink"
