@@ -107,7 +107,7 @@ function changeDevice {
     sinks=($(echo "$o_pulseaudio" | grep index | awk -F': ' '{print $2}'))
 
     # Gets present default sink index
-    activeSink=$(echo "$o_pulseaudio" | grep "\* index" | awk -F': ' '{$0=$2}1')
+    activeSink=$(echo "$o_pulseaudio" | grep "\* index" | awk -F': ' '{print $2}')
 
     # Sets new sink index, checks that it's not in the blacklist
     newSink=$activeSink
