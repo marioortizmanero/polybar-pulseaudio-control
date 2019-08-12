@@ -1,6 +1,11 @@
 #!/bin/bash
 
-# SCRIPT CONFIGURATION - More info in the README.md
+##################################################################
+# Polybar Pulseaudio Control                                     #
+# https://github.com/marioortizmanero/polybar-pulseaudio-control #
+##################################################################
+
+# Script configuration (more info in the README)
 OSD="no"  # On Screen Display message for KDE if enabled
 INC=2  # Increment when lowering/rising the volume
 MAX_VOL=130  # Maximum volume
@@ -14,7 +19,7 @@ NOTIFICATIONS="no"  # Notifications when switching sinks if enabled
 SINK_BLACKLIST=(  )  # Index blacklist for sinks when switching between them
 
 
-# Script variables
+# Global script variables
 isMuted="no"
 activeSink=""
 endColor="%{F-}"
@@ -98,22 +103,21 @@ function volMute {
 
 }
 
-# Changing the audio device
 function changeDevice {
-    # Treats pulseaudio sink list to avoid calling pacmd list-sinks twice
+    # Treat pulseaudio sink list to avoid calling pacmd list-sinks twice
     o_pulseaudio=$(pacmd list-sinks| grep -e 'index' -e 'device.description')
 
-    # Gets all sink indices in a list
+    # Get all sink indices in a list
     sinks=($(echo "$o_pulseaudio" | grep index | awk -F': ' '{print $2}'))
 
-    # Gets present default sink index
+    # Get present default sink index
     activeSink=$(echo "$o_pulseaudio" | grep "\* index" | awk -F': ' '{print $2}')
 
-    # Sets new sink index, checks that it's not in the blacklist
+    # Set new sink index, checks that it's not in the blacklist
     newSink=$activeSink
 
     # Remove blacklist devices from the sink list
-    sinks=($(echo "${sinks[@]} ${SINK_BLACKLIST[@]}" | tr ' ' '\n' | sort | uniq -u | tr '\n' ' '))
+    sinks=($(comm -23 <(echo "${sinks[@]}" | tr ' ' '\n' | sort) <(echo "${SINK_BLACKLIST[@]}" | tr ' ' '\n' | sort) | tr '\n' ' '))
 
     # If the resulting list is empty, do nothing
     if [ -z "$sinks" ]; then exit; fi
@@ -131,10 +135,10 @@ function changeDevice {
         done
     fi
 
-    # New sink
+    # The new sink is set
     pacmd set-default-sink $newSink
 
-    # Moves all audio threads to new sink
+    # Move all audio threads to new sink
     inputs=$(pactl list sink-inputs short | cut -f 1)
     for i in $inputs; do
         pacmd move-sink-input "$i" "$newSink"
@@ -151,8 +155,6 @@ function sendNotification {
     notify-send "Output cycle" "Changed output to ${deviceName}" --icon=audio-headphones-symbolic
 }
 
-# Prints output for bar
-# Listens for events for fast update speed
 function listen {
     firstrun=0
 
