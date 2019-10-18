@@ -5,6 +5,9 @@
 # https://github.com/marioortizmanero/polybar-pulseaudio-control #
 ##################################################################
 
+# Functions of this scripts depends on English outputs of pactl
+export LANGUAGE=en_US
+
 # Script configuration (more info in the README)
 OSD="no"  # On Screen Display message for KDE if enabled
 INC=2  # Increment when lowering/rising the volume
