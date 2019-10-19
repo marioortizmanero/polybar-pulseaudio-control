@@ -18,6 +18,8 @@ CUSTOM_SINK_ICONS=(  )  # Custom sink icons in index of sink order
 NOTIFICATIONS="no"  # Notifications when switching sinks if enabled
 SINK_BLACKLIST=(  )  # Index blacklist for sinks when switching between them
 
+# Environment constants
+LANGUAGE=en_US  # Functions of this scripts depends on English outputs of pactl
 
 # Global script variables
 isMuted="no"
