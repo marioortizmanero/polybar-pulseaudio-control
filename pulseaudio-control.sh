@@ -161,7 +161,7 @@ function listen {
     firstrun=0
 
     pactl subscribe 2>/dev/null | {
-        while true; do 
+        while true; do
             {
                 # If this is the first time just continue
                 # and print the current state
@@ -186,7 +186,7 @@ function listen {
 }
 
 function output() {
-    if [ -z $(pgrep pulseaudio) ]; then echo "Pulseaudio not running"; return 1; fi
+    if [ -z "$(pgrep pulseaudio)" ]; then echo "Pulseaudio not running"; return 1; fi
 
     getCurSink
     getCurVol
