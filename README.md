@@ -69,6 +69,3 @@ label-foreground = ${colors.foreground}
 ##  Sources
 
 Part of the script and of this README's info was taken from [customlinux.blogspot.com](http://customlinux.blogspot.com/2013/02/pavolumesh-control-active-sink-volume.html), the creator. It was later adapted to fit polybar. It is also mixed with [the ArcoLinux version](https://github.com/arcolinux/arcolinux-polybar/blob/master/etc/skel/.config/polybar/scripts/pavolume.sh) to use the --listen flag and have a faster refresh.
-
-Pulseaudio Control is also combined with another script to switch between sinks from [here](https://gist.github.com/Jguer/3443e23145902ff30481). The latter was also modified to suit polybar and with the main script.
-
