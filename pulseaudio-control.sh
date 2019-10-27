@@ -122,15 +122,15 @@ function changeDevice {
     sinks=($(comm -23 <(echo "${sinks[@]}" | tr ' ' '\n' | sort) <(echo "${SINK_BLACKLIST[@]}" | tr ' ' '\n' | sort) | tr '\n' ' '))
 
     # If the resulting list is empty, do nothing
-    if [ -z "$sinks" ]; then exit; fi
+    if [ ${#sinks[@]} -eq 0 ]; then exit; fi
 
     # If the current sink is greater or equal than last one, pick the first
     # sink in the list. Otherwise just pick the next sink avaliable.
-    if [ $activeSink -ge ${sinks[-1]} ]; then
+    if [ "$activeSink" -ge "${sinks[-1]}" ]; then
         newSink=${sinks[0]}
     else
-        for sink in ${sinks[@]}; do
-            if [ $activeSink -lt $sink ]; then
+        for sink in "${sinks[@]}"; do
+            if [ "$activeSink" -lt "$sink" ]; then
                 newSink=$sink
                 break
             fi
@@ -138,7 +138,7 @@ function changeDevice {
     fi
 
     # The new sink is set
-    pacmd set-default-sink $newSink
+    pacmd set-default-sink "$newSink"
 
     # Move all audio threads to new sink
     inputs=$(pactl list sink-inputs short | cut -f 1)
