@@ -160,7 +160,7 @@ function sendNotification {
 function listen {
     firstrun=0
 
-    pactl subscribe 2>/dev/null | {
+    LANG=$LANGUAGE pactl subscribe 2>/dev/null | {
         while true; do
             {
                 # If this is the first time just continue
