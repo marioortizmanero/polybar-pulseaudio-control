@@ -37,7 +37,7 @@ function getCurSink() {
 }
 
 
-function volMuteStatus() {
+function getVolMuteStatus() {
     isMuted=$(pacmd list-sinks | grep -A 15 "index: $activeSink" | awk '/muted/{print $2}')
 }
 
@@ -50,7 +50,7 @@ function getSinkInputs() {
 function volUp() {
     # Obtaining the current volume from pacmd into $curVol.
     getCurVol
-    maxLimit=$((MAX_VOL - INC))
+    local maxLimit=$((MAX_VOL - INC))
 
     # Checking the volume upper bounds so that if MAX_VOL was 100% and the
     # increase percentage was 3%, a 99% volume would top at 100% instead
@@ -128,18 +128,15 @@ function volMute() {
 
 function changeDevice() {
     # Treat pulseaudio sink list to avoid calling pacmd list-sinks twice
-    sinksList=$(pacmd list-sinks | grep -e 'index' -e 'device.description')
-
-    # Get all sink indices in a list
-    sinks=($(echo "$sinksList" | grep index | awk -F': ' '{print $2}'))
+    local sinksList=$(pacmd list-sinks | grep -e 'index' -e 'device.description')
 
     # Get present default sink index
-    activeSink=$(echo "$sinksList" | grep "\* index" | awk -F': ' '{print $2}')
-
+    local activeSink=$(echo "$sinksList" | grep "\* index" | awk -F': ' '{print $2}')
     # Set new sink index, checks that it's not in the blacklist
-    newSink=$activeSink
+    local newSink=$activeSink
 
-    # Remove blacklist devices from the sink list
+    # The sink list, removing the blacklisted ones
+    local sinks=($(echo "$sinksList" | grep index | awk -F': ' '{print $2}'))
     sinks=($(comm -23 <(echo "${sinks[@]}" | tr ' ' '\n' | sort) <(echo "${SINK_BLACKLIST[@]}" | tr ' ' '\n' | sort) | tr '\n' ' '))
 
     # If the resulting list is empty, do nothing
@@ -162,7 +159,7 @@ function changeDevice() {
     pacmd set-default-sink "$newSink"
 
     # Move all audio threads to new sink
-    inputs=$(pactl list sink-inputs short | cut -f 1)
+    local inputs=$(pactl list sink-inputs short | cut -f 1)
     for i in $inputs; do
         pacmd move-sink-input "$i" "$newSink"
     done
@@ -176,13 +173,13 @@ function changeDevice() {
 function sendNotification() {
     # Sending a notification when the output changes. This is only called when
     # $NOTIFICATIONS is set to `yes`.
-    deviceName=$(pacmd list-sinks | grep -e 'index' -e 'device.description' | sed -n '/* index/{n;p;}' | grep -o '".*"' | sed 's/"//g')
+    local deviceName=$(pacmd list-sinks | grep -e 'index' -e 'device.description' | sed -n '/* index/{n;p;}' | grep -o '".*"' | sed 's/"//g')
     notify-send "Output cycle" "Changed output to $deviceName" --icon=audio-headphones-symbolic
 }
 
 
 function listen() {
-    firstRun=0
+    local firstRun=0
 
     # Listen for changes and immediately create new output for the bar.
     # This is faster than having the script on an interval.
@@ -213,12 +210,12 @@ function output() {
 
     getCurSink
     getCurVol
-    volMuteStatus
+    getVolMuteStatus
 
     # Fixed volume icons over max volume
-    iconsLen="${#VOLUME_ICONS[@]}"
+    local iconsLen="${#VOLUME_ICONS[@]}"
     if [ "$iconsLen" -ne 0 ]; then
-        volSplit=$(( MAX_VOL / iconsLen ))
+        local volSplit=$(( MAX_VOL / iconsLen ))
         for (( i=1; i<=iconsLen; i++ )); do
             if (( i*volSplit >= curVol )); then
                 volIcon="${VOLUME_ICONS[$((i-1))]}"
@@ -230,7 +227,7 @@ function output() {
     fi
 
     # Uses custom sink icon if the array contains one
-    sinksLen=${#CUSTOM_SINK_ICONS[@]}
+    local sinksLen=${#CUSTOM_SINK_ICONS[@]}
     if [ "$activeSink" -le "$((sinksLen - 1))" ]; then
         sinkIcon=${CUSTOM_SINK_ICONS[$activeSink]}
     else
@@ -255,7 +252,7 @@ case "$1" in
         volDown
         ;;
     --togmute)
-        volMuteStatus
+        getVolMuteStatus
         if [ "$isMuted" = "yes" ]; then
             volMute unmute
         else
