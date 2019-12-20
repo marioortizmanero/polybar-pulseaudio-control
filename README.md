@@ -66,6 +66,19 @@ label-foreground = ${colors.foreground}
 
 *Note that you will have to change the paths above to where your script is saved. You might want to change or remove the colors too.*
 
+## Useful icons
+
+Here's a list with some icons from different fonts you can copy-paste. Most have an space afterwards so that the module has a bit of spacing. They may appear bugged on Firefox if the font isn't available there. Please add yours if they aren't in the list.
+
+| Font name                                       | Volumes               | Muted   | Sink icons             |
+| ----------------------------------------------- | :-------------------: | :-----: | :--------------------: |
+| [FontAwesome](https://fontawesome.com)          | `(" " " ")`         | `" "`  | `" "`, `" "`         |
+| [Material](https://material.io/resources/icons) | `(" " " " " ")`    | `" "`  | `" "`, `" "`, `" "` |
+| Emoji                                           | `("🔈 " "🔉 " "🔊 ")` | `"🔇 "` | `"🔈 "`, `"🎧"`        |
+| Emoji v2                                        | `("🕨 " "🕩 " "🕪 ")`    | `"🔇 "` | `"🕨 "`, `"🎧"`         |
+
+Most of these can be used after downloading a [Nerd Font](https://www.nerdfonts.com/), or from your distro's repository.
+
 ##  Sources
 
 Part of the script and of this README's info was taken from [customlinux.blogspot.com](http://customlinux.blogspot.com/2013/02/pavolumesh-control-active-sink-volume.html), the creator. It was later adapted to fit polybar. It is also mixed with [the ArcoLinux version](https://github.com/arcolinux/arcolinux-polybar/blob/master/etc/skel/.config/polybar/scripts/pavolume.sh) to use the --listen flag and have a faster refresh.
