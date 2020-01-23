@@ -120,7 +120,7 @@ function volMute() {
     esac
 
     if [ $OSD = "yes" ]; then
-        qdbus org.kde.kded /modules/kosd showVolume ${curVol} ${status}
+        qdbus org.kde.kded /modules/kosd showVolume "$curVol" "$status"
     fi
 
 }
@@ -213,7 +213,7 @@ function output() {
     getVolMuteStatus
 
     # Fixed volume icons over max volume
-    local iconsLen="${#VOLUME_ICONS[@]}"
+    local iconsLen=${#VOLUME_ICONS[@]}
     if [ "$iconsLen" -ne 0 ]; then
         local volSplit=$((MAX_VOL / iconsLen))
         for i in $(seq 1 "$iconsLen"); do
@@ -227,15 +227,14 @@ function output() {
     fi
 
     # Uses custom sink icon if the array contains one
-    local sinksLen=${#CUSTOM_SINK_ICONS[@]}
-    if [ "$activeSink" -le $((sinksLen - 1)) ]; then
+    if [ "$activeSink" -lt ${#CUSTOM_SINK_ICONS[@]} ]; then
         sinkIcon=${CUSTOM_SINK_ICONS[$activeSink]}
     else
         sinkIcon=$DEFAULT_SINK_ICON
     fi
 
     # Showing the formatted message
-    if [ "${isMuted}" = "yes" ]; then
+    if [ "$isMuted" = "yes" ]; then
         echo "${MUTED_COLOR}${MUTED_ICON}${curVol}%   ${sinkIcon}${activeSink}${endColor}"
     else
         echo "${volIcon}${curVol}%   ${sinkIcon}${activeSink}"
