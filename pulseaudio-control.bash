@@ -33,7 +33,7 @@ function getCurVol() {
 
 
 function getCurSink() {
-    activeSink=$(pacmd list-sinks | awk '/* index:/{print $3}')
+    activeSink=$(pacmd list-sinks | awk '/\* index:/{print $3}')
 }
 
 
