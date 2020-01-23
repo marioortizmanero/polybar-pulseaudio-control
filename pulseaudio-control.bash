@@ -216,7 +216,7 @@ function output() {
     local iconsLen="${#VOLUME_ICONS[@]}"
     if [ "$iconsLen" -ne 0 ]; then
         local volSplit=$((MAX_VOL / iconsLen))
-        for i in $(seq 1 $iconsLen); do
+        for i in $(seq 1 "$iconsLen"); do
             if [ $((i * volSplit)) -ge $curVol ]; then
                 volIcon="${VOLUME_ICONS[$((i-1))]}"
                 break
@@ -228,7 +228,7 @@ function output() {
 
     # Uses custom sink icon if the array contains one
     local sinksLen=${#CUSTOM_SINK_ICONS[@]}
-    if [ $activeSink -le $((sinksLen - 1)) ]; then
+    if [ "$activeSink" -le $((sinksLen - 1)) ]; then
         sinkIcon=${CUSTOM_SINK_ICONS[$activeSink]}
     else
         sinkIcon=$DEFAULT_SINK_ICON
