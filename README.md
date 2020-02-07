@@ -1,10 +1,11 @@
 # PulseAudio Control
 
-A full volume control module for PulseAudio. Also known as Pavolume. Main features:
+A feature-full volume control module for PulseAudio. Also known as Pavolume. Main features:
 
 * Increase/Decrease and Mute the default sink's audio.
-* Work as a shortcut to pavucontrol.
-* Switch between sinks easily, with optional notifications. You can also blacklist useless devices.
+* Switch between sinks easily. You can also blacklist useless devices.
+* Optionally enable notifications and OSD messages.
+* Works as a shortcut to pavucontrol or your favorite audio manager tool.
 * Check [Configuration](#configuration) for more.
 
 ![example](screenshots/example.png)
@@ -12,9 +13,9 @@ A full volume control module for PulseAudio. Also known as Pavolume. Main featur
 
 ## Dependencies
 
-Obviously `pulseaudio` to use `pactl` and `pacmd`. You might want to have `pavucontrol` installed to easily control pulseaudio with a GUI. The script can send notifications if enabled, so you may want a notification daemon like `dunst`.
+[`pulseaudio`](https://www.freedesktop.org/wiki/Software/PulseAudio/) with `pactl` and `pacmd` in your `$PATH`. You might want to have [`pavucontrol`](https://freedesktop.org/software/pulseaudio/pavucontrol/) installed to easily control pulseaudio with a GUI. The script can send notifications if enabled, for which you'll need a notification daemon like [`dunst`](https://github.com/dunst-project/dunst).
 
-To be able to switch the default sinks from this script you may need to disable stream target device restore by editing the corresponing line in `/etc/pulse/default.pa` to:
+To be able to switch the default sinks from this script you might need to disable stream target device restore by editing the corresponing line in `/etc/pulse/default.pa` to:
 
 `load-module module-stream-restore restore_device=false`
 
@@ -44,10 +45,10 @@ You can change the script configuration at the beginning of the file:
 
 The example from the screenshot can:
 
-* Open `pavucontrol` on right click
+* Raise and decrease the volume on mousewheel scroll
 * Mute the audio on left click
-* Change devices on mousewheel click
-* Raise and decrease the volume with on mousewheel scroll
+* Switch between devices on mousewheel click
+* Open `pavucontrol` on right click
 
 ```ini
 [module/pulseaudio-control]
@@ -66,7 +67,7 @@ label-padding = 2
 label-foreground = ${colors.foreground}
 ```
 
-*Note that you will have to change the paths above to where your script is saved. You might want to change or remove the colors too.*
+*Note that you will have to change the paths above to where your script is saved. You might want to change or remove the colors and labels, too.*
 
 ## Useful icons
 
@@ -83,4 +84,4 @@ Most of these can be used after downloading a [Nerd Font](https://www.nerdfonts.
 
 ##  Sources
 
-Part of the script and of this README's info was taken from [customlinux.blogspot.com](http://customlinux.blogspot.com/2013/02/pavolumesh-control-active-sink-volume.html), the creator. It was later adapted to fit polybar. It is also mixed with [the ArcoLinux version](https://github.com/arcolinux/arcolinux-polybar/blob/master/etc/skel/.config/polybar/scripts/pavolume.sh) to use the --listen flag and have a faster refresh.
+Part of the script and of this README's info was taken from [customlinux.blogspot.com](http://customlinux.blogspot.com/2013/02/pavolumesh-control-active-sink-volume.html), the creator. It was later adapted to fit polybar. It is also mixed with [the ArcoLinux version](https://github.com/arcolinux/arcolinux-polybar/blob/master/etc/skel/.config/polybar/scripts/pavolume.sh), which implemented the `--listen` flag to use less resources.
