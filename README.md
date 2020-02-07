@@ -85,3 +85,7 @@ Most of these can be used after downloading a [Nerd Font](https://www.nerdfonts.
 ##  Sources
 
 Part of the script and of this README's info was taken from [customlinux.blogspot.com](http://customlinux.blogspot.com/2013/02/pavolumesh-control-active-sink-volume.html), the creator. It was later adapted to fit polybar. It is also mixed with [the ArcoLinux version](https://github.com/arcolinux/arcolinux-polybar/blob/master/etc/skel/.config/polybar/scripts/pavolume.sh), which implemented the `--listen` flag to use less resources.
+
+## Development
+
+Any PRs and issues are welcome! The tests can be ran with `bats tests.bash`.
