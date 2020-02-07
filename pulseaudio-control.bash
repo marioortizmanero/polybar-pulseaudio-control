@@ -128,22 +128,21 @@ function volMute() {
 
 function changeDevice() {
     # Treat pulseaudio sink list to avoid calling pacmd list-sinks twice
-    local sinksList=$(pacmd list-sinks | grep -e 'index' -e 'device.description')
+    local sinksList=$(pacmd list-sinks | grep -e 'index')
 
     # Get present default sink index
     local activeSink=$(echo "$sinksList" | grep "\* index" | awk -F': ' '{print $2}')
-    # Set new sink index, checks that it's not in the blacklist
-    local newSink=$activeSink
 
     # The sink list, removing the blacklisted ones
     local sinks=($(echo "$sinksList" | grep index | awk -F': ' '{print $2}'))
-    sinks=($(comm -23 <(echo "${sinks[@]}" | tr ' ' '\n' | sort) <(echo "${SINK_BLACKLIST[@]}" | tr ' ' '\n' | sort) | tr '\n' ' '))
+    sinks=($(comm -23 <(echo "${sinks[@]}" | tr ' ' '\n' | sort) <(echo "${SINK_BLACKLIST[@]}" | tr ' ' '\n' | sort) | sort -n | tr '\n' ' '))
 
     # If the resulting list is empty, do nothing
     if [ ${#sinks[@]} -eq 0 ]; then exit; fi
 
     # If the current sink is greater or equal than last one, pick the first
     # sink in the list. Otherwise just pick the next sink avaliable.
+    local newSink
     if [ "$activeSink" -ge "${sinks[-1]}" ]; then
         newSink=${sinks[0]}
     else
@@ -206,7 +205,7 @@ function listen() {
 
 
 function output() {
-    if [ -z "$(pgrep pulseaudio)" ]; then echo "Pulseaudio not running"; return 1; fi
+    if ! pulseaudio --check; then echo "Pulseaudio not running"; return 1; fi
 
     getCurSink
     getCurVol
