@@ -1,6 +1,7 @@
 #!/bin/env bats
+# vim: filetype=sh
 # 
-# Polybar PulseAudio Control - tests.bash
+# Polybar PulseAudio Control - tests.bats
 # 
 # Simple test script to make sure the most basic functions in this script
 # always work as intended. The tests will temporarily modify your pulseaudio
@@ -27,6 +28,7 @@ function teardown() {
 @test "changeDevice()" {
     # This test will only work if there is currently only one sink. It's
     # kind of hardcoded to avoid excesive complexity.
+    pactl list short sinks
     if [ "$(pactl list short sinks | wc -l)" -ne 1 ]; then
         skip
     fi
@@ -35,14 +37,15 @@ function teardown() {
     for i in {1..15}; do
         pacmd load-module module-null-sink sink_name="null-sink-$i"
     done
-    pacmd set-default-sink 0
+    pacmd set-default-sink 1
 
     # The blacklist has valid and invalid sinks. The switching will be in
     # the same order as the array.
     # This test assumes that `getCurSink` works properly, and tries it 50
-    # times.
-    SINK_BLACKLIST=(1 8 4 2 2 -100 300 -9 13 10)
-    local order=(0 3 5 6 7 9 11 12 14 15)
+    # times. The sink with ID zero must always be ignored, because it's
+    # reserved to special sinks.
+    SINK_BLACKLIST=(0 8 4 2 2 -100 300 -9 13 10)
+    local order=(1 3 5 6 7 9 11 12 14 15)
     for i in {1..50}; do
         changeDevice
         getCurSink

@@ -142,12 +142,13 @@ function changeDevice() {
 
     # If the current sink is greater or equal than last one, pick the first
     # sink in the list. Otherwise just pick the next sink avaliable.
+    local newSink
     if [ "$activeSink" -ge "${sinks[-1]}" ]; then
-        local newSink=${sinks[0]}
+        newSink=${sinks[0]}
     else
         for sink in "${sinks[@]}"; do
             if [ "$activeSink" -lt "$sink" ]; then
-                local newSink=$sink
+                newSink=$sink
                 break
             fi
         done
