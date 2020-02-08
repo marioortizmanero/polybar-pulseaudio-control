@@ -49,8 +49,8 @@ function teardown() {
     for i in {1..50}; do
         changeDevice
         getCurSink
-        echo "Real sink is $activeSink, expected ${order[$((i % ${#order[@]}))]} at iteration $i"
-        [ "$activeSink" -eq "${order[$((i % ${#order[@]}))]}" ]
+        echo "Real sink is $curSink, expected ${order[$((i % ${#order[@]}))]} at iteration $i"
+        [ "$curSink" -eq "${order[$((i % ${#order[@]}))]}" ]
     done
 }
 
@@ -62,10 +62,10 @@ function teardown() {
     INC=5
     local vol=0
     getCurSink
-    pactl set-sink-volume "$activeSink" "$vol%"
+    pactl set-sink-volume "$curSink" "$vol%"
     for i in {1..100}; do
         volUp
-        getCurVol
+        getCurVol "$curSink"
         if [ "$vol" -lt $MAX_VOL ]; then
             vol=$((vol + INC))
         fi
@@ -83,11 +83,10 @@ function teardown() {
     # It shouldn't matter that the current volume exceeds the maximum volume
     local vol=375
     getCurSink
-    pactl set-sink-volume "$activeSink" "$vol%"
-    getCurVol
+    pactl set-sink-volume "$curSink" "$vol%"
     for i in {1..100}; do
         volDown
-        getCurVol
+        getCurVol "$curSink"
         if [ "$vol" -gt 0 ]; then
             vol=$((vol - INC))
         fi
@@ -103,10 +102,10 @@ function teardown() {
     local status=0
     local realStatus
     getCurSink
-    pactl set-sink-mute "$activeSink" "$status"
+    pactl set-sink-mute "$curSink" "$status"
     for i in {1..50}; do
         volMute
-        getVolMuteStatus
+        getIsMuted "$curSink"
         if [ "$status" -eq 0 ]; then status=1; fi
         if [ "$isMuted" = "no" ]; then realStatus=1; else realStatus=0; fi
         echo "Real status is $realStatus, expected $status"
