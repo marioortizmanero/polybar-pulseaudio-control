@@ -114,14 +114,14 @@ function volMute() {
     if [ "$1" = "toggle" ]; then
         getIsMuted "$curSink"
         if [ "$isMuted" = "yes" ]; then
-            pactl set-sink-mute "$curSink" 1
+            pactl set-sink-mute "$curSink" "no"
         else
-            pactl set-sink-mute "$curSink" 0
+            pactl set-sink-mute "$curSink" "yes"
         fi
     elif [ "$1" = "mute" ]; then
-        pactl set-sink-mute "$curSink" 1
+        pactl set-sink-mute "$curSink" "yes"
     elif [ "$1" = "unmute" ]; then
-        pactl set-sink-mute "$curSink" 0
+        pactl set-sink-mute "$curSink" "no"
     fi
 
     if [ $OSD = "yes" ]; then showOSD "$curSink"; fi

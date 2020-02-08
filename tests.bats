@@ -43,7 +43,7 @@ function teardown() {
     # the same order as the array.
     # This test assumes that `getCurSink` works properly, and tries it 50
     # times. The sink with ID zero must always be ignored, because it's
-    # reserved to special sinks.
+    # reserved to special sinks, and it might cause issues in the test.
     SINK_BLACKLIST=(0 8 4 2 2 -100 300 -9 13 10)
     local order=(1 3 5 6 7 9 11 12 14 15)
     for i in {1..50}; do
@@ -99,16 +99,37 @@ function teardown() {
 @test "volMute()" {
     # Very simple tests to make sure that volume muting works. The sink starts
     # muted, and its state is changed to check that the function doesn't fail.
-    local status=0
-    local realStatus
+    # First of all, the toggle mode is tested.
     getCurSink
-    pactl set-sink-mute "$curSink" "$status"
+    local expected="no"
+    pactl set-sink-mute "$curSink" "$expected"
     for i in {1..50}; do
-        volMute
+        volMute toggle
         getIsMuted "$curSink"
-        if [ "$status" -eq 0 ]; then status=1; fi
-        if [ "$isMuted" = "no" ]; then realStatus=1; else realStatus=0; fi
-        echo "Real status is $realStatus, expected $status"
-        [ "$realStatus" -eq $status ]
+        if [ "$expected" = "no" ]; then expected="yes"; else expected="no"; fi
+        echo "Real status is '$isMuted', expected '$expected'"
+        [ "$isMuted" = "$expected" ]
     done
+
+    # Testing that muting once or more results in a muted sink
+    volMute mute
+    getIsMuted "$curSink"
+    [ "$isMuted" = "yes" ]
+    volMute mute
+    getIsMuted "$curSink"
+    [ "$isMuted" = "yes" ]
+    volMute mute
+    getIsMuted "$curSink"
+    [ "$isMuted" = "yes" ]
+
+    # Same for unmuting
+    volMute unmute
+    getIsMuted "$curSink"
+    [ "$isMuted" = "no" ]
+    volMute unmute
+    getIsMuted "$curSink"
+    [ "$isMuted" = "no" ]
+    volMute unmute
+    getIsMuted "$curSink"
+    [ "$isMuted" = "no" ]
 }
