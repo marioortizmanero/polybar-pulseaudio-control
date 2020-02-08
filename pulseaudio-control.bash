@@ -24,13 +24,10 @@ LANGUAGE=en_US  # Some calls depend on English outputs of pactl
 END_COLOR="%{F-}"
 
 
-# Saves the currently default sink into a variable named `curSink`.
+# Saves the currently default sink into a variable named `curSink`. It will
+# return an error code when pulseaudio isn't running.
 function getCurSink() {
-    if ! pulseaudio --check; then
-        echo "PulseAudio not running"
-        exit 1
-    fi
-
+    if ! pulseaudio --check; then return 1; fi
     curSink=$(pacmd list-sinks | awk '/\* index:/{print $3}')
 }
 
@@ -57,7 +54,10 @@ function getSinkInputs() {
 
 function volUp() {
     # Obtaining the current volume from pacmd into $curVol.
-    getCurSink
+    if ! getCurSink; then
+        echo "PulseAudio not running"
+        return 1
+    fi
     getCurVol "$curSink"
     local maxLimit=$((MAX_VOL - INC))
 
@@ -84,7 +84,10 @@ function volUp() {
 function volDown() {
     # Pactl already handles the volume lower bounds so that negative values
     # are ignored.
-    getCurSink
+    if ! getCurSink; then
+        echo "PulseAudio not running"
+        return 1
+    fi
     pactl set-sink-volume "$curSink" "-$INC%"
 
     if [ $OSD = "yes" ]; then
@@ -99,7 +102,10 @@ function volDown() {
 
 
 function volSync() {
-    getCurSink
+    if ! getCurSink; then
+        echo "PulseAudio not running"
+        return 1
+    fi
     getSinkInputs "$curSink"
     getCurVol "$curSink"
 
@@ -113,7 +119,10 @@ function volSync() {
 
 function volMute() {
     # Switch to mute/unmute the volume with pactl.
-    getCurSink
+    if ! getCurSink; then
+        echo "PulseAudio not running"
+        return 1
+    fi
     if [ "$1" = "toggle" ]; then
         getIsMuted "$curSink"
         if [ "$isMuted" = "yes" ]; then
@@ -138,7 +147,10 @@ function volMute() {
 function changeDevice() {
     # The final sinks list, removing the blacklisted ones from the list of
     # currently available sinks.
-    getCurSink
+    if ! getCurSink; then
+        echo "PulseAudio not running"
+        return 1
+    fi
     local sinks=($(comm -23 <(pactl list short sinks | cut -f 1 | sort) \
                             <(echo "${SINK_BLACKLIST[@]}" | tr ' ' '\n' | sort) \
                             | sort -un | tr '\n' ' '))
@@ -175,6 +187,7 @@ function changeDevice() {
 }
 
 
+# This function assumes that PulseAudio is already running
 function sendNotification() {
     # Sending a notification when the output changes. This is only called when
     # $NOTIFICATIONS is set to `yes`.
@@ -211,7 +224,10 @@ function listen() {
 
 
 function output() {
-    getCurSink
+    if ! getCurSink; then
+        echo "PulseAudio not running"
+        return 1
+    fi
     getCurVol "$curSink"
     getIsMuted "$curSink"
 
