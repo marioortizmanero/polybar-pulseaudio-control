@@ -134,9 +134,9 @@ function changeDevice() {
     # The final sinks list, removing the blacklisted ones from the list of
     # currently available sinks.
     getCurSink
-    local sinks=($(comm -23 <(pactl list short sinks | awk '{print $1}' | sort) \
+    local sinks=($(comm -23 <(pactl list short sinks | cut -f 1 | sort) \
                             <(echo "${SINK_BLACKLIST[@]}" | tr ' ' '\n' | sort) \
-                            | sort -n | tr '\n' ' '))
+                            | sort -un | tr '\n' ' '))
 
     # If the resulting list is empty, nothing is done
     if [ ${#sinks[@]} -eq 0 ]; then exit; fi
@@ -159,7 +159,7 @@ function changeDevice() {
     pacmd set-default-sink "$newSink"
 
     # Move all audio threads to new sink
-    local inputs=$(pactl list sink-inputs short | cut -f 1)
+    local inputs=$(pactl list short sink-inputs | cut -f 1)
     for i in $inputs; do
         pacmd move-sink-input "$i" "$newSink"
     done
