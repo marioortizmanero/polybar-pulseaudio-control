@@ -65,10 +65,8 @@ function volUp() {
         pactl set-sink-volume "$curSink" "+$INC%"
     fi
 
-    # Updating the current volume global variable for future usage.
-    getCurVol "$curSink"
-
     if [ $OSD = "yes" ]; then
+        getCurVol "$curSink"
         qdbus org.kde.kded /modules/kosd showVolume "$curVol" 0
     fi
 
