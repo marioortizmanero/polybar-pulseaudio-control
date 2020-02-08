@@ -242,6 +242,28 @@ function output() {
 }
 
 
+function printHelp() {
+    echo "Usage: $0 ACTION"
+    echo ""
+    echo "Actions:"
+    echo "    --help              display this help and exit"
+    echo "    --output            print the PulseAudio status once"
+    echo "    --listen            listen for changes in PulseAudio to automatically"
+    echo "                        update this script's output"
+    echo "    --up, --down        increase or decrease the default sink's volume"
+    echo "    --mute, --unmute    mute or unmute the default sink's audio"
+    echo "    --togmute           switch between the actions above"
+    echo "    --change            switch to the next available sink"
+    echo "    --sync              synchronize all the output streams volume to"
+    echo "                        the be the same as the current sink's volume"
+    echo ""
+    echo "Author:"
+    echo "    Mario O. M."
+    echo "More info on GitHub:"
+    echo "    https://github.com/marioortizmanero/polybar-pulseaudio-control"
+}
+
+
 case "$1" in
     --up)
         volUp
@@ -267,8 +289,11 @@ case "$1" in
     --change)
         changeDevice
         ;;
-    *)
-        # By default print output for bar.
+    --output)
         output
+        ;;
+    *)
+        printHelp
+        exit 0
         ;;
 esac
