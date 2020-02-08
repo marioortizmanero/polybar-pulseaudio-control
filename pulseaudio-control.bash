@@ -70,14 +70,8 @@ function volUp() {
         pactl set-sink-volume "$curSink" "+$INC%"
     fi
 
-    if [ $OSD = "yes" ]; then
-        getCurVol "$curSink"
-        qdbus org.kde.kded /modules/kosd showVolume "$curVol" 0
-    fi
-
-    if [ $AUTOSYNC = "yes" ]; then
-        volSync
-    fi
+    if [ $OSD = "yes" ]; then showOSD; fi
+    if [ $AUTOSYNC = "yes" ]; then volSync fi
 }
 
 
@@ -90,14 +84,8 @@ function volDown() {
     fi
     pactl set-sink-volume "$curSink" "-$INC%"
 
-    if [ $OSD = "yes" ]; then
-        getCurVol "$curSink"
-        qdbus org.kde.kded /modules/kosd showVolume "$curVol" 0
-    fi
-
-    if [ $AUTOSYNC = "yes" ]; then
-        volSync
-    fi
+    if [ $OSD = "yes" ]; then showOSD; fi
+    if [ $AUTOSYNC = "yes" ]; then volSync fi
 }
 
 
@@ -136,11 +124,7 @@ function volMute() {
         pactl set-sink-mute "$curSink" 0
     fi
 
-    if [ $OSD = "yes" ]; then
-        getCurVol "$curSink"
-        getIsMuted "$curSink"
-        qdbus org.kde.kded /modules/kosd showVolume "$curVol" "$isMuted"
-    fi
+    if [ $OSD = "yes" ]; then showOSD; fi
 }
 
 
@@ -181,18 +165,26 @@ function changeDevice() {
         pacmd move-sink-input "$i" "$newSink"
     done
 
-    if [ $NOTIFICATIONS = "yes" ]; then
-        sendNotification
-    fi
+    if [ $NOTIFICATIONS = "yes" ]; then sendNotification; fi
 }
 
 
-# This function assumes that PulseAudio is already running
+# This function assumes that PulseAudio is already running.
 function sendNotification() {
     # Sending a notification when the output changes. This is only called when
-    # $NOTIFICATIONS is set to `yes`.
+    # $NOTIFICATIONS is set to "yes".
     local deviceName=$(pacmd list-sinks | grep -e 'index' -e 'device.description' | sed -n '/* index/{n;p;}' | grep -o '".*"' | sed 's/"//g')
     notify-send "Output cycle" "Changed output to $deviceName" --icon=audio-headphones-symbolic
+}
+
+
+# This function assumes that PulseAudio is already running. It only supports
+# KDE OSDs for now.
+function showOSD() {
+    getCurSink
+    getCurVol "$curSink"
+    getIsMuted "$curSink"
+    qdbus org.kde.kded /modules/kosd showVolume "$curVol" "$isMuted"
 }
 
 
