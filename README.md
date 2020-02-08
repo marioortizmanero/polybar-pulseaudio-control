@@ -71,10 +71,9 @@ label-foreground = ${colors.foreground}
 
 ## Usage
 
-The full usage in case you want to modify the script above, or want to use it for different reasons:
+Here are all the available actions, in case you want to modify the module above, or want to use it for different reasons:
 
 ```
-❯ bash pulseaudio-control.bash --help
 Usage: pulseaudio-control.bash ACTION
 
 Actions:
@@ -88,11 +87,6 @@ Actions:
     --change            switch to the next available sink
     --sync              synchronize all the output streams volume to
                         the be the same as the current sink's volume
-
-Author:
-    Mario O. M.
-More info on GitHub:
-    https://github.com/marioortizmanero/polybar-pulseaudio-control
 ```
 
 ## Useful icons
