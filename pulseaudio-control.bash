@@ -26,6 +26,11 @@ END_COLOR="%{F-}"
 
 # Saves the currently default sink into a variable named `curSink`.
 function getCurSink() {
+    if ! pulseaudio --check; then
+        echo "PulseAudio not running"
+        exit 1
+    fi
+
     curSink=$(pacmd list-sinks | awk '/\* index:/{print $3}')
 }
 
@@ -206,8 +211,6 @@ function listen() {
 
 
 function output() {
-    if ! pulseaudio --check; then echo "Pulseaudio not running"; return 1; fi
-
     getCurSink
     getCurVol "$curSink"
     getIsMuted "$curSink"
