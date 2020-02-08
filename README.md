@@ -69,6 +69,32 @@ label-foreground = ${colors.foreground}
 
 *Note that you will have to change the paths above to where your script is saved. You might want to change or remove the colors and labels, too.*
 
+## Usage
+
+The full usage in case you want to modify the script above, or want to use it for different reasons:
+
+```
+❯ bash pulseaudio-control.bash --help
+Usage: pulseaudio-control.bash ACTION
+
+Actions:
+    --help              display this help and exit
+    --output            print the PulseAudio status once
+    --listen            listen for changes in PulseAudio to automatically
+                        update this script's output
+    --up, --down        increase or decrease the default sink's volume
+    --mute, --unmute    mute or unmute the default sink's audio
+    --togmute           switch between the actions above
+    --change            switch to the next available sink
+    --sync              synchronize all the output streams volume to
+                        the be the same as the current sink's volume
+
+Author:
+    Mario O. M.
+More info on GitHub:
+    https://github.com/marioortizmanero/polybar-pulseaudio-control
+```
+
 ## Useful icons
 
 Here's a list with some icons from different fonts you can copy-paste. Most have an space afterwards so that the module has a bit of spacing. They may appear bugged on Firefox if the font isn't available there. Please add yours if they aren't in the list.

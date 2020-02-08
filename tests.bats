@@ -15,7 +15,7 @@ function setup() {
         echo "Starting pulseaudio"
         pulseaudio --start -D
     fi
-    source pulseaudio-control.bash &>/dev/null
+    source pulseaudio-control.bash --output &>/dev/null
 }
 
 function teardown() {
