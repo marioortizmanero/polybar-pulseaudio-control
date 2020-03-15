@@ -198,11 +198,12 @@ function changeDevice() {
     done
 
     if [ $NOTIFICATIONS = "yes" ]; then
-        getCurDescr "$newSink"
-        displayName="${curDescr}"
         if [ $NICKNAMES = "yes" ]; then
           getCurNick "$newSink"
-          displayName="${curNick}"
+          displayName="$curNick"
+        else
+          getCurDescr "$newSink"
+          displayName="$curDescr"
         fi
         notify-send "PulseAudio" "Changed output to $displayName" --icon=audio-headphones-symbolic &
     fi
@@ -281,10 +282,10 @@ function output() {
         sinkIcon=$DEFAULT_SINK_ICON
     fi
 
-    local displayName="${curSink}"
+    local displayName="$curSink"
     if [ $NICKNAMES = "yes" ]; then
       getCurNick "$curSink"
-      displayName="${curNick}"
+      displayName="$curNick"
     fi
 
     # Showing the formatted message
