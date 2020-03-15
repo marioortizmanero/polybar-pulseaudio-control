@@ -199,7 +199,12 @@ function changeDevice() {
 
     if [ $NOTIFICATIONS = "yes" ]; then
         getCurDescr $newSink
-        notify-send "PulseAudio" "Changed output to $curDescr" --icon=audio-headphones-symbolic &
+        displayName="${curDescr}"
+        if [ $NICKNAMES = "yes" ]; then
+          getCurNick $newSink
+          displayName="${curNick}"
+        fi
+        notify-send "PulseAudio" "Changed output to $displayName" --icon=audio-headphones-symbolic &
     fi
 }
 
