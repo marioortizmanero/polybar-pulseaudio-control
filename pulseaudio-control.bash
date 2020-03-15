@@ -16,7 +16,14 @@ MUTED_COLOR="%{F#6b6b6b}"  # Color when the audio is muted
 DEFAULT_SINK_ICON="# "  # The default sink icon if a custom one isn't found
 CUSTOM_SINK_ICONS=(  )  # Custom sink icons in index of sink order
 NOTIFICATIONS="no"  # Notifications when switching sinks if enabled
+NICKNAMES="no"  # Use human-readable names instead of sink indices
 SINK_BLACKLIST=(  )  # Index blacklist for sinks when switching between them
+
+# maps pulse-audio sink names to human-readable names
+declare -A NAME_NICKNAME_MAP=(
+  ["alsa_output.pci-0000_00_1f.3.analog-stereo"]="Built-In Soundcard"
+  ["alsa_output.usb-SomeManufacturer_SomeUsbSoundcard-00.analog-stereo"]="External Soundcard"
+)
 
 
 # Environment & global constants for the scriot
@@ -35,6 +42,31 @@ function getCurSink() {
 # Saves the sink passed by parameter's volume into a variable named `curVol`.
 function getCurVol() {
     curVol=$(pacmd list-sinks | grep -A 15 'index: '"$1"'' | grep 'volume:' | grep -E -v 'base volume:' | awk -F : '{print $3}' | grep -o -P '.{0,3}%' | sed s/.$// | tr -d ' ')
+}
+
+
+# Saves the `device.description` property of the sink passed by parameter into a variable named `curDescr`.
+function getCurDescr() {
+  curDescr=$(pacmd list-sinks | sed -n -e '/index: '"$1"'/,/index/ p' | grep 'device.description' | sed 's/.*"\(.*\)"/\1/g')
+}
+
+
+# Saves the name of the sink passed by parameter into a variable named `curName`.
+function getCurName() {
+  curName=$(pacmd list-sinks | sed -n -e '/index: '"$1"'/,/index/ p' | grep 'name:' | sed 's/.*<\(.*\)>/\1/g')
+}
+
+
+# Saves a `nickname` for the sink passed by parameter into a variable called `curNick`.
+# If a mapping for the sink name exists, that is used. Otherwise, the sinks description is used as fallback.
+function getCurNick() {
+  getCurName $1
+  if [ ${NAME_NICKNAME_MAP[$curName]+abc} ]; then
+    curNick="${NAME_NICKNAME_MAP[$curName]}"
+  else
+    getCurDescr $1
+    curNick="$curDescr"
+  fi
 }
 
 
@@ -166,10 +198,11 @@ function changeDevice() {
     done
 
     if [ $NOTIFICATIONS = "yes" ]; then
-        local deviceName=$(pacmd list-sinks | grep -e 'index' -e 'device.description' | sed -n '/* index/{n;p;}' | grep -o '".*"' | sed 's/"//g')
-        notify-send "PulseAudio" "Changed output to $deviceName" --icon=audio-headphones-symbolic &
+        getCurDescr $newSink
+        notify-send "PulseAudio" "Changed output to $curDescr" --icon=audio-headphones-symbolic &
     fi
 }
+
 
 
 # This function assumes that PulseAudio is already running. It only supports
@@ -243,11 +276,17 @@ function output() {
         sinkIcon=$DEFAULT_SINK_ICON
     fi
 
+    local displayName="${curSink}"
+    if [ $NICKNAMES = "yes" ]; then
+      getCurNick "$curSink"
+      displayName="${curNick}"
+    fi
+
     # Showing the formatted message
     if [ "$isMuted" = "yes" ]; then
-        echo "${MUTED_COLOR}${MUTED_ICON}${curVol}%   ${sinkIcon}${curSink}${END_COLOR}"
+        echo "${MUTED_COLOR}${MUTED_ICON}${curVol}%   ${sinkIcon}${displayName}${END_COLOR}"
     else
-        echo "${volIcon}${curVol}%   ${sinkIcon}${curSink}"
+        echo "${volIcon}${curVol}%   ${sinkIcon}${displayName}"
     fi
 }
 
