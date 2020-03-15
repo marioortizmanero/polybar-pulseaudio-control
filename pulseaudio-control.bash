@@ -167,7 +167,7 @@ function changeDevice() {
 
     if [ $NOTIFICATIONS = "yes" ]; then
         local deviceName=$(pacmd list-sinks | grep -e 'index' -e 'device.description' | sed -n '/* index/{n;p;}' | grep -o '".*"' | sed 's/"//g')
-        notify-send "PulseAudio" "Changed output to $deviceName" --icon=audio-headphones-symbolic
+        notify-send "PulseAudio" "Changed output to $deviceName" --icon=audio-headphones-symbolic &
     fi
 }
 
