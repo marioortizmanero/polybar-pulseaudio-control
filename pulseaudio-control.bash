@@ -60,11 +60,11 @@ function getCurName() {
 # Saves a `nickname` for the sink passed by parameter into a variable called `curNick`.
 # If a mapping for the sink name exists, that is used. Otherwise, the sinks description is used as fallback.
 function getCurNick() {
-  getCurName $1
+  getCurName "$1"
   if [ ${NAME_NICKNAME_MAP[$curName]+abc} ]; then
     curNick="${NAME_NICKNAME_MAP[$curName]}"
   else
-    getCurDescr $1
+    getCurDescr "$1"
     curNick="$curDescr"
   fi
 }
@@ -198,10 +198,10 @@ function changeDevice() {
     done
 
     if [ $NOTIFICATIONS = "yes" ]; then
-        getCurDescr $newSink
+        getCurDescr "$newSink"
         displayName="${curDescr}"
         if [ $NICKNAMES = "yes" ]; then
-          getCurNick $newSink
+          getCurNick "$newSink"
           displayName="${curNick}"
         fi
         notify-send "PulseAudio" "Changed output to $displayName" --icon=audio-headphones-symbolic &
