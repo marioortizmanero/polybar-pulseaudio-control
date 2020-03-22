@@ -37,7 +37,7 @@ You can change the script configuration at the beginning of the file:
 | `CUSTOM_SINK_ICON`     | String\*         | Custom icons for each of your sinks. If a custom icon isn't found, the default one will be used instead. |
 | `NOTIFICATIONS`        | `"yes"` / `"no"` | Sends a notifcation when the sink is changed. |
 | `SINK_BLACKLIST`       | Bash array like `( 0 1 2 )` | A blacklist for whenever you switch sinks. You should put in the array the indexes of the devices you want to blaclist. Use `pacmd list-sinks` to see all device names in order to get its index. The list should also be sorted for a small performance improvement. |
-| `NAME_DISPLAYNAME_MAP` | Bash associative array | Maps the pulseaudio name of a sink to a human-readable displayname to be used in the statusbar. |
+| `DISPLAY_NAMES`        | Bash associative array | Maps the pulseaudio name of a sink to a human-readable displayname to be used in the statusbar. |
 
 \*Check the [Useful icons](#useful-icons) section for examples.
 

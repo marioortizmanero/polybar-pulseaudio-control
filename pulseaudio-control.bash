@@ -13,14 +13,14 @@ AUTOSYNC="no"  # All programs have the same volume if enabled
 VOLUME_ICONS=( "# " "# " "# " )  # Volume icons array, from lower volume to higher
 MUTED_ICON="# "  # Muted volume icon
 MUTED_COLOR="%{F#6b6b6b}"  # Color when the audio is muted
-DEFAULT_SINK_ICON="# "  # The default sink icon if a custom one isn't found
+DEFAULT_SINK_ICON=""  # The default sink icon if a custom one isn't found
 CUSTOM_SINK_ICONS=(  )  # Custom sink icons in index of sink order
 NOTIFICATIONS="no"  # Notifications when switching sinks if enabled
 SINK_BLACKLIST=(  )  # Index blacklist for sinks when switching between them
 
 # maps pulse-audio sink names to human-readable names
-declare -A NAME_DISPLAYNAME_MAP
-NAME_DISPLAYNAME_MAP["alsa_output.usb-SomeManufacturer_SomeUsbSoundcard-00.analog-stereo"]="External Soundcard"
+declare -A DISPLAY_NAMES
+DISPLAY_NAMES["alsa_output.usb-SomeManufacturer_SomeUsbSoundcard-00.analog-stereo"]="External Soundcard"
 
 
 # Environment & global constants for the scriot
@@ -52,10 +52,10 @@ function getCurName() {
 # If a mapping for the sink name exists, that is used. Otherwise, the string "Sink <index>" is used.
 function getDisplayName() {
   getCurName "$1"
-  if [ ${NAME_DISPLAYNAME_MAP[$curName]+abc} ]; then
-    displayName="${NAME_DISPLAYNAME_MAP[$curName]}"
+  if [ ${DISPLAY_NAMES[$curName]+abc} ]; then
+    displayName="${DISPLAY_NAMES[$curName]}"
   else
-    displayName="Sink $1"
+    displayName="Sink #$1"
   fi
 }
 
