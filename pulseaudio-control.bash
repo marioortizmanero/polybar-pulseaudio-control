@@ -15,14 +15,19 @@ MUTED_ICON="# "  # Muted volume icon
 MUTED_COLOR="%{F#6b6b6b}"  # Color when the audio is muted
 NOTIFICATIONS="no"  # Notifications when switching sinks if enabled
 SINK_ICON="# "  # The default sink icon if a custom one isn't found
-SINK_BLACKLIST=(  )  # Index blacklist for sinks when switching between them
 
-# Maps pulse-audio sink names to human-readable names
-declare -A DISPLAY_NAMES
-DISPLAY_NAMES["alsa_output.usb-SomeManufacturer_SomeUsbSoundcard-00.analog-stereo"]="External Soundcard"
+# Blacklist of PulseAudio sink names when switching between them. To obtain
+# the names of your active sinks, use `pactl list sinks short`.
+SINK_BLACKLIST=(
+    "alsa_output.usb-SinkYouDontUse-00.analog-stereo"
+)
+
+# Maps PulseAudio sink names to human-readable names
+declare -A SINK_NICKNAMES
+SINK_NICKNAMES["alsa_output.usb-SomeManufacturer_SomeUsbSoundcard-00.analog-stereo"]="External Soundcard"
 
 
-# Environment & global constants for the scriot
+# Environment & global constants for the script
 LANGUAGE=en_US  # Some calls depend on English outputs of pactl
 END_COLOR="%{F-}"
 
@@ -41,21 +46,24 @@ function getCurVol() {
 }
 
 
-# Saves the name of the sink passed by parameter into a variable named `curName`.
-function getCurName() {
-  curName=$(pacmd list-sinks | sed -n -e '/index: '"$1"'/,/index/ p' | grep 'name:' | sed 's/.*<\(.*\)>/\1/g')
+# Saves the name of the sink passed by parameter into a variable named
+# `sinkName`.
+function getSinkName() {
+    sinkName=$(pactl list sinks short | awk -v sink="$1" '{ if ($1 == sink) {print $2} }')
 }
 
 
-# Saves the name to be displayed for the sink passed by parameter into a variable called `displayName`.
-# If a mapping for the sink name exists, that is used. Otherwise, the string "Sink <index>" is used.
-function getDisplayName() {
-  getCurName "$1"
-  if [ ${DISPLAY_NAMES[$curName]+abc} ]; then
-    displayName="${DISPLAY_NAMES[$curName]}"
-  else
-    displayName="Sink #$1"
-  fi
+# Saves the name to be displayed for the sink passed by parameter into a
+# variable called `nickname`.
+# If a mapping for the sink name exists, that is used. Otherwise, the string
+# "Sink #<index>" is used.
+function getNickname() {
+    getSinkName "$1"
+    if [ -n "${SINK_NICKNAMES[$sinkName]}" ]; then
+        nickname="${SINK_NICKNAMES[$sinkName]}"
+    else
+        nickname="Sink #$1"
+    fi
 }
 
 
@@ -156,12 +164,29 @@ function changeDevice() {
         echo "PulseAudio not running"
         return 1
     fi
-    local sinks=($(comm -23 <(pactl list short sinks | cut -f 1 | sort) \
-                            <(echo "${SINK_BLACKLIST[@]}" | tr ' ' '\n' | sort) \
-                            | sort -un | tr '\n' ' '))
+
+    # Obtaining a tuple of sink indexes after removing the blacklisted devices
+    # with their name.
+    sinks=()
+    local i=0
+    while read -r line; do
+        index=$(echo "$line" | cut -f1)
+        name=$(echo "$line" | cut -f2)
+
+        # If it's in the blacklist, continue the main loop. Otherwise, add
+        # it to the list.
+        for sink in "${SINK_BLACKLIST[@]}"; do
+            if [ "$sink" = "$name" ]; then
+                continue 2
+            fi
+        done
+
+        sinks[$i]="$index"
+        i=$((i + 1))
+    done < <(pactl list short sinks)
 
     # If the resulting list is empty, nothing is done
-    if [ ${#sinks[@]} -eq 0 ]; then exit; fi
+    if [ ${#sinks[@]} -eq 0 ]; then return; fi
 
     # If the current sink is greater or equal than last one, pick the first
     # sink in the list. Otherwise just pick the next sink avaliable.
@@ -187,8 +212,8 @@ function changeDevice() {
     done
 
     if [ $NOTIFICATIONS = "yes" ]; then
-        getDisplayName "$newSink"
-        notify-send "PulseAudio" "Changed output to $displayName" --icon=audio-headphones-symbolic &
+        getNickname "$newSink"
+        notify-send "PulseAudio" "Changed output to $nickname" --icon=audio-headphones-symbolic &
     fi
 }
 
@@ -257,13 +282,13 @@ function output() {
         volIcon=""
     fi
 
-    getDisplayName "$curSink"
+    getNickname "$curSink"
 
     # Showing the formatted message
     if [ "$isMuted" = "yes" ]; then
-        echo "${MUTED_COLOR}${MUTED_ICON}${curVol}%   ${SINK_ICON}${displayName}${END_COLOR}"
+        echo "${MUTED_COLOR}${MUTED_ICON}${curVol}%   ${SINK_ICON}${nickname}${END_COLOR}"
     else
-        echo "${volIcon}${curVol}%   ${SINK_ICON}${displayName}"
+        echo "${volIcon}${curVol}%   ${SINK_ICON}${nickname}"
     fi
 }
 

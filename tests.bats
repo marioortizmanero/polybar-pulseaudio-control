@@ -44,7 +44,18 @@ function teardown() {
     # This test assumes that `getCurSink` works properly, and tries it 50
     # times. The sink with ID zero must always be ignored, because it's
     # reserved to special sinks, and it might cause issues in the test.
-    SINK_BLACKLIST=(0 8 4 2 2 -100 300 -9 13 10)
+    SINK_BLACKLIST=(
+        "null-sink-0"
+        "null-sink-8"
+        "null-sink-4"
+        "null-sink-2"
+        "null-sink-2"
+        "null-sink-doesntexist"
+        "null-sink-300"
+        "null-sink-noexist"
+        "null-sink-13"
+        "null-sink-10"
+    )
     local order=(1 3 5 6 7 9 11 12 14 15)
     for i in {1..50}; do
         changeDevice
