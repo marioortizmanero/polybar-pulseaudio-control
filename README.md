@@ -24,19 +24,20 @@ To be able to switch the default sinks from this script you might need to disabl
 
 You can change the script configuration at the beginning of the file:
 
-| Name                |  Values          | Description |
-| ------------------- | :--------------: | ----------- |
-| `OSD`               | `"yes"` / `"no"` | Will display an OSD message when changing volume if set to true. |
-| `INC`               | Numerical        | Sets the increment/decrease that each volume up/down will perform. |
-| `MAX_VOL`           | Numerical        | Maximum volume. |
-| `AUTOSYNC`          | `"yes"` / `"no"` | Will automatically sync all program volumes with the volume of your current sink (output) whenever you change the volume. This is useful if you manage multiple outputs and have issues with the app volumes becoming out of sync with the output. |
-| `VOLUME_ICONS`      | Bash array like `( "🔉" "🔊" )` with strings\* | Icons used for the volume (ordered by sound level). The volume levels are divided by the number of icons inside it. For example, if you are using 4 icons and `MAX_VOL` is 100, they will show up in order when the volume is lower than 25, 50, 75 and 100. This is useful because some fonts only have 2 volume levels while others can have up to 4. |
-| `MUTED_ICON`        | String\*         | Icon used for the muted volume. |
-| `MUTED_COLOR`       | Polybar color    | Color used when the audio is muted. |
-| `DEFAULT_SINK_ICON` | String\*         | Icon used for the sink. |
-| `CUSTOM_SINK_ICON`  | String\*         | Custom icons for each of your sinks. If a custom icon isn't found, the default one will be used instead. |
-| `NOTIFICATIONS`     | `"yes"` / `"no"` | Sends a notifcation when the sink is changed. |
-| `SINK_BLACKLIST`    | Bash array like `( 0 1 2 )` | A blacklist for whenever you switch sinks. You should put in the array the indexes of the devices you want to blaclist. Use `pacmd list-sinks` to see all device names in order to get its index. The list should also be sorted for a small performance improvement. |
+| Name                   |  Values          | Description |
+| ---------------------- | :--------------: | ----------- |
+| `OSD`                  | `"yes"` / `"no"` | Will display an OSD message when changing volume if set to true. |
+| `INC`                  | Numerical        | Sets the increment/decrease that each volume up/down will perform. |
+| `MAX_VOL`              | Numerical        | Maximum volume. |
+| `AUTOSYNC`             | `"yes"` / `"no"` | Will automatically sync all program volumes with the volume of your current sink (output) whenever you change the volume. This is useful if you manage multiple outputs and have issues with the app volumes becoming out of sync with the output. |
+| `VOLUME_ICONS`         | Bash array like `( "🔉" "🔊" )` with strings\* | Icons used for the volume (ordered by sound level). The volume levels are divided by the number of icons inside it. For example, if you are using 4 icons and `MAX_VOL` is 100, they will show up in order when the volume is lower than 25, 50, 75 and 100. This is useful because some fonts only have 2 volume levels while others can have up to 4. |
+| `MUTED_ICON`           | String\*         | Icon used for the muted volume. |
+| `MUTED_COLOR`          | Polybar color    | Color used when the audio is muted. |
+| `DEFAULT_SINK_ICON`    | String\*         | Icon used for the sink. |
+| `CUSTOM_SINK_ICON`     | String\*         | Custom icons for each of your sinks. If a custom icon isn't found, the default one will be used instead. |
+| `NOTIFICATIONS`        | `"yes"` / `"no"` | Sends a notifcation when the sink is changed. |
+| `SINK_BLACKLIST`       | Bash array like `( 0 1 2 )` | A blacklist for whenever you switch sinks. You should put in the array the indexes of the devices you want to blaclist. Use `pacmd list-sinks` to see all device names in order to get its index. The list should also be sorted for a small performance improvement. |
+| `DISPLAY_NAMES`        | Bash associative array | Maps the pulseaudio name of a sink to a human-readable displayname to be used in the statusbar. |
 
 \*Check the [Useful icons](#useful-icons) section for examples.
 
