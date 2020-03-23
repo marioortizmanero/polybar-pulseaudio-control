@@ -13,12 +13,11 @@ AUTOSYNC="no"  # All programs have the same volume if enabled
 VOLUME_ICONS=( "# " "# " "# " )  # Volume icons array, from lower volume to higher
 MUTED_ICON="# "  # Muted volume icon
 MUTED_COLOR="%{F#6b6b6b}"  # Color when the audio is muted
-DEFAULT_SINK_ICON=""  # The default sink icon if a custom one isn't found
-CUSTOM_SINK_ICONS=(  )  # Custom sink icons in index of sink order
 NOTIFICATIONS="no"  # Notifications when switching sinks if enabled
+SINK_ICON="# "  # The default sink icon if a custom one isn't found
 SINK_BLACKLIST=(  )  # Index blacklist for sinks when switching between them
 
-# maps pulse-audio sink names to human-readable names
+# Maps pulse-audio sink names to human-readable names
 declare -A DISPLAY_NAMES
 DISPLAY_NAMES["alsa_output.usb-SomeManufacturer_SomeUsbSoundcard-00.analog-stereo"]="External Soundcard"
 
@@ -194,7 +193,6 @@ function changeDevice() {
 }
 
 
-
 # This function assumes that PulseAudio is already running. It only supports
 # KDE OSDs for now. It will show a system message with the status of the
 # sink passed by parameter, or the currently active one by default.
@@ -259,20 +257,13 @@ function output() {
         volIcon=""
     fi
 
-    # Uses custom sink icon if the array contains one
-    if [ "$curSink" -lt ${#CUSTOM_SINK_ICONS[@]} ]; then
-        sinkIcon=${CUSTOM_SINK_ICONS[$curSink]}
-    else
-        sinkIcon=$DEFAULT_SINK_ICON
-    fi
-
     getDisplayName "$curSink"
 
     # Showing the formatted message
     if [ "$isMuted" = "yes" ]; then
-        echo "${MUTED_COLOR}${MUTED_ICON}${curVol}%   ${sinkIcon}${displayName}${END_COLOR}"
+        echo "${MUTED_COLOR}${MUTED_ICON}${curVol}%   ${SINK_ICON}${displayName}${END_COLOR}"
     else
-        echo "${volIcon}${curVol}%   ${sinkIcon}${displayName}"
+        echo "${volIcon}${curVol}%   ${SINK_ICON}${displayName}"
     fi
 }
 
