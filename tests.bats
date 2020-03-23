@@ -151,3 +151,35 @@ function setup() {
     getIsMuted "$curSink"
     [ "$isMuted" = "no" ]
 }
+
+
+@test "getNickname()" {
+    # The already existing sinks will be ignored.
+    offset=$(pactl list short sinks | wc -l)
+
+    # Testing sink nicknames with 10 null sinks. Only a few of them will
+    # have a name in the nickname map.
+    for i in {0..9}; do
+        pacmd load-module module-null-sink sink_name="null-sink-$i"
+    done
+
+    unset SINK_NICKNAMES
+    declare -A SINK_NICKNAMES
+    # Checking with an empty map.
+    for i in {0..9}; do
+        getNickname "$((i + offset))"
+        [ "$nickname" = "Sink #$((i + offset))" ]
+    done
+
+    # Populating part of the map.
+    SINK_NICKNAMES["does-not-exist"]="null"
+    for i in {0..4}; do
+        SINK_NICKNAMES["null-sink-$i"]="Null Sink $i"
+        getNickname "$((i + offset))"
+        [ "$nickname" = "Null Sink $i" ]
+    done
+    for i in {5..9}; do
+        getNickname "$((i + offset))"
+        [ "$nickname" = "Sink #$((i + offset))" ]
+    done
+}
