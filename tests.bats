@@ -4,30 +4,37 @@
 # Polybar PulseAudio Control - tests.bats
 # 
 # Simple test script to make sure the most basic functions in this script
-# always work as intended. The tests will temporarily modify your pulseaudio
-# setup, but they will be restored to the default after finishing.
+# always work as intended. The tests will modify the system's PulseAudio
+# setup until it's restarted, so either do that after running the test, or
+# launch the tests inside a container.
 # The tests can be run with BATS. See the README.md for more info.
+
+function restartPulseaudio() {
+    if pulseaudio --check; then
+        echo "Killing PulseAudio"
+        killall pulseaudio
+    fi
+
+    # Starting and killing PulseAudio is performed asynchronously, so this
+    # makes sure the requested state is real.
+    while pgrep pulseaudio &>/dev/null; do :; done
+    echo "Starting PulseAudio"
+    pulseaudio --start -D
+    while ! pgrep pulseaudio &>/dev/null; do :; done
+}
+
 
 # Loading the script and starting pulseaudio if it isn't already
 function setup() {
+    restartPulseaudio
     echo "Loading script"
-    if ! pulseaudio --check &>/dev/null; then
-        echo "Starting pulseaudio"
-        pulseaudio --start -D
-    fi
     source pulseaudio-control.bash --output &>/dev/null
-}
-
-function teardown() {
-    echo "Restarting pulseaudio"
-    killall pulseaudio
-    pulseaudio --start -D
 }
 
 
 @test "nextSink()" {
     # This test will only work if there is currently only one sink. It's
-    # kind of hardcoded to avoid excesive complexity.
+    # kind of hardcoded to avoid excessive complexity.
     pactl list short sinks
     if [ "$(pactl list short sinks | wc -l)" -ne 1 ]; then
         skip
