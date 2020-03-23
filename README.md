@@ -57,12 +57,12 @@ tail = true
 label=%output%
 format-underline = ${colors.blue}
 
-exec = ~/.config/polybar/scripts/pulseaudio-control.bash --listen
+exec = ~/.config/polybar/scripts/pulseaudio-control.bash listen
 click-right = exec pavucontrol &
-click-left = ~/.config/polybar/scripts/pulseaudio-control.bash --togmute
-click-middle = ~/.config/polybar/scripts/pulseaudio-control.bash --change
-scroll-up = ~/.config/polybar/scripts/pulseaudio-control.bash --up
-scroll-down = ~/.config/polybar/scripts/pulseaudio-control.bash --down
+click-left = ~/.config/polybar/scripts/pulseaudio-control.bash togmute
+click-middle = ~/.config/polybar/scripts/pulseaudio-control.bash next-sink
+scroll-up = ~/.config/polybar/scripts/pulseaudio-control.bash up
+scroll-down = ~/.config/polybar/scripts/pulseaudio-control.bash down
 label-padding = 2
 label-foreground = ${colors.foreground}
 ```
@@ -77,16 +77,16 @@ Here are all the available actions, in case you want to modify the module above,
 Usage: pulseaudio-control.bash ACTION
 
 Actions:
-    --help              display this help and exit
-    --output            print the PulseAudio status once
-    --listen            listen for changes in PulseAudio to automatically
-                        update this script's output
-    --up, --down        increase or decrease the default sink's volume
-    --mute, --unmute    mute or unmute the default sink's audio
-    --togmute           switch between the actions above
-    --change            switch to the next available sink
-    --sync              synchronize all the output streams volume to
-                        the be the same as the current sink's volume
+    help              display this help and exit
+    output            print the PulseAudio status once
+    listen            listen for changes in PulseAudio to automatically
+                      update this script's output
+    up, down          increase or decrease the default sink's volume
+    mute, unmute      mute or unmute the default sink's audio
+    togmute           switch between muted and unmuted
+    next-sink         switch to the next available sink
+    sync              synchronize all the output streams volume to
+                      the be the same as the current sink's volume
 ```
 
 ## Useful icons
@@ -104,7 +104,7 @@ Most of these can be used after downloading a [Nerd Font](https://www.nerdfonts.
 
 ##  Sources
 
-Part of the script and of this README's info was taken from [customlinux.blogspot.com](http://customlinux.blogspot.com/2013/02/pavolumesh-control-active-sink-volume.html), the creator. It was later adapted to fit polybar. It is also mixed with [the ArcoLinux version](https://github.com/arcolinux/arcolinux-polybar/blob/master/etc/skel/.config/polybar/scripts/pavolume.sh), which implemented the `--listen` flag to use less resources.
+Part of the script and of this README's info was taken from [customlinux.blogspot.com](http://customlinux.blogspot.com/2013/02/pavolumesh-control-active-sink-volume.html), the creator. It was later adapted to fit polybar. It is also mixed with [the ArcoLinux version](https://github.com/arcolinux/arcolinux-polybar/blob/master/etc/skel/.config/polybar/scripts/pavolume.sh), which implemented the `listen` action to use less resources.
 
 ## Development
 

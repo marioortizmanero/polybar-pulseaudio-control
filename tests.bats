@@ -25,7 +25,7 @@ function teardown() {
 }
 
 
-@test "changeDevice()" {
+@test "nextSink()" {
     # This test will only work if there is currently only one sink. It's
     # kind of hardcoded to avoid excesive complexity.
     pactl list short sinks
@@ -58,7 +58,7 @@ function teardown() {
     )
     local order=(1 3 5 6 7 9 11 12 14 15)
     for i in {1..50}; do
-        changeDevice
+        nextSink
         getCurSink
         echo "Real sink is $curSink, expected ${order[$((i % ${#order[@]}))]} at iteration $i"
         [ "$curSink" -eq "${order[$((i % ${#order[@]}))]}" ]

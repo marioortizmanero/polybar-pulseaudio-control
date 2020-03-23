@@ -157,7 +157,7 @@ function volMute() {
 }
 
 
-function changeDevice() {
+function nextSink() {
     # The final sinks list, removing the blacklisted ones from the list of
     # currently available sinks.
     if ! getCurSink; then
@@ -293,20 +293,20 @@ function output() {
 }
 
 
-function printHelp() {
+function usage() {
     echo "Usage: $0 ACTION"
     echo ""
     echo "Actions:"
-    echo "    --help              display this help and exit"
-    echo "    --output            print the PulseAudio status once"
-    echo "    --listen            listen for changes in PulseAudio to automatically"
-    echo "                        update this script's output"
-    echo "    --up, --down        increase or decrease the default sink's volume"
-    echo "    --mute, --unmute    mute or unmute the default sink's audio"
-    echo "    --togmute           switch between the actions above"
-    echo "    --change            switch to the next available sink"
-    echo "    --sync              synchronize all the output streams volume to"
-    echo "                        the be the same as the current sink's volume"
+    echo "    help              display this help and exit"
+    echo "    output            print the PulseAudio status once"
+    echo "    listen            listen for changes in PulseAudio to automatically"
+    echo "                      update this script's output"
+    echo "    up, down          increase or decrease the default sink's volume"
+    echo "    mute, unmute      mute or unmute the default sink's audio"
+    echo "    togmute           switch between muted and unmuted"
+    echo "    next-sink         switch to the next available sink"
+    echo "    sync              synchronize all the output streams volume to"
+    echo "                      the be the same as the current sink's volume"
     echo ""
     echo "Author:"
     echo "    Mario O. M."
@@ -316,35 +316,34 @@ function printHelp() {
 
 
 case "$1" in
-    --up)
+    up)
         volUp
         ;;
-    --down)
+    down)
         volDown
         ;;
-    --togmute)
+    togmute)
         volMute toggle
         ;;
-    --mute)
+    mute)
         volMute mute
         ;;
-    --unmute)
+    unmute)
         volMute unmute
         ;;
-    --sync)
+    sync)
         volSync
         ;;
-    --listen)
+    listen)
         listen
         ;;
-    --change)
-        changeDevice
+    next-sink)
+        nextSink
         ;;
-    --output)
+    output)
         output
         ;;
     *)
-        printHelp
-        exit 0
+        usage
         ;;
 esac
