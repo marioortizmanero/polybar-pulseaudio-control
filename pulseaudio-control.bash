@@ -14,7 +14,7 @@ VOLUME_ICONS=( "# " "# " "# " )  # Volume icons array, from lower volume to high
 MUTED_ICON="# "  # Muted volume icon
 MUTED_COLOR="%{F#6b6b6b}"  # Color when the audio is muted
 NOTIFICATIONS="no"  # Notifications when switching sinks if enabled
-SINK_ICON="# "  # The default sink icon if a custom one isn't found
+SINK_ICON="# "  # Icon always shown to the left of the default sink names
 
 # Blacklist of PulseAudio sink names when switching between them. To obtain
 # the names of your active sinks, use `pactl list sinks short`.

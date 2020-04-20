@@ -34,7 +34,7 @@ You can change the script configuration at the beginning of the file:
 | `MUTED_ICON`           | String\*                 | Icon used for the muted volume. |
 | `MUTED_COLOR`          | String ([polybar color](https://github.com/polybar/polybar/wiki/Formatting#foreground-color-f))   | Color used when the audio is muted. |
 | `NOTIFICATIONS`        | `"yes"` / `"no"`         | Sends a notification when the sink is changed. |
-| `SINK_ICON`            | String\*                 | Icon used for the sinks by default. |
+| `SINK_ICON`            | String\*                 | Icon always displayed to the left of the sink names. |
 | `SINK_BLACKLIST`       | Bash array               | A blacklist for whenever sinks are switched. Use `pactl list sinks short` to see all active sink names. |
 | `SINK_NICKNAMES`       | Bash associative array   | Maps the PulseAudio sink names to human-readable nicknames. Use `pactl list sinks short` to obtain the active sinks names. If unconfigured, `Sink #N` is used instead. Custom icons\* for the sinks can be added here if `SINK_ICON` is set to `""`. |
 
