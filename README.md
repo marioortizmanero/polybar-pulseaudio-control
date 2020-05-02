@@ -19,6 +19,10 @@ To be able to switch the default sinks from this script you might need to disabl
 
 `load-module module-stream-restore restore_device=false`
 
+At a minimum, bash version 4 is required to run the script. You can check your bash version by running:
+
+`bash --version`
+
 
 ## Configuration
 
