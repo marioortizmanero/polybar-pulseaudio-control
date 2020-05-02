@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 ##################################################################
 # Polybar Pulseaudio Control                                     #
