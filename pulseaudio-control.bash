@@ -211,7 +211,6 @@ function nextSink() {
         pacmd move-sink-input "$i" "$newSink"
     done
 
-
     if [ $NOTIFICATIONS = "yes" ]; then
         getNickname "$newSink"
         
