@@ -211,13 +211,15 @@ function nextSink() {
         pacmd move-sink-input "$i" "$newSink"
     done
 
-    notify="notify-send"
-    if command -v dunstify &>/dev/null; then
-        notify="dunstify --replace 201839192"
-    fi
 
     if [ $NOTIFICATIONS = "yes" ]; then
         getNickname "$newSink"
+        
+        if command -v dunstify &>/dev/null; then
+            notify="dunstify --replace 201839192"
+        else
+            notify="notify-send"
+        fi
         $notify "PulseAudio" "Changed output to $nickname" --icon=audio-headphones-symbolic &
     fi
 }
