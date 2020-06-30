@@ -174,7 +174,7 @@ function setup() {
     # Populating part of the map.
     SINK_NICKNAMES["does-not-exist"]="null"
     for i in {0..4}; do
-        SINK_NICKNAMES["null-sink-$i"]="Null Sink $i"
+        SINK_NICKNAMES["null-sink-$i/"]="Null Sink $i"
         getNickname "$((i + offset))"
         [ "$nickname" = "Null Sink $i" ]
     done
