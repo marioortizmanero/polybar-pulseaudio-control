@@ -48,8 +48,10 @@ function getCurVol() {
 
 # Saves the name of the sink passed by parameter into a variable named
 # `sinkName`.
+# Runs `pactl list sinks` and extracts the `Name` and `Active Port` for the sink number given
+# as the argument to the function. Then combine them with a /. ie. `name/active_port`
 function getSinkName() {
-    sinkName=$(pactl list sinks | awk -v sink="Sink #$1" '$0 ~ sink {flag=1; next} flag && /Name:/{printf $2"/"} flag && /Active Port:/{print $NF; flag=0;}')
+    sinkName=$(pactl list sinks | awk -v sink="Sink #$1" '$0 == sink {flag=1; next} flag && /Name:/{printf $2"/"; next} flag && /Active Port:/{print $NF; flag=0;}')
 }
 
 
