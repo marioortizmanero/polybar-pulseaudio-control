@@ -54,9 +54,9 @@ function getCurVol() {
 # ie. `<name>/`
 function getSinkName() {
     sinkName=$(pactl list sinks | awk -v sink="Sink #$1" \
-        '$0 == sink {flag=1; next} \
-         flag && /Name:/{printf $2"/"; next} \
-         flag && /Active Port:/{print $NF; flag=0;} \
+        '$0 == sink {flag=1; next}
+         flag && /Name:/{printf $2"/"; next}
+         flag && /Active Port:/{print $NF; flag=0;}
          flag && /^$/ {print; flag=0}')
 }
 
