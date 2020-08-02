@@ -42,7 +42,7 @@ function getCurSink() {
 
 # Saves the sink passed by parameter's volume into a variable named `curVol`.
 function getCurVol() {
-    curVol=$(pacmd list-sinks | grep -A 15 'index: '"$1"'' | grep 'volume:' | grep -E -v 'base volume:' | awk -F : '{print $3}' | grep -o -P '.{0,3}%' | sed s/.$// | tr -d ' ')
+    curVol=$(pacmd list-sinks | grep -A 15 'index: '"$1"'' | grep 'volume:' | grep -E -v 'base volume:' | awk -F : '{print $3; exit}' | grep -o -P '.{0,3}%' | sed s/.$// | tr -d ' ')
 }
 
 
