@@ -1,4 +1,4 @@
-#!/bin/env bats
+#!/usr/bin/env bats
 # vim: filetype=sh
 # 
 # Polybar PulseAudio Control - tests.bats
