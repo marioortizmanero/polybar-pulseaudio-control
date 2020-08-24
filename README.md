@@ -6,7 +6,7 @@ A feature-full volume control module for PulseAudio. Also known as Pavolume. Mai
 * Switch between sinks easily. You can also blacklist useless devices.
 * Optionally enable notifications and OSD messages.
 * Works as a shortcut to pavucontrol or your favorite audio manager tool.
-* Check [Configuration](#configuration) for more.
+* Highly customizable: check the [Configuration](#configuration) section for details.
 
 ![example](screenshots/example.png)
 
@@ -17,11 +17,11 @@ A feature-full volume control module for PulseAudio. Also known as Pavolume. Mai
 
 To be able to switch the default sinks from this script you might need to disable stream target device restore by editing the corresponing line in `/etc/pulse/default.pa` to:
 
-`load-module module-stream-restore restore_device=false`
+```
+load-module module-stream-restore restore_device=false
+```
 
-At a minimum, bash version 4 is required to run the script. You can check your bash version by running:
-
-`bash --version`
+At a minimum, bash version 4 is required to run the script. You can check your bash version by running `bash --version`.
 
 
 ## Configuration
@@ -34,7 +34,7 @@ You can change the script configuration at the beginning of the file:
 | `INC`                  | Numerical                | Sets the increment/decrease that each volume up/down will perform. |
 | `MAX_VOL`              | Numerical                | Maximum volume. |
 | `AUTOSYNC`             | `"yes"` / `"no"`         | Will automatically sync all program volumes with the volume of your current sink (output) whenever you change the volume. This is useful if you manage multiple outputs and have issues with the app volumes becoming out of sync with the output. |
-| `VOLUME_ICONS`         | Bash array with i        cons like `( "🔉" "🔊" )`\* | Icons used for the volume (ordered by sound level). The volume levels are divided by the number of icons inside it. For example, if you are using 4 icons and `MAX_VOL` is 100, they will show up in order when the volume is lower than 25, 50, 75 and 100. This is useful because some fonts only have 2 volume levels while others can have up to 4. |
+| `VOLUME_ICONS`         | Bash array with i        cons like `( "🔉" "🔊" )`\* | Icons used for the volume, ordered by sound level. The volume levels are divided by the number of icons inside it. For example, if you are using 4 icons and `MAX_VOL` is 100, they will show up in order when the volume is lower than 25, 50, 75 and 100. This is useful because some fonts only have 2 volume icons, while others can have up to 4. |
 | `MUTED_ICON`           | String\*                 | Icon used for the muted volume. |
 | `MUTED_COLOR`          | String ([polybar color](https://github.com/polybar/polybar/wiki/Formatting#foreground-color-f))   | Color used when the audio is muted. |
 | `NOTIFICATIONS`        | `"yes"` / `"no"`         | Sends a notification when the sink is changed. |
@@ -95,7 +95,7 @@ Actions:
 
 ## Useful icons
 
-Here's a list with some icons from different fonts you can copy-paste. Most have an space afterwards so that the module has a bit of spacing. They may appear bugged on Firefox if the font isn't available there. Please add yours if they aren't in the list.
+Here's a list with some icons from different fonts you can copy-paste. Most have an space afterwards so that the module has a bit of spacing. They may appear bugged on your browser if the font isn't available there. Please add yours if they aren't in the list.
 
 | Font name                                       | Volumes               | Muted   | Sink icons             |
 | ----------------------------------------------- | :-------------------: | :-----: | :--------------------: |
