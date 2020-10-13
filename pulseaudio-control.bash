@@ -320,7 +320,7 @@ function output() {
 
 
 function usage() {
-    echo "Usage: $0 ACTION"
+    echo "Usage: $0 [OPTION...] ACTION"
     echo
     echo "Options:"
     echo "    --vol-icon-low    icon to use at low volume"
