@@ -66,6 +66,25 @@ function getNickname() {
     fi
 }
 
+# Sets sink nicknames based on a given property.
+function setNicknames() {
+    local nickname_prop="$1"
+
+    mapfile -t lines < <(pacmd list-sinks)
+    for line in "${lines[@]}"; do
+        case "$line" in
+            *name:*)
+                sink_name="$(echo "$line" | sed -E 's/.*name: <(.*)>/\1/')"
+                unset sink_desc
+                ;;
+            *"$nickname_prop ="*)
+                sink_desc="$(echo "$line" | sed -E "s/.*$nickname_prop = \"(.*)\"/\1/")"
+                SINK_NICKNAMES["$sink_name"]="$sink_desc"
+                unset sink_name
+                ;;
+        esac
+    done
+}
 
 # Saves the status of the sink passed by parameter into a variable named
 # `isMuted`.
@@ -302,7 +321,15 @@ function output() {
 
 function usage() {
     echo "Usage: $0 ACTION"
-    echo ""
+    echo
+    echo "Options:"
+    echo "    --vol-icon-low    icon to use at low volume"
+    echo "    --vol-icon-mid    icon to use at mid volume"
+    echo "    --vol-icon-high   icon to use at high volume"
+    echo "    --vol-icon-mute   icon to use when muted"
+    echo "    --sink-icon       icon to use for sink"
+    echo "    --sink-name-from  pacmd property to use for sink name"
+    echo
     echo "Actions:"
     echo "    help              display this help and exit"
     echo "    output            print the PulseAudio status once"
@@ -321,6 +348,30 @@ function usage() {
     echo "    https://github.com/marioortizmanero/polybar-pulseaudio-control"
 }
 
+while [[ "$1" = --* ]]; do
+    case "$1" in
+        --vol-icon-low=*)
+            VOLUME_ICONS[0]="${1#--vol-icon-low=}"
+            ;;
+        --vol-icon-mid=*)
+            VOLUME_ICONS[1]="${1#--vol-icon-mid=}"
+            ;;
+        --vol-icon-high=*)
+            VOLUME_ICONS[2]="${1#--vol-icon-high=}"
+            ;;
+        --sink-icon=*)
+            SINK_ICON="${1#--sink-icon=}"
+            ;;
+        --sink-name-from=*)
+            setNicknames "${1#--sink-name-from=}"
+            ;;
+        *)
+            >&2 echo "Unrecognised option: $1"
+            exit 1
+            ;;
+    esac
+    shift
+done
 
 case "$1" in
     up)
