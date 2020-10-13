@@ -206,14 +206,15 @@ function nextSink() {
     pacmd set-default-sink "$newSink"
 
     # Move all audio threads to new sink
-    local inputs=$(pactl list short sink-inputs | cut -f 1)
+    local inputs
+    inputs="$(pactl list short sink-inputs | cut -f 1)"
     for i in $inputs; do
         pacmd move-sink-input "$i" "$newSink"
     done
 
     if [ $NOTIFICATIONS = "yes" ]; then
         getNickname "$newSink"
-        
+
         if command -v dunstify &>/dev/null; then
             notify="dunstify --replace 201839192"
         else
