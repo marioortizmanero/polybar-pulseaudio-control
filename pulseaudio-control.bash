@@ -401,7 +401,11 @@ case "$1" in
     output)
         output
         ;;
-    *)
+    help)
         usage
+        ;;
+    *)
+        >&2 "Unrecognised action: $1"
+        exit 1
         ;;
 esac
