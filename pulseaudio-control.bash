@@ -366,7 +366,7 @@ while [[ "$1" = --* ]]; do
             setNicknames "${1#--sink-name-from=}"
             ;;
         *)
-            >&2 echo "Unrecognised option: $1"
+            echo "Unrecognised option: $1" >&2
             exit 1
             ;;
     esac
@@ -405,7 +405,7 @@ case "$1" in
         usage
         ;;
     *)
-        >&2 "Unrecognised action: $1"
+        echo "Unrecognised action: $1" >&2
         exit 1
         ;;
 esac
