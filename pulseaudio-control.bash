@@ -349,14 +349,20 @@ function usage() {
 }
 
 while [[ "$1" = --* ]]; do
+    unset arg
+    unset val
     if [[ "$1" = *=* ]]; then
         arg="${1//=*/}"
         val="${1//*=/}"
         shift
     else
         arg="$1"
-        val="$2"
-        shift; shift
+        # Support space-separated values, but also value-less flags
+        if [[ "$2" != --* ]]; then
+            val="$2"
+            shift
+        fi
+        shift
     fi
 
     case "$arg" in
