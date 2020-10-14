@@ -325,6 +325,7 @@ function usage() {
     echo "Options:"
     echo "    --vol-icons       icons for volume, from lower to higher (comma-separated)"
     echo "    --vol-icon-mute   icon to use when muted"
+    echo "    --sink-blacklist  sinks to ignore when switching (comma-separated)"
     echo "    --sink-icon       icon to use for sink"
     echo "    --sink-name-from  pacmd property to use for sink name"
     echo "    --sink-nickname   <name>:<nick> pair to use for sink name (multiple args allowed)"
@@ -361,6 +362,9 @@ while [[ "$1" = --* ]]; do
     case "$arg" in
         --vol-icons)
             IFS=, read -r -a VOLUME_ICONS <<< "$val"
+            ;;
+        --sink-blacklist)
+            IFS=, read -r -a SINK_BLACKLIST <<< "$val"
             ;;
         --sink-icon)
             SINK_ICON="$val"
