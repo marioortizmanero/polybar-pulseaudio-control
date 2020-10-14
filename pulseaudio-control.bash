@@ -323,9 +323,7 @@ function usage() {
     echo "Usage: $0 [OPTION...] ACTION"
     echo
     echo "Options:"
-    echo "    --vol-icon-low    icon to use at low volume"
-    echo "    --vol-icon-mid    icon to use at mid volume"
-    echo "    --vol-icon-high   icon to use at high volume"
+    echo "    --vol-icons       icons for volume, from lower to higher (comma-separated)"
     echo "    --vol-icon-mute   icon to use when muted"
     echo "    --sink-icon       icon to use for sink"
     echo "    --sink-name-from  pacmd property to use for sink name"
@@ -350,14 +348,8 @@ function usage() {
 
 while [[ "$1" = --* ]]; do
     case "$1" in
-        --vol-icon-low=*)
-            VOLUME_ICONS[0]="${1#--vol-icon-low=}"
-            ;;
-        --vol-icon-mid=*)
-            VOLUME_ICONS[1]="${1#--vol-icon-mid=}"
-            ;;
-        --vol-icon-high=*)
-            VOLUME_ICONS[2]="${1#--vol-icon-high=}"
+        --vol-icons=*)
+            IFS=, read -r -a VOLUME_ICONS <<< "${1#--vol-icons=}"
             ;;
         --sink-icon=*)
             SINK_ICON="${1#--sink-icon=}"
