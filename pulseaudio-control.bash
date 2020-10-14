@@ -323,12 +323,12 @@ function usage() {
     echo "Usage: $0 [OPTION...] ACTION"
     echo
     echo "Options:"
-    echo "    --vol-icons       icons for volume, from lower to higher (comma-separated)"
-    echo "    --vol-icon-mute   icon to use when muted"
-    echo "    --sink-blacklist  sinks to ignore when switching (comma-separated)"
-    echo "    --sink-icon       icon to use for sink"
-    echo "    --sink-name-from  pacmd property to use for sink name"
-    echo "    --sink-nickname   <name>:<nick> pair to use for sink name (multiple args allowed)"
+    echo "    --vol-icons <icon>[,<icon>...]        icons for volume, from lower to higher"
+    echo "    --vol-icon-mute <icon>                icon to use when muted"
+    echo "    --sink-blacklist <name>[,<name>...]   sinks to ignore when switching"
+    echo "    --sink-icon <icon>                    icon to use for sink"
+    echo "    --sink-name-from <prop>               pacmd property to use for sink name"
+    echo "    --sink-nickname <name>:<nick>         nickname to assign to given sink name (may be given multiple times)"
     echo
     echo "Actions:"
     echo "    help              display this help and exit"
