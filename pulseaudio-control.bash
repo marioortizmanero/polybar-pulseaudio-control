@@ -26,6 +26,8 @@ SINK_BLACKLIST=(
 declare -A SINK_NICKNAMES
 SINK_NICKNAMES["alsa_output.usb-SomeManufacturer_SomeUsbSoundcard-00.analog-stereo"]="External Soundcard"
 
+# PulseAudio device property for human-readable names where an explicit nickname not given
+SINK_NICKNAME_PROP=
 
 # Environment & global constants for the script
 LANGUAGE=en_US  # Some calls depend on English outputs of pactl
@@ -59,16 +61,25 @@ function getSinkName() {
 # "Sink #<index>" is used.
 function getNickname() {
     getSinkName "$1"
+    unset nickname
+
     if [ -n "${SINK_NICKNAMES[$sinkName]}" ]; then
         nickname="${SINK_NICKNAMES[$sinkName]}"
-    else
+    elif [ -n "$SINK_NICKNAME_PROP" ]; then
+        nickname="$(getNicknameFromProp "$SINK_NICKNAME_PROP" "$sinkName")"
+        # Cache that result for next time
+        SINK_NICKNAMES["$sinkName"]="$nickname"
+    fi
+
+    if [ -z "$nickname" ]; then
         nickname="Sink #$1"
     fi
 }
 
-# Sets sink nicknames based on a given property.
-function setNicknamesFromProp() {
+# Gets sink nickname based on a given property.
+function getNicknameFromProp() {
     local nickname_prop="$1"
+    local for_name="$2"
 
     mapfile -t lines < <(pacmd list-sinks)
     for line in "${lines[@]}"; do
@@ -78,9 +89,12 @@ function setNicknamesFromProp() {
                 unset sink_desc
                 ;;
             *"$nickname_prop ="*)
-                sink_desc="$(echo "$line" | sed -E "s/.*$nickname_prop = \"(.*)\"/\1/")"
-                SINK_NICKNAMES["$sink_name"]="$sink_desc"
-                unset sink_name
+                if [ "$sink_name" != "$for_name" ]; then
+                    continue
+                fi
+                prop_value="$(echo "$line" | sed -E "s/.*$nickname_prop = \"(.*)\"/\1/")"
+                echo "$prop_value"
+                break
                 ;;
         esac
     done
@@ -376,7 +390,7 @@ while [[ "$1" = --* ]]; do
             SINK_ICON="$val"
             ;;
         --sink-name-from)
-            setNicknamesFromProp "$val"
+            SINK_NICKNAME_PROP="$val"
             ;;
         --sink-nickname)
             SINK_NICKNAMES["${val//:*/}"]="${val//*:}"
