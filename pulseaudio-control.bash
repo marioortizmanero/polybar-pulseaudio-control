@@ -347,22 +347,31 @@ function usage() {
 }
 
 while [[ "$1" = --* ]]; do
-    case "$1" in
-        --vol-icons=*)
-            IFS=, read -r -a VOLUME_ICONS <<< "${1#--vol-icons=}"
+    if [[ "$1" = *=* ]]; then
+        arg="${1//=*/}"
+        val="${1//*=/}"
+        shift
+    else
+        arg="$1"
+        val="$2"
+        shift; shift
+    fi
+
+    case "$arg" in
+        --vol-icons)
+            IFS=, read -r -a VOLUME_ICONS <<< "$val"
             ;;
-        --sink-icon=*)
-            SINK_ICON="${1#--sink-icon=}"
+        --sink-icon)
+            SINK_ICON="$val"
             ;;
-        --sink-name-from=*)
-            setNicknames "${1#--sink-name-from=}"
+        --sink-name-from)
+            setNicknames "$val"
             ;;
         *)
-            echo "Unrecognised option: $1" >&2
+            echo "Unrecognised option: $arg" >&2
             exit 1
             ;;
     esac
-    shift
 done
 
 case "$1" in
