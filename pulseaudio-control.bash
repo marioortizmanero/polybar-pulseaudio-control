@@ -67,7 +67,7 @@ function getNickname() {
 }
 
 # Sets sink nicknames based on a given property.
-function setNicknames() {
+function setNicknamesFromProp() {
     local nickname_prop="$1"
 
     mapfile -t lines < <(pacmd list-sinks)
@@ -327,6 +327,7 @@ function usage() {
     echo "    --vol-icon-mute   icon to use when muted"
     echo "    --sink-icon       icon to use for sink"
     echo "    --sink-name-from  pacmd property to use for sink name"
+    echo "    --sink-nickname   <name>:<nick> pair to use for sink name (multiple args allowed)"
     echo
     echo "Actions:"
     echo "    help              display this help and exit"
@@ -365,7 +366,10 @@ while [[ "$1" = --* ]]; do
             SINK_ICON="$val"
             ;;
         --sink-name-from)
-            setNicknames "$val"
+            setNicknamesFromProp "$val"
+            ;;
+        --sink-nickname)
+            SINK_NICKNAMES["${val//:*/}"]="${val//*:}"
             ;;
         *)
             echo "Unrecognised option: $arg" >&2
