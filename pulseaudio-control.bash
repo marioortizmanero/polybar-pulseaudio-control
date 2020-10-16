@@ -81,23 +81,21 @@ function getNicknameFromProp() {
     local nickname_prop="$1"
     local for_name="$2"
 
-    mapfile -t lines < <(pacmd list-sinks)
-    for line in "${lines[@]}"; do
-        case "$line" in
-            *name:*)
-                sink_name="$(echo "$line" | sed -E 's/.*name: <(.*)>/\1/')"
+    while read -r property value; do
+        case "$property" in
+            name:)
+                sink_name="${value//[<>]/}"
                 unset sink_desc
                 ;;
-            *"$nickname_prop ="*)
+            "$nickname_prop")
                 if [ "$sink_name" != "$for_name" ]; then
                     continue
                 fi
-                prop_value="$(echo "$line" | sed -E "s/.*$nickname_prop = \"(.*)\"/\1/")"
-                echo "$prop_value"
+                echo "${value:3:-1}"
                 break
                 ;;
         esac
-    done
+    done < <(pacmd list-sinks)
 }
 
 # Saves the status of the sink passed by parameter into a variable named
