@@ -335,13 +335,19 @@ function output() {
 function usage() {
     echo "Usage: $0 [OPTION...] ACTION"
     echo
-    echo "Options:"
-    echo "    --vol-icons <icon>[,<icon>...]        icons for volume, from lower to higher"
-    echo "    --vol-icon-mute <icon>                icon to use when muted"
-    echo "    --sink-blacklist <name>[,<name>...]   sinks to ignore when switching"
-    echo "    --sink-icon <icon>                    icon to use for sink"
-    echo "    --sink-name-from <prop>               pacmd property to use for sink name"
-    echo "    --sink-nickname <name>:<nick>         nickname to assign to given sink name (may be given multiple times)"
+    echo "Options: (defaults)"
+    echo "    --autosync, --no-autosync             whether to maintain same volume for all programs ($AUTOSYNC)"
+    echo "    --color-mute <rrggbb>                 color in which to format when muted (${MUTED_COLOR:4:-1})"
+    echo "    --notifications, --no-notifications   whether to show notifications when changing sink ($NOTIFICATIONS)"
+    echo "    --osd, --no-osd                       whether to display KDE's OSD message ($OSD)"
+    echo "    --vol-icons <icon>[,<icon>...]        icons for volume, from lower to higher ($(IFS=, ; echo "${VOLUME_ICONS[*]}"))"
+    echo "    --vol-icon-mute <icon>                icon to use when muted ($MUTED_ICON)"
+    echo "    --vol-max <int>                       maximum volume to which to allow increasing ($MAX_VOL)"
+    echo "    --vol-step <int>                      step size when inc/decrementing volume ($INC)"
+    echo "    --sink-blacklist <name>[,<name>...]   sinks to ignore when switching ()"
+    echo "    --sink-icon <icon>                    icon to use for sink ($SINK_ICON)"
+    echo "    --sink-name-from <prop>               pacmd property to use for sink name ($SINK_NICKNAME_PROP)"
+    echo "    --sink-nickname <name>:<nick>         nickname to assign to given sink name (may be given multiple times) ()"
     echo
     echo "Actions:"
     echo "    help              display this help and exit"
@@ -379,8 +385,38 @@ while [[ "$1" = --* ]]; do
     fi
 
     case "$arg" in
+        --autosync)
+            AUTOSYNC=yes
+            ;;
+        --no-autosync)
+            AUTOSYNC=no
+            ;;
+        --color-mute|--colour-mute)
+            MUTED_COLOR="$val"
+            ;;
+        --notifications)
+            NOTIFICATIONS=yes
+            ;;
+        --no-notifications)
+            NOTIFICATIONS=no
+            ;;
+        --osd)
+            OSD=yes
+            ;;
+        --no-osd)
+            OSD=no
+            ;;
         --vol-icons)
             IFS=, read -r -a VOLUME_ICONS <<< "$val"
+            ;;
+        --vol-icon-mute)
+            MUTED_ICON="$val"
+            ;;
+        --vol-max)
+            MAX_VOL="$val"
+            ;;
+        --vol-step)
+            INC="$val"
             ;;
         --sink-blacklist)
             IFS=, read -r -a SINK_BLACKLIST <<< "$val"
