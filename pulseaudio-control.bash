@@ -66,7 +66,7 @@ function getNickname() {
     if [ -n "${SINK_NICKNAMES[$sinkName]}" ]; then
         nickname="${SINK_NICKNAMES[$sinkName]}"
     elif [ -n "$SINK_NICKNAME_PROP" ]; then
-        nickname="$(getNicknameFromProp "$SINK_NICKNAME_PROP" "$sinkName")"
+        getNicknameFromProp "$SINK_NICKNAME_PROP" "$sinkName"
         # Cache that result for next time
         SINK_NICKNAMES["$sinkName"]="$nickname"
     fi
@@ -81,6 +81,7 @@ function getNicknameFromProp() {
     local nickname_prop="$1"
     local for_name="$2"
 
+    nickname=
     while read -r property value; do
         case "$property" in
             name:)
@@ -91,7 +92,7 @@ function getNicknameFromProp() {
                 if [ "$sink_name" != "$for_name" ]; then
                     continue
                 fi
-                echo "${value:3:-1}"
+                nickname="${value:3:-1}"
                 break
                 ;;
         esac
