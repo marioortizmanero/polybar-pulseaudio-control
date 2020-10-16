@@ -44,6 +44,15 @@ You can change the script configuration at the beginning of the file:
 
 \*Check the [Useful icons](#useful-icons) section for examples.
 
+Alternatively, these can be set via command-line arguments, such as:
+```ini
+[module/pulseaudio-control]
+type = custom/script
+exec = "polybar-pulseaudio-control --vol-max=150 --vol-icons='🔈 ,🔉 ,🔊 ' --sink-name-from-prop=device.description --osd"
+```
+
+refer to `polybar-pulseaudio-control help` for a full listing of the available options and their defaults.
+
 
 ## Module
 
