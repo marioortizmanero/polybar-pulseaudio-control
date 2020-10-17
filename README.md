@@ -87,7 +87,19 @@ label-foreground = ${colors.foreground}
 Here are all the available actions, in case you want to modify the module above, or want to use it for different reasons:
 
 ```
-Usage: pulseaudio-control.bash ACTION
+Options: (defaults)
+    --autosync, --no-autosync             whether to maintain same volume for all programs (no)
+    --color-mute <rrggbb>                 color in which to format when muted (6b6b6b)
+    --notifications, --no-notifications   whether to show notifications when changing sink (no)
+    --osd, --no-osd                       whether to display KDE's OSD message (no)
+    --vol-icons <icon>[,<icon>...]        icons for volume, from lower to higher (# ,# ,# )
+    --vol-icon-mute <icon>                icon to use when muted (# )
+    --vol-max <int>                       maximum volume to which to allow increasing (130)
+    --vol-step <int>                      step size when inc/decrementing volume (2)
+    --sink-blacklist <name>[,<name>...]   sinks to ignore when switching ()
+    --sink-icon <icon>                    icon to use for sink (# )
+    --sink-name-from <prop>               pacmd property to use for sink name ()
+    --sink-nickname <name>:<nick>         nickname to assign to given sink name (may be given multiple times) ()
 
 Actions:
     help              display this help and exit
