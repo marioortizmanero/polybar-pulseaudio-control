@@ -41,6 +41,7 @@ You can change the script configuration at the beginning of the file:
 | `SINK_ICON`            | String\*                 | Icon always displayed to the left of the sink names. |
 | `SINK_BLACKLIST`       | Bash array               | A blacklist for whenever sinks are switched. Use `pactl list sinks short` to see all active sink names. |
 | `SINK_NICKNAMES`       | Bash associative array   | Maps the PulseAudio sink names to human-readable nicknames. Use `pactl list sinks short` to obtain the active sinks names. If unconfigured, `Sink #N` is used instead. Custom icons\* for the sinks can be added here if `SINK_ICON` is set to `""`. |
+| `SINK_NICKNAME_PROP`   | String                   | Property (see `pacmd list-sinks`) to use for sink nicknames, where not explicitly set in `SINK_NICKNAMES`. |
 
 \*Check the [Useful icons](#useful-icons) section for examples.
 
