@@ -48,7 +48,9 @@ Options: (defaults)
     --volume-step <int>                   step size when inc/decrementing volume (2)
     --sink-blacklist <name>[,<name>...]   sinks to ignore when switching (none)
     --sink-nickname-from <prop>           pacmd property to use for sink name (none)
+                                          as listed under the 'properties' key in the output of `pacmd list-sinks`
     --sink-nickname <name>:<nick>         nickname to assign to given sink name (may be given multiple times) (none)
+                                          where 'name' is exactly as listed in the output of `pactl list sinks short | cut -f2`
 
 Actions:
     help              display this help and exit

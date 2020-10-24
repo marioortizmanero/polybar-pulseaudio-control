@@ -339,7 +339,9 @@ function usage() {
     echo "    --volume-step <int>                   step size when inc/decrementing volume ($INC)"
     echo "    --sink-blacklist <name>[,<name>...]   sinks to ignore when switching (none)"
     echo "    --sink-nickname-from <prop>           pacmd property to use for sink name (none)"
+    echo "                                          as listed under the 'properties' key in the output of \`pacmd list-sinks\`"
     echo "    --sink-nickname <name>:<nick>         nickname to assign to given sink name (may be given multiple times) (none)"
+    echo "                                          where 'name' is exactly as listed in the output of \`pactl list sinks short | cut -f2\`"
     echo
     echo "Actions:"
     echo "    help              display this help and exit"
