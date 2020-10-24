@@ -334,13 +334,13 @@ function usage() {
     echo "    --color-mute <rrggbb>                 color in which to format when muted (${MUTED_COLOR:4:-1})"
     echo "    --notifications, --no-notifications   whether to show notifications when changing sink ($NOTIFICATIONS)"
     echo "    --osd, --no-osd                       whether to display KDE's OSD message ($OSD)"
-    echo "    --vol-icons <icon>[,<icon>...]        icons for volume, from lower to higher ($(IFS=, ; echo "${VOLUME_ICONS[*]}"))"
-    echo "    --vol-icon-mute <icon>                icon to use when muted ($MUTED_ICON)"
-    echo "    --vol-max <int>                       maximum volume to which to allow increasing ($MAX_VOL)"
-    echo "    --vol-step <int>                      step size when inc/decrementing volume ($INC)"
+    echo "    --icon-muted <icon>                   icon to use when muted ($MUTED_ICON)"
+    echo "    --icon-sink <icon>                    icon to use for sink ($SINK_ICON)"
+    echo "    --icons-volume <icon>[,<icon>...]     icons for volume, from lower to higher ($(IFS=, ; echo "${VOLUME_ICONS[*]}"))"
+    echo "    --volume-max <int>                    maximum volume to which to allow increasing ($MAX_VOL)"
+    echo "    --volume-step <int>                   step size when inc/decrementing volume ($INC)"
     echo "    --sink-blacklist <name>[,<name>...]   sinks to ignore when switching ()"
-    echo "    --sink-icon <icon>                    icon to use for sink ($SINK_ICON)"
-    echo "    --sink-name-from <prop>               pacmd property to use for sink name ($SINK_NICKNAME_PROP)"
+    echo "    --sink-nickname-from <prop>           pacmd property to use for sink name ($SINK_NICKNAME_PROP)"
     echo "    --sink-nickname <name>:<nick>         nickname to assign to given sink name (may be given multiple times) ()"
     echo
     echo "Actions:"
@@ -400,25 +400,25 @@ while [[ "$1" = --* ]]; do
         --no-osd)
             OSD=no
             ;;
-        --vol-icons)
-            IFS=, read -r -a VOLUME_ICONS <<< "$val"
-            ;;
-        --vol-icon-mute)
+        --icon-muted)
             MUTED_ICON="$val"
             ;;
-        --vol-max)
+        --icon-sink)
+            SINK_ICON="$val"
+            ;;
+        --icons-volume)
+            IFS=, read -r -a VOLUME_ICONS <<< "$val"
+            ;;
+        --volume-max)
             MAX_VOL="$val"
             ;;
-        --vol-step)
+        --volume-step)
             INC="$val"
             ;;
         --sink-blacklist)
             IFS=, read -r -a SINK_BLACKLIST <<< "$val"
             ;;
-        --sink-icon)
-            SINK_ICON="$val"
-            ;;
-        --sink-name-from)
+        --sink-nickname-from)
             SINK_NICKNAME_PROP="$val"
             ;;
         --sink-nickname)

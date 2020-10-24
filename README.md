@@ -41,13 +41,13 @@ Options: (defaults)
     --color-mute <rrggbb>                 color in which to format when muted (6b6b6b)
     --notifications, --no-notifications   whether to show notifications when changing sink (no)
     --osd, --no-osd                       whether to display KDE's OSD message (no)
-    --vol-icons <icon>[,<icon>...]        icons for volume, from lower to higher (# ,# ,# )
-    --vol-icon-mute <icon>                icon to use when muted (# )
-    --vol-max <int>                       maximum volume to which to allow increasing (130)
-    --vol-step <int>                      step size when inc/decrementing volume (2)
+    --icon-muted <icon>                   icon to use when muted (# )
+    --icon-sink <icon>                    icon to use for sink (# )
+    --icons-volume <icon>[,<icon>...]     icons for volume, from lower to higher (# ,# ,# )
+    --volume-max <int>                    maximum volume to which to allow increasing (130)
+    --volume-step <int>                   step size when inc/decrementing volume (2)
     --sink-blacklist <name>[,<name>...]   sinks to ignore when switching ()
-    --sink-icon <icon>                    icon to use for sink (# )
-    --sink-name-from <prop>               pacmd property to use for sink name ()
+    --sink-nickname-from <prop>           pacmd property to use for sink name ()
     --sink-nickname <name>:<nick>         nickname to assign to given sink name (may be given multiple times) ()
 
 Actions:
@@ -82,7 +82,7 @@ tail = true
 label=%output%
 format-underline = ${colors.blue}
 
-exec = "~/.config/polybar/scripts/pulseaudio-control.bash --vol-max=150 --vol-icons='🔈 ,🔉 ,🔊 ' --sink-name-from-prop=device.description --osd listen"
+exec = "~/.config/polybar/scripts/pulseaudio-control.bash --volume-max=150 --icons-volume='🔈 ,🔉 ,🔊 ' --sink-nickname-from-prop=device.description --osd listen"
 click-right = exec pavucontrol &
 click-left = ~/.config/polybar/scripts/pulseaudio-control.bash togmute
 click-middle = ~/.config/polybar/scripts/pulseaudio-control.bash next-sink
