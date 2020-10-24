@@ -10,16 +10,14 @@ OSD="no"
 INC=2
 MAX_VOL=130
 AUTOSYNC="no"
-VOLUME_ICONS=( "# " "# " "# " )
-MUTED_ICON="# "
+VOLUME_ICONS=( " " )
+MUTED_ICON=" "
 MUTED_COLOR="%{F#6b6b6b}"
 NOTIFICATIONS="no"
-SINK_ICON="# "
+SINK_ICON=" "
 SINK_BLACKLIST=(
-    "alsa_output.usb-SinkYouDontUse-00.analog-stereo"
 )
 declare -A SINK_NICKNAMES
-SINK_NICKNAMES["alsa_output.usb-SomeManufacturer_SomeUsbSoundcard-00.analog-stereo"]="External Soundcard"
 SINK_NICKNAME_PROP=
 
 
@@ -330,18 +328,18 @@ function usage() {
     echo "Usage: $0 [OPTION...] ACTION"
     echo
     echo "Options: (defaults)"
-    echo "    --autosync, --no-autosync             whether to maintain same volume for all programs ($AUTOSYNC)"
+    echo "    --autosync | --no-autosync            whether to maintain same volume for all programs ($AUTOSYNC)"
     echo "    --color-mute <rrggbb>                 color in which to format when muted (${MUTED_COLOR:4:-1})"
-    echo "    --notifications, --no-notifications   whether to show notifications when changing sink ($NOTIFICATIONS)"
-    echo "    --osd, --no-osd                       whether to display KDE's OSD message ($OSD)"
-    echo "    --icon-muted <icon>                   icon to use when muted ($MUTED_ICON)"
-    echo "    --icon-sink <icon>                    icon to use for sink ($SINK_ICON)"
-    echo "    --icons-volume <icon>[,<icon>...]     icons for volume, from lower to higher ($(IFS=, ; echo "${VOLUME_ICONS[*]}"))"
+    echo "    --notifications | --no-notifications  whether to show notifications when changing sink ($NOTIFICATIONS)"
+    echo "    --osd | --no-osd                      whether to display KDE's OSD message ($OSD)"
+    echo "    --icon-muted <icon>                   icon to use when muted (none)"
+    echo "    --icon-sink <icon>                    icon to use for sink (none)"
+    echo "    --icons-volume <icon>[,<icon>...]     icons for volume, from lower to higher (none)"
     echo "    --volume-max <int>                    maximum volume to which to allow increasing ($MAX_VOL)"
     echo "    --volume-step <int>                   step size when inc/decrementing volume ($INC)"
-    echo "    --sink-blacklist <name>[,<name>...]   sinks to ignore when switching ()"
-    echo "    --sink-nickname-from <prop>           pacmd property to use for sink name ($SINK_NICKNAME_PROP)"
-    echo "    --sink-nickname <name>:<nick>         nickname to assign to given sink name (may be given multiple times) ()"
+    echo "    --sink-blacklist <name>[,<name>...]   sinks to ignore when switching (none)"
+    echo "    --sink-nickname-from <prop>           pacmd property to use for sink name (none)"
+    echo "    --sink-nickname <name>:<nick>         nickname to assign to given sink name (may be given multiple times) (none)"
     echo
     echo "Actions:"
     echo "    help              display this help and exit"

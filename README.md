@@ -37,18 +37,18 @@ where `action`, and (optionally) `option`s are as specified in `polybar-pulseaud
 
 ```
 Options: (defaults)
-    --autosync, --no-autosync             whether to maintain same volume for all programs (no)
+    --autosync | --no-autosync            whether to maintain same volume for all programs (no)
     --color-mute <rrggbb>                 color in which to format when muted (6b6b6b)
-    --notifications, --no-notifications   whether to show notifications when changing sink (no)
-    --osd, --no-osd                       whether to display KDE's OSD message (no)
-    --icon-muted <icon>                   icon to use when muted (# )
-    --icon-sink <icon>                    icon to use for sink (# )
-    --icons-volume <icon>[,<icon>...]     icons for volume, from lower to higher (# ,# ,# )
+    --notifications | --no-notifications  whether to show notifications when changing sink (no)
+    --osd | --no-osd                      whether to display KDE's OSD message (no)
+    --icon-muted <icon>                   icon to use when muted (none)
+    --icon-sink <icon>                    icon to use for sink (none)
+    --icons-volume <icon>[,<icon>...]     icons for volume, from lower to higher (none)
     --volume-max <int>                    maximum volume to which to allow increasing (130)
     --volume-step <int>                   step size when inc/decrementing volume (2)
-    --sink-blacklist <name>[,<name>...]   sinks to ignore when switching ()
-    --sink-nickname-from <prop>           pacmd property to use for sink name ()
-    --sink-nickname <name>:<nick>         nickname to assign to given sink name (may be given multiple times) ()
+    --sink-blacklist <name>[,<name>...]   sinks to ignore when switching (none)
+    --sink-nickname-from <prop>           pacmd property to use for sink name (none)
+    --sink-nickname <name>:<nick>         nickname to assign to given sink name (may be given multiple times) (none)
 
 Actions:
     help              display this help and exit
