@@ -36,9 +36,11 @@ exec = polybar-pulseaudio-control [option...] <action>
 where `action`, and (optionally) `option`s are as specified in `polybar-pulseaudio-control help`:
 
 ```
+Usage: ./pulseaudio-control.bash [OPTION...] ACTION
+
 Options: (defaults)
     --autosync | --no-autosync            whether to maintain same volume for all programs (no)
-    --color-mute <rrggbb>                 color in which to format when muted (6b6b6b)
+    --color-muted <rrggbb>                color in which to format when muted (6b6b6b)
     --notifications | --no-notifications  whether to show notifications when changing sink (no)
     --osd | --no-osd                      whether to display KDE's OSD message (no)
     --icon-muted <icon>                   icon to use when muted (none)
@@ -47,10 +49,11 @@ Options: (defaults)
     --volume-max <int>                    maximum volume to which to allow increasing (130)
     --volume-step <int>                   step size when inc/decrementing volume (2)
     --sink-blacklist <name>[,<name>...]   sinks to ignore when switching (none)
-    --sink-nickname-from <prop>           pacmd property to use for sink name (none)
+    --sink-nicknames-from <prop>          pacmd property to use for sink names (none)
                                           as listed under the 'properties' key in the output of `pacmd list-sinks`
-    --sink-nickname <name>:<nick>         nickname to assign to given sink name (may be given multiple times) (none)
+    --sink-nickname <name>:<nick>         nickname to assign to given sink name, may be given multiple times (none)
                                           where 'name' is exactly as listed in the output of `pactl list sinks short | cut -f2`
+                                          and with more priority than --sink-nicknames-from
 
 Actions:
     help              display this help and exit
@@ -62,10 +65,10 @@ Actions:
     togmute           switch between muted and unmuted
     next-sink         switch to the next available sink
     sync              synchronize all the output streams volume to
-                      the be the same as the current sink's volume
+                      be the same as the current sink's volume
 ```
 
-See the [Module](#module) section for a concrete example, or the [Useful icons](#useful-icons) section for example icons.
+See the [Module](#module) section for an example, or the [Useful icons](#useful-icons) section for some packs of icons.
 
 
 ## Module
@@ -81,17 +84,17 @@ The example from the screenshot can:
 [module/pulseaudio-control]
 type = custom/script
 tail = true
-label=%output%
-format-underline = ${colors.blue}
+format-underline = ${colors.cyan}
+label-padding = 2
+label-foreground = ${colors.foreground}
 
-exec = "~/.config/polybar/scripts/pulseaudio-control.bash --volume-max=150 --icons-volume='🔈 ,🔉 ,🔊 ' --sink-nickname-from-prop=device.description --osd listen"
+# Icons mixed from Font Awesome 5 and Material Icons
+exec = ~/.config/polybar/scripts/pulseaudio-control.bash --volume-max 130 --icons-volume " , " --icon-muted " " --sink-blacklist "alsa_output.pci-0000_01_00.1.hdmi-stereo-extra2" --sink-nicknames-from "device.description" --sink-nickname "alsa_output.pci-0000_00_1f.3.analog-stereo:  Speakers" --sink-nickname "alsa_output.usb-Kingston_HyperX_Virtual_Surround_Sound_00000000-00.analog-stereo:  Headphones" listen
 click-right = exec pavucontrol &
 click-left = ~/.config/polybar/scripts/pulseaudio-control.bash togmute
 click-middle = ~/.config/polybar/scripts/pulseaudio-control.bash next-sink
 scroll-up = ~/.config/polybar/scripts/pulseaudio-control.bash up
 scroll-down = ~/.config/polybar/scripts/pulseaudio-control.bash down
-label-padding = 2
-label-foreground = ${colors.foreground}
 ```
 
 *Note that you will have to change the paths above to where your script is saved. You might want to change or remove the colors and labels, too.*
@@ -100,16 +103,22 @@ label-foreground = ${colors.foreground}
 
 Here's a list with some icons from different fonts you can copy-paste. Most have an space afterwards so that the module has a bit of spacing. They may appear bugged on your browser if the font isn't available there. Please add yours if they aren't in the list.
 
-| Font name                                       | Volumes               | Muted   | Sink icons             |
-| ----------------------------------------------- | :-------------------: | :-----: | :--------------------: |
-| [FontAwesome](https://fontawesome.com)          | `" , "`         | `" "`  | `" "` or `" "`         |
+| Font name                                       | Volumes         | Muted   | Sink icons                 |
+| ----------------------------------------------- | :-------------: | :-----: | :------------------------: |
+| [FontAwesome](https://fontawesome.com)          | `" , "`       | `" "`  | `" "` or `" "`           |
 | [Material](https://material.io/resources/icons) | `" , , "`    | `" "`  | `" "` or `" "` or `" "` |
-| Emoji                                           | `"🔈 ,🔉 ,🔊 "` | `"🔇 "` | `"🔈 "` or `"🎧"`        |
-| Emoji v2                                        | `"🕨 ,🕩 ,🕪 "`    | `"🔇 "` | `"🕨 "` or `"🎧"`         |
+| Emoji                                           | `"🔈 ,🔉 ,🔊 "` | `"🔇 "` | `"🔈 "` or `"🎧 "`         |
+| Emoji v2                                        | `"🕨 ,🕩 ,🕪 "`    | `"🔇 "` | `"🕨 "` or `"🎧 "`          |
 
-Most of these can be used after downloading a [Nerd Font](https://www.nerdfonts.com/), or from your distro's repository.
+Most of these can be used after downloading a [Nerd Font](https://www.nerdfonts.com/) and including it in your Polybar config. For example:
 
-##  Sources
+```ini
+font-X = Font Awesome 5 Free: style=Solid: pixelsize=11
+font-Y = Font Awesome 5 Brands: pixelsize=11
+font-Z = Material Icons: style=Regular: pixelsize=13; 2
+```
+
+## Sources
 
 Part of the script and of this README's info was taken from [customlinux.blogspot.com](http://customlinux.blogspot.com/2013/02/pavolumesh-control-active-sink-volume.html), the creator. It was later adapted to fit polybar. It is also mixed with [the ArcoLinux version](https://github.com/arcolinux/arcolinux-polybar/blob/master/etc/skel/.config/polybar/scripts/pavolume.sh), which implemented the `listen` action to use less resources.
 
