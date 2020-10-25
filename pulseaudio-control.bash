@@ -323,41 +323,56 @@ function output() {
 
 
 function usage() {
-    echo "Usage: $0 [OPTION...] ACTION"
-    echo
-    echo "Options: (defaults)"
-    echo "    --autosync | --no-autosync            whether to maintain same volume for all programs ($AUTOSYNC)"
-    echo "    --color-muted <rrggbb>                color in which to format when muted (${COLOR_MUTED:4:-1})"
-    echo "    --notifications | --no-notifications  whether to show notifications when changing sink ($NOTIFICATIONS)"
-    echo "    --osd | --no-osd                      whether to display KDE's OSD message ($OSD)"
-    echo "    --icon-muted <icon>                   icon to use when muted (none)"
-    echo "    --icon-sink <icon>                    icon to use for sink (none)"
-    echo "    --icons-volume <icon>[,<icon>...]     icons for volume, from lower to higher (none)"
-    echo "    --volume-max <int>                    maximum volume to which to allow increasing ($VOLUME_MAX)"
-    echo "    --volume-step <int>                   step size when inc/decrementing volume ($VOLUME_INC)"
-    echo "    --sink-blacklist <name>[,<name>...]   sinks to ignore when switching (none)"
-    echo "    --sink-nicknames-from <prop>          pacmd property to use for sink names (none)"
-    echo "                                          as listed under the 'properties' key in the output of \`pacmd list-sinks\`"
-    echo "    --sink-nickname <name>:<nick>         nickname to assign to given sink name, may be given multiple times (none)"
-    echo "                                          where 'name' is exactly as listed in the output of \`pactl list sinks short | cut -f2\`"
-    echo "                                          and with more priority than --sink-nicknames-from"
-    echo
-    echo "Actions:"
-    echo "    help              display this help and exit"
-    echo "    output            print the PulseAudio status once"
-    echo "    listen            listen for changes in PulseAudio to automatically"
-    echo "                      update this script's output"
-    echo "    up, down          increase or decrease the default sink's volume"
-    echo "    mute, unmute      mute or unmute the default sink's audio"
-    echo "    togmute           switch between muted and unmuted"
-    echo "    next-sink         switch to the next available sink"
-    echo "    sync              synchronize all the output streams volume to"
-    echo "                      be the same as the current sink's volume"
-    echo ""
-    echo "Author:"
-    echo "    Mario Ortiz Manero"
-    echo "More info on GitHub:"
-    echo "    https://github.com/marioortizmanero/polybar-pulseaudio-control"
+    echo "\
+Usage: $0 [OPTION...] ACTION
+
+Options: (defaults)
+    --autosync | --no-autosync            whether to maintain same volume for
+                                          all programs ($AUTOSYNC)
+    --color-muted <rrggbb>                color in which to format when muted
+                                          (${COLOR_MUTED:4:-1})
+    --notifications | --no-notifications  whether to show notifications when
+                                          changing sinks ($NOTIFICATIONS)
+    --osd | --no-osd                      whether to display KDE's OSD message
+                                          ($OSD)
+    --icon-muted <icon>                   icon to use when muted (none)
+    --icon-sink <icon>                    icon to use for sink (none)
+    --icons-volume <icon>[,<icon>...]     icons for volume, from lower to higher
+                                          (none)
+    --volume-max <int>                    maximum volume to which to allow
+                                          increasing ($VOLUME_MAX)
+    --volume-step <int>                   step size when inc/decrementing volume
+                                          ($VOLUME_INC)
+    --sink-blacklist <name>[,<name>...]   sinks to ignore when switching (none)
+    --sink-nicknames-from <prop>          pacmd property to use for sink names,
+                                          unless overriden by --sink-nickname.
+                                          Its possible values are listed under
+                                          the 'properties' key in the output
+                                          of \`pacmd list-sinks\` (none)
+    --sink-nickname <name>:<nick>         nickname to assign to given sink name,
+                                          taking priority over
+                                          --sink-nicknames-from. May be given
+                                          multiple times, and 'name' is exactly
+                                          as listed in the output of
+                                          \`pactl list sinks short | cut -f2\`
+                                          (none)
+
+Actions:
+    help              display this help and exit
+    output            print the PulseAudio status once
+    listen            listen for changes in PulseAudio to automatically update
+                      this script's output
+    up, down          increase or decrease the default sink's volume
+    mute, unmute      mute or unmute the default sink's audio
+    togmute           switch between muted and unmuted
+    next-sink         switch to the next available sink
+    sync              synchronize all the output streams volume to be the same
+                      as the current sink's volume
+
+Author:
+    Mario Ortiz Manero
+More info on GitHub:
+    https://github.com/marioortizmanero/polybar-pulseaudio-control"
 }
 
 while [[ "$1" = --* ]]; do
