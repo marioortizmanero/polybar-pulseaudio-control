@@ -11,7 +11,20 @@ A feature-full volume control module for PulseAudio. Also known as Pavolume. Mai
 ![example](screenshots/example.png)
 
 
-## Dependencies
+## Installation
+
+### Arch
+
+Install [`pulseaudio-control`](https://aur.archlinux.org/packages/pulseaudio-control/) from the AUR with your preferred method, for example:
+```
+$ yay -S pulseaudio-control
+```
+
+### Other Linux
+
+Download the [bash script](https://github.com/marioortizmanero/polybar-pulseaudio-control/blob/master/pulseaudio-control.bash) from this repository, or extract it from [the latest release](https://github.com/marioortizmanero/polybar-pulseaudio-control/releases/latest), and put it somewhere on your `$PATH`.
+
+#### Dependencies
 
 [`pulseaudio`](https://www.freedesktop.org/wiki/Software/PulseAudio/) with `pactl` and `pacmd` in your `$PATH`. You might want to have [`pavucontrol`](https://freedesktop.org/software/pulseaudio/pavucontrol/) installed to easily control pulseaudio with a GUI. The script can send notifications if enabled, for which you'll need a notification daemon like [`dunst`](https://github.com/dunst-project/dunst).
 
