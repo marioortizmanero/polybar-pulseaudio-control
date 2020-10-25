@@ -77,7 +77,7 @@ function setup() {
     # Increases the volume from zero to a set maximum step by step, making
     # sure that the results are expected.
     VOLUME_MAX=350
-    VOLUME_INC=5
+    VOLUME_STEP=5
     local vol=0
     getCurSink
     pactl set-sink-volume "$curSink" "$vol%"
@@ -85,7 +85,7 @@ function setup() {
         volUp
         getCurVol "$curSink"
         if [ "$vol" -lt $VOLUME_MAX ]; then
-            vol=$((vol + VOLUME_INC))
+            vol=$((vol + VOLUME_STEP))
         fi
         echo "Real volume is $curVol, expected $vol"
         [ "$curVol" -eq $vol ]
@@ -97,7 +97,7 @@ function setup() {
     # Decreases the volume to 0 step by step, making sure that the results
     # are expected.
     VOLUME_MAX=350
-    VOLUME_INC=5
+    VOLUME_STEP=5
     # It shouldn't matter that the current volume exceeds the maximum volume
     local vol=375
     getCurSink
@@ -106,7 +106,7 @@ function setup() {
         volDown
         getCurVol "$curSink"
         if [ "$vol" -gt 0 ]; then
-            vol=$((vol - VOLUME_INC))
+            vol=$((vol - VOLUME_STEP))
         fi
         echo "Real volume is $curVol, expected $vol"
         [ "$curVol" -eq $vol ]

@@ -13,7 +13,7 @@ ICON_SINK=
 NOTIFICATIONS="no"
 OSD="no"
 SINK_NICKNAMES_PROP=
-VOLUME_INC=2
+VOLUME_STEP=2
 VOLUME_MAX=130
 declare -A SINK_NICKNAMES
 declare -a ICONS_VOLUME
@@ -110,7 +110,7 @@ function volUp() {
         return 1
     fi
     getCurVol "$curSink"
-    local maxLimit=$((VOLUME_MAX - VOLUME_INC))
+    local maxLimit=$((VOLUME_MAX - VOLUME_STEP))
 
     # Checking the volume upper bounds so that if VOLUME_MAX was 100% and the
     # increase percentage was 3%, a 99% volume would top at 100% instead
@@ -118,7 +118,7 @@ function volUp() {
     if [ "$curVol" -le "$VOLUME_MAX" ] && [ "$curVol" -ge "$maxLimit" ]; then
         pactl set-sink-volume "$curSink" "$VOLUME_MAX%"
     elif [ "$curVol" -lt "$maxLimit" ]; then
-        pactl set-sink-volume "$curSink" "+$VOLUME_INC%"
+        pactl set-sink-volume "$curSink" "+$VOLUME_STEP%"
     fi
 
     if [ $OSD = "yes" ]; then showOSD "$curSink"; fi
@@ -133,7 +133,7 @@ function volDown() {
         echo "PulseAudio not running"
         return 1
     fi
-    pactl set-sink-volume "$curSink" "-$VOLUME_INC%"
+    pactl set-sink-volume "$curSink" "-$VOLUME_STEP%"
 
     if [ $OSD = "yes" ]; then showOSD "$curSink"; fi
     if [ $AUTOSYNC = "yes" ]; then volSync; fi
@@ -342,7 +342,7 @@ Options: [defaults]
   --volume-max <int>                    maximum volume to which to allow
                                         increasing [$VOLUME_MAX]
   --volume-step <int>                   step size when inc/decrementing volume
-                                        [$VOLUME_INC]
+                                        [$VOLUME_STEP]
   --sink-blacklist <name>[,<name>...]   sinks to ignore when switching [none]
   --sink-nicknames-from <prop>          pacmd property to use for sink names,
                                         unless overriden by --sink-nickname.
@@ -427,7 +427,7 @@ while [[ "$1" = --* ]]; do
             VOLUME_MAX="$val"
             ;;
         --volume-step)
-            VOLUME_INC="$val"
+            VOLUME_STEP="$val"
             ;;
         --sink-blacklist)
             IFS=, read -r -a SINK_BLACKLIST <<< "$val"
