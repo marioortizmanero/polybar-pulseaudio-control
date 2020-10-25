@@ -5,31 +5,23 @@
 # https://github.com/marioortizmanero/polybar-pulseaudio-control #
 ##################################################################
 
-# Script configuration (more info in the README)
-OSD="no"  # On Screen Display message for KDE if enabled
-INC=2  # Increment when lowering/rising the volume
-MAX_VOL=130  # Maximum volume
-AUTOSYNC="no"  # All programs have the same volume if enabled
-VOLUME_ICONS=( "# " "# " "# " )  # Volume icons array, from lower volume to higher
-MUTED_ICON="# "  # Muted volume icon
-MUTED_COLOR="%{F#6b6b6b}"  # Color when the audio is muted
-NOTIFICATIONS="no"  # Notifications when switching sinks if enabled
-SINK_ICON="# "  # Icon always shown to the left of the default sink names
-
-# Blacklist of PulseAudio sink names when switching between them. To obtain
-# the names of your active sinks, use `pactl list sinks short`.
-SINK_BLACKLIST=(
-    "alsa_output.usb-SinkYouDontUse-00.analog-stereo"
-)
-
-# Maps PulseAudio sink names to human-readable names
+# Defaults for configurable values, expected to be set by command-line arguments
+AUTOSYNC="no"
+COLOR_MUTED="%{F#6b6b6b}"
+ICON_MUTED=
+ICON_SINK=
+NOTIFICATIONS="no"
+OSD="no"
+SINK_NICKNAMES_PROP=
+VOLUME_STEP=2
+VOLUME_MAX=130
 declare -A SINK_NICKNAMES
-SINK_NICKNAMES["alsa_output.usb-SomeManufacturer_SomeUsbSoundcard-00.analog-stereo"]="External Soundcard"
-
+declare -a ICONS_VOLUME
+declare -a SINK_BLACKLIST
 
 # Environment & global constants for the script
+END_COLOR="%{F-}"  # For Polybar colors
 LANGUAGE=en_US  # Some calls depend on English outputs of pactl
-END_COLOR="%{F-}"
 
 
 # Saves the currently default sink into a variable named `curSink`. It will
@@ -59,13 +51,43 @@ function getSinkName() {
 # "Sink #<index>" is used.
 function getNickname() {
     getSinkName "$1"
+    unset nickname
+
     if [ -n "${SINK_NICKNAMES[$sinkName]}" ]; then
         nickname="${SINK_NICKNAMES[$sinkName]}"
-    else
+    elif [ -n "$SINK_NICKNAMES_PROP" ]; then
+        getNicknameFromProp "$SINK_NICKNAMES_PROP" "$sinkName"
+        # Cache that result for next time
+        SINK_NICKNAMES["$sinkName"]="$nickname"
+    fi
+
+    if [ -z "$nickname" ]; then
         nickname="Sink #$1"
     fi
 }
 
+# Gets sink nickname based on a given property.
+function getNicknameFromProp() {
+    local nickname_prop="$1"
+    local for_name="$2"
+
+    nickname=
+    while read -r property value; do
+        case "$property" in
+            name:)
+                sink_name="${value//[<>]/}"
+                unset sink_desc
+                ;;
+            "$nickname_prop")
+                if [ "$sink_name" != "$for_name" ]; then
+                    continue
+                fi
+                nickname="${value:3:-1}"
+                break
+                ;;
+        esac
+    done < <(pacmd list-sinks)
+}
 
 # Saves the status of the sink passed by parameter into a variable named
 # `isMuted`.
@@ -88,15 +110,15 @@ function volUp() {
         return 1
     fi
     getCurVol "$curSink"
-    local maxLimit=$((MAX_VOL - INC))
+    local maxLimit=$((VOLUME_MAX - VOLUME_STEP))
 
-    # Checking the volume upper bounds so that if MAX_VOL was 100% and the
+    # Checking the volume upper bounds so that if VOLUME_MAX was 100% and the
     # increase percentage was 3%, a 99% volume would top at 100% instead
     # of 102%. If the volume is above the maximum limit, nothing is done.
-    if [ "$curVol" -le "$MAX_VOL" ] && [ "$curVol" -ge "$maxLimit" ]; then
-        pactl set-sink-volume "$curSink" "$MAX_VOL%"
+    if [ "$curVol" -le "$VOLUME_MAX" ] && [ "$curVol" -ge "$maxLimit" ]; then
+        pactl set-sink-volume "$curSink" "$VOLUME_MAX%"
     elif [ "$curVol" -lt "$maxLimit" ]; then
-        pactl set-sink-volume "$curSink" "+$INC%"
+        pactl set-sink-volume "$curSink" "+$VOLUME_STEP%"
     fi
 
     if [ $OSD = "yes" ]; then showOSD "$curSink"; fi
@@ -111,7 +133,7 @@ function volDown() {
         echo "PulseAudio not running"
         return 1
     fi
-    pactl set-sink-volume "$curSink" "-$INC%"
+    pactl set-sink-volume "$curSink" "-$VOLUME_STEP%"
 
     if [ $OSD = "yes" ]; then showOSD "$curSink"; fi
     if [ $AUTOSYNC = "yes" ]; then volSync; fi
@@ -206,14 +228,15 @@ function nextSink() {
     pacmd set-default-sink "$newSink"
 
     # Move all audio threads to new sink
-    local inputs=$(pactl list short sink-inputs | cut -f 1)
+    local inputs
+    inputs="$(pactl list short sink-inputs | cut -f 1)"
     for i in $inputs; do
         pacmd move-sink-input "$i" "$newSink"
     done
 
     if [ $NOTIFICATIONS = "yes" ]; then
         getNickname "$newSink"
-        
+
         if command -v dunstify &>/dev/null; then
             notify="dunstify --replace 201839192"
         else
@@ -275,12 +298,12 @@ function output() {
     getIsMuted "$curSink"
 
     # Fixed volume icons over max volume
-    local iconsLen=${#VOLUME_ICONS[@]}
+    local iconsLen=${#ICONS_VOLUME[@]}
     if [ "$iconsLen" -ne 0 ]; then
-        local volSplit=$((MAX_VOL / iconsLen))
+        local volSplit=$((VOLUME_MAX / iconsLen))
         for i in $(seq 1 "$iconsLen"); do
             if [ $((i * volSplit)) -ge "$curVol" ]; then
-                volIcon="${VOLUME_ICONS[$((i-1))]}"
+                volIcon="${ICONS_VOLUME[$((i-1))]}"
                 break
             fi
         done
@@ -292,34 +315,135 @@ function output() {
 
     # Showing the formatted message
     if [ "$isMuted" = "yes" ]; then
-        echo "${MUTED_COLOR}${MUTED_ICON}${curVol}%   ${SINK_ICON}${nickname}${END_COLOR}"
+        echo "${COLOR_MUTED}${ICON_MUTED}${curVol}%   ${ICON_SINK}${nickname}${END_COLOR}"
     else
-        echo "${volIcon}${curVol}%   ${SINK_ICON}${nickname}"
+        echo "${volIcon}${curVol}%   ${ICON_SINK}${nickname}"
     fi
 }
 
 
 function usage() {
-    echo "Usage: $0 ACTION"
-    echo ""
-    echo "Actions:"
-    echo "    help              display this help and exit"
-    echo "    output            print the PulseAudio status once"
-    echo "    listen            listen for changes in PulseAudio to automatically"
-    echo "                      update this script's output"
-    echo "    up, down          increase or decrease the default sink's volume"
-    echo "    mute, unmute      mute or unmute the default sink's audio"
-    echo "    togmute           switch between muted and unmuted"
-    echo "    next-sink         switch to the next available sink"
-    echo "    sync              synchronize all the output streams volume to"
-    echo "                      the be the same as the current sink's volume"
-    echo ""
-    echo "Author:"
-    echo "    Mario O. M."
-    echo "More info on GitHub:"
-    echo "    https://github.com/marioortizmanero/polybar-pulseaudio-control"
+    echo "\
+Usage: $0 [OPTION...] ACTION
+
+Options: [defaults]
+  --autosync | --no-autosync            whether to maintain same volume for all
+                                        programs [$AUTOSYNC]
+  --color-muted <rrggbb>                color in which to format when muted
+                                        [${COLOR_MUTED:4:-1}]
+  --notifications | --no-notifications  whether to show notifications when
+                                        changing sinks [$NOTIFICATIONS]
+  --osd | --no-osd                      whether to display KDE's OSD message
+                                        [$OSD]
+  --icon-muted <icon>                   icon to use when muted [none]
+  --icon-sink <icon>                    icon to use for sink [none]
+  --icons-volume <icon>[,<icon>...]     icons for volume, from lower to higher
+                                        [none]
+  --volume-max <int>                    maximum volume to which to allow
+                                        increasing [$VOLUME_MAX]
+  --volume-step <int>                   step size when inc/decrementing volume
+                                        [$VOLUME_STEP]
+  --sink-blacklist <name>[,<name>...]   sinks to ignore when switching [none]
+  --sink-nicknames-from <prop>          pacmd property to use for sink names,
+                                        unless overriden by --sink-nickname.
+                                        Its possible values are listed under
+                                        the 'properties' key in the output of
+                                        \`pacmd list-sinks\` [none]
+  --sink-nickname <name>:<nick>         nickname to assign to given sink name,
+                                        taking priority over
+                                        --sink-nicknames-from. May be given
+                                        multiple times, and 'name' is exactly as
+                                        listed in the output of
+                                        \`pactl list sinks short | cut -f2\`
+                                        [none]
+
+Actions:
+  help              display this message and exit
+  output            print the PulseAudio status once
+  listen            listen for changes in PulseAudio to automatically update
+                    this script's output
+  up, down          increase or decrease the default sink's volume
+  mute, unmute      mute or unmute the default sink's audio
+  togmute           switch between muted and unmuted
+  next-sink         switch to the next available sink
+  sync              synchronize all the output streams volume to be the same as
+                    the current sink's volume
+
+Author:
+    Mario Ortiz Manero
+More info on GitHub:
+    https://github.com/marioortizmanero/polybar-pulseaudio-control"
 }
 
+while [[ "$1" = --* ]]; do
+    unset arg
+    unset val
+    if [[ "$1" = *=* ]]; then
+        arg="${1//=*/}"
+        val="${1//*=/}"
+        shift
+    else
+        arg="$1"
+        # Support space-separated values, but also value-less flags
+        if [[ "$2" != --* ]]; then
+            val="$2"
+            shift
+        fi
+        shift
+    fi
+
+    case "$arg" in
+        --autosync)
+            AUTOSYNC=yes
+            ;;
+        --no-autosync)
+            AUTOSYNC=no
+            ;;
+        --color-muted|--colour-muted)
+            COLOR_MUTED="$val"
+            ;;
+        --notifications)
+            NOTIFICATIONS=yes
+            ;;
+        --no-notifications)
+            NOTIFICATIONS=no
+            ;;
+        --osd)
+            OSD=yes
+            ;;
+        --no-osd)
+            OSD=no
+            ;;
+        --icon-muted)
+            ICON_MUTED="$val"
+            ;;
+        --icon-sink)
+            ICON_SINK="$val"
+            ;;
+        --icons-volume)
+            IFS=, read -r -a ICONS_VOLUME <<< "$val"
+            ;;
+        --volume-max)
+            VOLUME_MAX="$val"
+            ;;
+        --volume-step)
+            VOLUME_STEP="$val"
+            ;;
+        --sink-blacklist)
+            IFS=, read -r -a SINK_BLACKLIST <<< "$val"
+            ;;
+        --sink-nicknames-from)
+            SINK_NICKNAMES_PROP="$val"
+            ;;
+        --sink-nickname)
+            SINK_NICKNAMES["${val//:*/}"]="${val//*:}"
+            ;;
+        *)
+            echo "Unrecognised option: $arg" >&2
+            exit 1
+            ;;
+    esac
+done
 
 case "$1" in
     up)
@@ -349,7 +473,11 @@ case "$1" in
     output)
         output
         ;;
-    *)
+    help)
         usage
+        ;;
+    *)
+        echo "Unrecognised action: $1" >&2
+        exit 1
         ;;
 esac

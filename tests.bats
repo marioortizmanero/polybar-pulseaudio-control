@@ -28,15 +28,15 @@ function restartPulseaudio() {
 function setup() {
     restartPulseaudio
     echo "Loading script"
-    source pulseaudio-control.bash --output &>/dev/null
+    source pulseaudio-control.bash output &>/dev/null
 }
 
 
 @test "nextSink()" {
     # This test will only work if there is currently only one sink. It's
     # kind of hardcoded to avoid excessive complexity.
-    pactl list short sinks
-    if [ "$(pactl list short sinks | wc -l)" -ne 1 ]; then
+    numSinks=$(pactl list short sinks | wc -l)
+    if [ "$numSinks" -ne 1 ]; then
         skip
     fi
 
@@ -76,16 +76,16 @@ function setup() {
 @test "volUp()" {
     # Increases the volume from zero to a set maximum step by step, making
     # sure that the results are expected.
-    MAX_VOL=350
-    INC=5
+    VOLUME_MAX=350
+    VOLUME_STEP=5
     local vol=0
     getCurSink
     pactl set-sink-volume "$curSink" "$vol%"
     for i in {1..100}; do
         volUp
         getCurVol "$curSink"
-        if [ "$vol" -lt $MAX_VOL ]; then
-            vol=$((vol + INC))
+        if [ "$vol" -lt $VOLUME_MAX ]; then
+            vol=$((vol + VOLUME_STEP))
         fi
         echo "Real volume is $curVol, expected $vol"
         [ "$curVol" -eq $vol ]
@@ -96,8 +96,8 @@ function setup() {
 @test "volDown()" {
     # Decreases the volume to 0 step by step, making sure that the results
     # are expected.
-    MAX_VOL=350
-    INC=5
+    VOLUME_MAX=350
+    VOLUME_STEP=5
     # It shouldn't matter that the current volume exceeds the maximum volume
     local vol=375
     getCurSink
@@ -106,7 +106,7 @@ function setup() {
         volDown
         getCurVol "$curSink"
         if [ "$vol" -gt 0 ]; then
-            vol=$((vol - INC))
+            vol=$((vol - VOLUME_STEP))
         fi
         echo "Real volume is $curVol, expected $vol"
         [ "$curVol" -eq $vol ]
