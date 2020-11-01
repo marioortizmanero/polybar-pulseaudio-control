@@ -400,7 +400,7 @@ while [[ "$1" = --* ]]; do
             AUTOSYNC=no
             ;;
         --color-muted|--colour-muted)
-            COLOR_MUTED="$val"
+            COLOR_MUTED="%{F#$val}"
             ;;
         --notifications)
             NOTIFICATIONS=yes
