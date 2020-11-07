@@ -316,10 +316,11 @@ function output() {
 
     # Showing the formatted message
     if [ "$isMuted" = "yes" ]; then
-    	VOL_ICON=$ICON_MUTED	    
-	echo "${COLOR_MUTED}$(eval echo "$FORMAT")${END_COLOR}"
+        # shellcheck disable=SC2034
+        VOL_ICON=$ICON_MUTED
+        echo "${COLOR_MUTED}$(eval echo "$FORMAT")${END_COLOR}"
     else
-	    echo "$(eval echo "$FORMAT")"
+        echo "$(eval echo "$FORMAT")"
     fi
 }
 
@@ -340,7 +341,10 @@ Options: [defaults]
   --icon-muted <icon>                   icon to use when muted [none]
   --icon-sink <icon>                    icon to use for sink [none]
   --format <string>                     use a format string to control the output
-  					[$FORMAT]
+                                        [$FORMAT]
+                                        Available variables: \$VOL_ICON,
+                                        \$VOL_LEVEL, \$ICON_SINK, and
+                                        \$SINK_NICKNAME
   --icons-volume <icon>[,<icon>...]     icons for volume, from lower to higher
                                         [none]
   --volume-max <int>                    maximum volume to which to allow
@@ -422,6 +426,7 @@ while [[ "$1" = --* ]]; do
             ICON_MUTED="$val"
             ;;
         --icon-sink)
+            # shellcheck disable=SC2034
             ICON_SINK="$val"
             ;;
         --icons-volume)
@@ -442,9 +447,9 @@ while [[ "$1" = --* ]]; do
         --sink-nickname)
             SINK_NICKNAMES["${val//:*/}"]="${val//*:}"
             ;;
-	--format)
+        --format)
 	    FORMAT="$val"
-	    ;;
+            ;;
         *)
             echo "Unrecognised option: $arg" >&2
             exit 1
