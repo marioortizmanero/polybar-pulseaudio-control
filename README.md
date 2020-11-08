@@ -62,6 +62,11 @@ Options: [defaults]
                                         [no]
   --icon-muted <icon>                   icon to use when muted [none]
   --icon-sink <icon>                    icon to use for sink [none]
+  --format <string>                     use a format string to control the output
+                                        [$VOL_ICON ${VOL_LEVEL}%  $ICON_SINK $SINK_NICKNAME]
+                                        Available variables: \$VOL_ICON,
+                                        \$VOL_LEVEL, \$ICON_SINK, and
+                                        \$SINK_NICKNAME
   --icons-volume <icon>[,<icon>...]     icons for volume, from lower to higher
                                         [none]
   --volume-max <int>                    maximum volume to which to allow
