@@ -15,6 +15,8 @@ OSD="no"
 SINK_NICKNAMES_PROP=
 VOLUME_STEP=2
 VOLUME_MAX=130
+# shellcheck disable=SC2016
+FORMAT='$VOL_ICON ${VOL_LEVEL}%  $ICON_SINK $SINK_NICKNAME'
 declare -A SINK_NICKNAMES
 declare -a ICONS_VOLUME
 declare -a SINK_BLACKLIST
@@ -32,9 +34,9 @@ function getCurSink() {
 }
 
 
-# Saves the sink passed by parameter's volume into a variable named `curVol`.
+# Saves the sink passed by parameter's volume into a variable named `VOL_LEVEL`.
 function getCurVol() {
-    curVol=$(pacmd list-sinks | grep -A 15 'index: '"$1"'' | grep 'volume:' | grep -E -v 'base volume:' | awk -F : '{print $3; exit}' | grep -o -P '.{0,3}%' | sed 's/.$//' | tr -d ' ')
+    VOL_LEVEL=$(pacmd list-sinks | grep -A 15 'index: '"$1"'' | grep 'volume:' | grep -E -v 'base volume:' | awk -F : '{print $3; exit}' | grep -o -P '.{0,3}%' | sed 's/.$//' | tr -d ' ')
 }
 
 
@@ -46,23 +48,23 @@ function getSinkName() {
 
 
 # Saves the name to be displayed for the sink passed by parameter into a
-# variable called `nickname`.
+# variable called `SINK_NICKNAME`.
 # If a mapping for the sink name exists, that is used. Otherwise, the string
 # "Sink #<index>" is used.
 function getNickname() {
     getSinkName "$1"
-    unset nickname
+    unset SINK_NICKNAME
 
     if [ -n "${SINK_NICKNAMES[$sinkName]}" ]; then
-        nickname="${SINK_NICKNAMES[$sinkName]}"
+        SINK_NICKNAME="${SINK_NICKNAMES[$sinkName]}"
     elif [ -n "$SINK_NICKNAMES_PROP" ]; then
         getNicknameFromProp "$SINK_NICKNAMES_PROP" "$sinkName"
         # Cache that result for next time
-        SINK_NICKNAMES["$sinkName"]="$nickname"
+        SINK_NICKNAMES["$sinkName"]="$SINK_NICKNAME"
     fi
 
-    if [ -z "$nickname" ]; then
-        nickname="Sink #$1"
+    if [ -z "$SINK_NICKNAME" ]; then
+        SINK_NICKNAME="Sink #$1"
     fi
 }
 
@@ -71,7 +73,7 @@ function getNicknameFromProp() {
     local nickname_prop="$1"
     local for_name="$2"
 
-    nickname=
+    SINK_NICKNAME=
     while read -r property value; do
         case "$property" in
             name:)
@@ -82,7 +84,7 @@ function getNicknameFromProp() {
                 if [ "$sink_name" != "$for_name" ]; then
                     continue
                 fi
-                nickname="${value:3:-1}"
+                SINK_NICKNAME="${value:3:-1}"
                 break
                 ;;
         esac
@@ -104,7 +106,7 @@ function getSinkInputs() {
 
 
 function volUp() {
-    # Obtaining the current volume from pacmd into $curVol.
+    # Obtaining the current volume from pacmd into $VOL_LEVEL.
     if ! getCurSink; then
         echo "PulseAudio not running"
         return 1
@@ -115,9 +117,9 @@ function volUp() {
     # Checking the volume upper bounds so that if VOLUME_MAX was 100% and the
     # increase percentage was 3%, a 99% volume would top at 100% instead
     # of 102%. If the volume is above the maximum limit, nothing is done.
-    if [ "$curVol" -le "$VOLUME_MAX" ] && [ "$curVol" -ge "$maxLimit" ]; then
+    if [ "$VOL_LEVEL" -le "$VOLUME_MAX" ] && [ "$VOL_LEVEL" -ge "$maxLimit" ]; then
         pactl set-sink-volume "$curSink" "$VOLUME_MAX%"
-    elif [ "$curVol" -lt "$maxLimit" ]; then
+    elif [ "$VOL_LEVEL" -lt "$maxLimit" ]; then
         pactl set-sink-volume "$curSink" "+$VOLUME_STEP%"
     fi
 
@@ -151,7 +153,7 @@ function volSync() {
     # Every output found in the active sink has their volume set to the
     # current one. This will only be called if $AUTOSYNC is `yes`.
     for each in $sinkInputs; do
-        pactl set-sink-input-volume "$each" "$curVol%"
+        pactl set-sink-input-volume "$each" "$VOL_LEVEL%"
     done
 }
 
@@ -242,7 +244,7 @@ function nextSink() {
         else
             notify="notify-send"
         fi
-        $notify "PulseAudio" "Changed output to $nickname" --icon=audio-headphones-symbolic &
+        $notify "PulseAudio" "Changed output to $SINK_NICKNAME" --icon=audio-headphones-symbolic &
     fi
 }
 
@@ -258,7 +260,7 @@ function showOSD() {
     fi
     getCurVol "$curSink"
     getIsMuted "$curSink"
-    qdbus org.kde.kded /modules/kosd showVolume "$curVol" "$isMuted"
+    qdbus org.kde.kded /modules/kosd showVolume "$VOL_LEVEL" "$isMuted"
 }
 
 
@@ -302,22 +304,24 @@ function output() {
     if [ "$iconsLen" -ne 0 ]; then
         local volSplit=$((VOLUME_MAX / iconsLen))
         for i in $(seq 1 "$iconsLen"); do
-            if [ $((i * volSplit)) -ge "$curVol" ]; then
-                volIcon="${ICONS_VOLUME[$((i-1))]}"
+            if [ $((i * volSplit)) -ge "$VOL_LEVEL" ]; then
+                VOL_ICON="${ICONS_VOLUME[$((i-1))]}"
                 break
             fi
         done
     else
-        volIcon=""
+        VOL_ICON=""
     fi
 
     getNickname "$curSink"
 
     # Showing the formatted message
     if [ "$isMuted" = "yes" ]; then
-        echo "${COLOR_MUTED}${ICON_MUTED}${curVol}%   ${ICON_SINK}${nickname}${END_COLOR}"
+        # shellcheck disable=SC2034
+        VOL_ICON=$ICON_MUTED
+        echo "${COLOR_MUTED}$(eval echo "$FORMAT")${END_COLOR}"
     else
-        echo "${volIcon}${curVol}%   ${ICON_SINK}${nickname}"
+        eval echo "$FORMAT"
     fi
 }
 
@@ -337,6 +341,11 @@ Options: [defaults]
                                         [$OSD]
   --icon-muted <icon>                   icon to use when muted [none]
   --icon-sink <icon>                    icon to use for sink [none]
+  --format <string>                     use a format string to control the output
+                                        Available variables: \$VOL_ICON,
+                                        \$VOL_LEVEL, \$ICON_SINK, and
+                                        \$SINK_NICKNAME
+                                        [$FORMAT]
   --icons-volume <icon>[,<icon>...]     icons for volume, from lower to higher
                                         [none]
   --volume-max <int>                    maximum volume to which to allow
@@ -418,6 +427,7 @@ while [[ "$1" = --* ]]; do
             ICON_MUTED="$val"
             ;;
         --icon-sink)
+            # shellcheck disable=SC2034
             ICON_SINK="$val"
             ;;
         --icons-volume)
@@ -437,6 +447,9 @@ while [[ "$1" = --* ]]; do
             ;;
         --sink-nickname)
             SINK_NICKNAMES["${val//:*/}"]="${val//*:}"
+            ;;
+        --format)
+	    FORMAT="$val"
             ;;
         *)
             echo "Unrecognised option: $arg" >&2

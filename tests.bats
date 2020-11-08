@@ -87,8 +87,8 @@ function setup() {
         if [ "$vol" -lt $VOLUME_MAX ]; then
             vol=$((vol + VOLUME_STEP))
         fi
-        echo "Real volume is $curVol, expected $vol"
-        [ "$curVol" -eq $vol ]
+        echo "Real volume is $VOL_LEVEL, expected $vol"
+        [ "$VOL_LEVEL" -eq $vol ]
     done
 }
 
@@ -108,8 +108,8 @@ function setup() {
         if [ "$vol" -gt 0 ]; then
             vol=$((vol - VOLUME_STEP))
         fi
-        echo "Real volume is $curVol, expected $vol"
-        [ "$curVol" -eq $vol ]
+        echo "Real volume is $VOL_LEVEL, expected $vol"
+        [ "$VOL_LEVEL" -eq $vol ]
     done
 }
 
@@ -168,7 +168,7 @@ function setup() {
     # Checking with an empty map.
     for i in {0..9}; do
         getNickname "$((i + offset))"
-        [ "$nickname" = "Sink #$((i + offset))" ]
+        [ "$SINK_NICKNAME" = "Sink #$((i + offset))" ]
     done
 
     # Populating part of the map.
@@ -176,10 +176,10 @@ function setup() {
     for i in {0..4}; do
         SINK_NICKNAMES["null-sink-$i"]="Null Sink $i"
         getNickname "$((i + offset))"
-        [ "$nickname" = "Null Sink $i" ]
+        [ "$SINK_NICKNAME" = "Null Sink $i" ]
     done
     for i in {5..9}; do
         getNickname "$((i + offset))"
-        [ "$nickname" = "Sink #$((i + offset))" ]
+        [ "$SINK_NICKNAME" = "Sink #$((i + offset))" ]
     done
 }
