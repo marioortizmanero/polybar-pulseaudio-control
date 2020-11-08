@@ -15,6 +15,7 @@ OSD="no"
 SINK_NICKNAMES_PROP=
 VOLUME_STEP=2
 VOLUME_MAX=130
+# shellcheck disable=SC2016
 FORMAT='$VOL_ICON ${VOL_LEVEL}%  $ICON_SINK $SINK_NICKNAME'
 declare -A SINK_NICKNAMES
 declare -a ICONS_VOLUME
@@ -320,7 +321,7 @@ function output() {
         VOL_ICON=$ICON_MUTED
         echo "${COLOR_MUTED}$(eval echo "$FORMAT")${END_COLOR}"
     else
-        echo "$(eval echo "$FORMAT")"
+        eval echo "$FORMAT"
     fi
 }
 
