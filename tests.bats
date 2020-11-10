@@ -182,4 +182,13 @@ function setup() {
         getNickname "$((i + offset))"
         [ "$SINK_NICKNAME" = "Sink #$((i + offset))" ]
     done
+
+    # Testing empty $sinkName.
+    # Observed to happen when a sink is removed (e.g. Bluetooth disconnect)
+    # possibly only with unlucky timing of when `getSinkName` runs. cf. #41
+    function getSinkName() {
+        sinkName=''
+    }
+    getNickname "$((10 + offset))" # beyond what exists
+    [ "$SINK_NICKNAME" = "Sink #$((10 + offset))" ]
 }
