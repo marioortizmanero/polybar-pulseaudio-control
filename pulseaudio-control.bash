@@ -55,9 +55,9 @@ function getNickname() {
     getSinkName "$1"
     unset SINK_NICKNAME
 
-    if [ -n "${SINK_NICKNAMES[$sinkName]}" ]; then
+    if [ -n "$sinkName" ] && [ -n "${SINK_NICKNAMES[$sinkName]}" ]; then
         SINK_NICKNAME="${SINK_NICKNAMES[$sinkName]}"
-    elif [ -n "$SINK_NICKNAMES_PROP" ]; then
+    elif [ -n "$sinkName" ] && [ -n "$SINK_NICKNAMES_PROP" ]; then
         getNicknameFromProp "$SINK_NICKNAMES_PROP" "$sinkName"
         # Cache that result for next time
         SINK_NICKNAMES["$sinkName"]="$SINK_NICKNAME"
