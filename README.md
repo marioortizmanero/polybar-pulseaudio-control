@@ -6,7 +6,7 @@ A feature-full volume control module for PulseAudio. Also known as Pavolume. Mai
 * Switch between sinks easily. You can also blacklist useless devices.
 * Optionally enable notifications and OSD messages.
 * Works as a shortcut to pavucontrol or your favorite audio manager tool.
-* Highly customizable: check the [Configuration](#configuration) section for details.
+* Highly customizable: check the [Usage](#usage) section for details.
 
 ![example](screenshots/example.png)
 
@@ -22,7 +22,7 @@ $ yay -S pulseaudio-control
 
 ### Other Linux
 
-Download the [bash script](https://github.com/marioortizmanero/polybar-pulseaudio-control/blob/master/pulseaudio-control.bash) from this repository, or extract it from [the latest release](https://github.com/marioortizmanero/polybar-pulseaudio-control/releases/latest), and put it somewhere on your `$PATH`.
+Download the [bash script](https://github.com/marioortizmanero/polybar-pulseaudio-control/blob/master/pulseaudio-control.bash) from this repository, or extract it from [the latest release](https://github.com/marioortizmanero/polybar-pulseaudio-control/releases/latest), and put it somewhere in your `$PATH`.
 
 #### Dependencies
 
