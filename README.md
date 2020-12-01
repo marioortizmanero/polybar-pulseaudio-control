@@ -107,7 +107,7 @@ See the [Module](#module) section for an example, or the [Useful icons](#useful-
 
 The example from the screenshot can:
 
-* Raise and decrease the volume on mousewheel scroll
+* Increase and decrease the volume on mousewheel scroll
 * Mute the audio on left click
 * Switch between devices on mousewheel click
 * Open `pavucontrol` on right click
@@ -132,8 +132,6 @@ scroll-up = pulseaudio-control --volume-max 130 up
 scroll-down = pulseaudio-control --volume-max 130 down
 ```
 
-*Note that you will have to change the paths above to where your script is saved. You might want to change or remove the colors and labels, too.*
-
 ## Useful icons
 
 Here's a list with some icons from different fonts you can copy-paste. Most have an space afterwards so that the module has a bit of spacing. They may appear bugged on your browser if the font isn't available there. Please add yours if they aren't in the list.
@@ -145,7 +143,7 @@ Here's a list with some icons from different fonts you can copy-paste. Most have
 | Emoji                                           | `"🔈 ,🔉 ,🔊 "` | `"🔇 "` | `"🔈 "` or `"🎧 "`         |
 | Emoji v2                                        | `"🕨 ,🕩 ,🕪 "`    | `"🔇 "` | `"🕨 "` or `"🎧 "`          |
 
-Most of these can be used after downloading a [Nerd Font](https://www.nerdfonts.com/) and including it in your Polybar config. For example:
+Most of these can be used after downloading a [Nerd Font](https://www.nerdfonts.com/) and including it in your [Polybar config](https://github.com/polybar/polybar/wiki/Fonts). For example:
 
 ```ini
 font-X = Font Awesome 5 Free: style=Solid: pixelsize=11
