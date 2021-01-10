@@ -20,6 +20,8 @@ jobs:
       steps:
         - uses: actions/checkout@v2
         - name: Install dependencies
-          run: sudo apt-get update && sudo apt-get install bats
+          run: |
+              sudo apt-get update
+              sudo apt-get install bats pulseaudio
         - name: Tests with Bats
           run: bats tests.bats
