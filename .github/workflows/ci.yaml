@@ -1,0 +1,15 @@
+name: Continuous Integration
+
+on:
+  pull_request:
+  push:
+    branches: master
+
+jobs:
+  linter:
+      name: ShellCheck
+      runs-on: ubuntu-20.04
+      steps:
+        - uses: actions/checkout@v2
+        - name: ShellCheck
+          uses: ludeeus/action-shellcheck@1.0.0
