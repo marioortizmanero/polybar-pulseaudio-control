@@ -44,7 +44,7 @@ function getCurVol() {
 # `sinkName`.
 function getSinkName() {
     sinkName=$(pactl list sinks short | awk -v sink="$1" '{ if ($1 == sink) {print $2} }')
-    portName=$(pacmd list-sinks | grep -e 'index' -e 'active port' | sed -n -e 's/<\(.*\)>/\1/' -e "/index: $curSink/,+1p" | awk '/active port:/{print $3}')
+    portName=$(pacmd list-sinks | grep -e 'index' -e 'active port' | sed -n -e 's/<\(.*\)>/\1/' -e "/index: $1/,+1p" | awk '/active port:/{print $3}')
 }
 
 
