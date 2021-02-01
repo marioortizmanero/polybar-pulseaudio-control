@@ -44,6 +44,7 @@ function getCurVol() {
 # `sinkName`.
 function getSinkName() {
     sinkName=$(pactl list sinks short | awk -v sink="$1" '{ if ($1 == sink) {print $2} }')
+    portName=$(pacmd list-sinks | grep -e 'index' -e 'active port' | sed -n -e 's/<\(.*\)>/\1/' -e "/index: $1/,+1p" | awk '/active port:/{print $3}')
 }
 
 
@@ -55,7 +56,9 @@ function getNickname() {
     getSinkName "$1"
     unset SINK_NICKNAME
 
-    if [ -n "$sinkName" ] && [ -n "${SINK_NICKNAMES[$sinkName]}" ]; then
+    if [ -n "$sinkName" ] && [ -n "$portName" ] && [ -n "${SINK_NICKNAMES[$sinkName/$portName]}" ]; then
+        SINK_NICKNAME="${SINK_NICKNAMES[$sinkName/$portName]}"
+    elif [ -n "$sinkName" ] && [ -n "${SINK_NICKNAMES[$sinkName]}" ]; then
         SINK_NICKNAME="${SINK_NICKNAMES[$sinkName]}"
     elif [ -n "$sinkName" ] && [ -n "$SINK_NICKNAMES_PROP" ]; then
         getNicknameFromProp "$SINK_NICKNAMES_PROP" "$sinkName"
