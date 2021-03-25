@@ -39,14 +39,14 @@ At a minimum, bash version 4 is required to run the script. You can check your b
 
 ## Usage
 
-`polybar-pulseaudio-control` is expected to be invoked from a [polybar](//github.com/polybar/polybar) module:
+`pulseaudio-control` is expected to be invoked from a [polybar](//github.com/polybar/polybar) module:
 ```ini
 [module/pulseaudio-control]
 type = custom/script
-exec = polybar-pulseaudio-control [option...] <action>
+exec = pulseaudio-control [option...] <action>
 ```
 
-where `action`, and (optionally) `option`s are as specified in `polybar-pulseaudio-control help`:
+where `action`, and (optionally) `option`s are as specified in `pulseaudio-control help`:
 
 ```
 Usage: ./pulseaudio-control.bash [OPTION...] ACTION
