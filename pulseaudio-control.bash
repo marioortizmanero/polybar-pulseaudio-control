@@ -29,14 +29,17 @@ LANGUAGE=en_US  # Some calls depend on English outputs of pactl
 # Saves the currently default sink into a variable named `curSink`. It will
 # return an error code when pulseaudio isn't running.
 function getCurSink() {
-    if ! pulseaudio --check; then return 1; fi
-    curSink=$(pacmd list-sinks | awk '/\* index:/{print $3}')
+    if ! pactl info &>/dev/null; then return 1; fi
+    local curSinkName
+
+    curSinkName=$(pactl info | awk '/Default Sink: / {print $3}')
+    curSink=$(pactl list sinks | grep -B 4 -E "Name: $curSinkName\$" | sed -nE 's/^Sink #([0-9]+)$/\1/p')
 }
 
 
 # Saves the sink passed by parameter's volume into a variable named `VOL_LEVEL`.
 function getCurVol() {
-    VOL_LEVEL=$(pacmd list-sinks | grep -A 15 'index: '"$1"'' | grep 'volume:' | grep -E -v 'base volume:' | awk -F : '{print $3; exit}' | grep -o -P '.{0,3}%' | sed 's/.$//' | tr -d ' ')
+    VOL_LEVEL=$(pactl list sinks | grep -A 15 -E "^Sink #$1\$" | grep 'Volume:' | grep -E -v 'Base Volume:'  | awk -F : '{print $3; exit}' | grep -o -P '.{0,3}%' | sed 's/.$//' | tr -d ' ')
 }
 
 
@@ -44,7 +47,7 @@ function getCurVol() {
 # `sinkName`.
 function getSinkName() {
     sinkName=$(pactl list sinks short | awk -v sink="$1" '{ if ($1 == sink) {print $2} }')
-    portName=$(pacmd list-sinks | grep -e 'index' -e 'active port' | sed -n -e 's/<\(.*\)>/\1/' -e "/index: $1/,+1p" | awk '/active port:/{print $3}')
+    portName=$(pactl list sinks | grep -e 'Sink #' -e 'Active Port: ' | sed -n "/^Sink #$1\$/,+1p" | awk '/Active Port: / {print $3}')
 }
 
 
@@ -79,8 +82,8 @@ function getNicknameFromProp() {
     SINK_NICKNAME=
     while read -r property value; do
         case "$property" in
-            name:)
-                sink_name="${value//[<>]/}"
+            Name:)
+                sink_name="$value"
                 unset sink_desc
                 ;;
             "$nickname_prop")
@@ -91,25 +94,25 @@ function getNicknameFromProp() {
                 break
                 ;;
         esac
-    done < <(pacmd list-sinks)
+    done < <(pactl list sinks)
 }
 
 # Saves the status of the sink passed by parameter into a variable named
 # `isMuted`.
 function getIsMuted() {
-    isMuted=$(pacmd list-sinks | grep -A 15 "index: $1" | awk '/muted/ {print $2; exit}')
+    isMuted=$(pactl list sinks | grep -E "^Sink #$1\$" -A 15 | awk '/Mute: / {print $2}')
 }
 
 
 # Saves all the sink inputs of the sink passed by parameter into a string
 # named `sinkInputs`.
 function getSinkInputs() {
-    sinkInputs=$(pacmd list-sink-inputs | grep -B 4 "sink: $1 " | awk '/index:/{print $2}')
+    sinkInputs=$(pactl list sink-inputs | grep -B 4 "Sink: $1" | sed -nE 's/^Sink Input #([0-9]+)$/\1/p')
 }
 
 
 function volUp() {
-    # Obtaining the current volume from pacmd into $VOL_LEVEL.
+    # Obtaining the current volume from pulseaudio into $VOL_LEVEL.
     if ! getCurSink; then
         echo "PulseAudio not running"
         return 1
@@ -230,13 +233,13 @@ function nextSink() {
     fi
 
     # The new sink is set
-    pacmd set-default-sink "$newSink"
+    pactl set-default-sink "$newSink"
 
     # Move all audio threads to new sink
     local inputs
     inputs="$(pactl list short sink-inputs | cut -f 1)"
     for i in $inputs; do
-        pacmd move-sink-input "$i" "$newSink"
+        pactl move-sink-input "$i" "$newSink"
     done
 
     if [ $NOTIFICATIONS = "yes" ]; then
@@ -356,11 +359,11 @@ Options: [defaults]
   --volume-step <int>                   step size when inc/decrementing volume
                                         [$VOLUME_STEP]
   --sink-blacklist <name>[,<name>...]   sinks to ignore when switching [none]
-  --sink-nicknames-from <prop>          pacmd property to use for sink names,
+  --sink-nicknames-from <prop>          pactl property to use for sink names,
                                         unless overriden by --sink-nickname.
                                         Its possible values are listed under
-                                        the 'properties' key in the output of
-                                        \`pacmd list-sinks\` [none]
+                                        the 'Properties' key in the output of
+                                        \`pactl list sinks\` [none]
   --sink-nickname <name>:<nick>         nickname to assign to given sink name,
                                         taking priority over
                                         --sink-nicknames-from. May be given

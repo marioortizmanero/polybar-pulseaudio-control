@@ -6,7 +6,9 @@
 # Simple test script to make sure the most basic functions in this script
 # always work as intended. The tests will modify the system's PulseAudio
 # setup until it's restarted, so either do that after running the test, or
-# launch the tests inside a container.
+# launch the tests inside a container (see the Dockerfile in the main
+# repository).
+#
 # The tests can be run with BATS. See the README.md for more info.
 
 function restartPulseaudio() {
@@ -42,9 +44,9 @@ function setup() {
 
     # Testing sink swapping with 8 sinks
     for i in {1..15}; do
-        pacmd load-module module-null-sink sink_name="null-sink-$i"
+        pactl load-module module-null-sink sink_name="null-sink-$i"
     done
-    pacmd set-default-sink 1
+    pactl set-default-sink 1
 
     # The blacklist has valid and invalid sinks. The switching will be in
     # the same order as the array.
@@ -160,7 +162,7 @@ function setup() {
     # Testing sink nicknames with 10 null sinks. Only a few of them will
     # have a name in the nickname map.
     for i in {0..9}; do
-        pacmd load-module module-null-sink sink_name="null-sink-$i"
+        pactl load-module module-null-sink sink_name="null-sink-$i"
     done
 
     unset SINK_NICKNAMES
