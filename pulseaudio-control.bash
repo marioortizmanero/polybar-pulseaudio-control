@@ -30,7 +30,9 @@ LANGUAGE=en_US  # Some calls depend on English outputs of pactl
 # return an error code when pulseaudio isn't running.
 function getCurSink() {
     if ! pactl info &>/dev/null; then return 1; fi
-    local curSinkName=$(pactl info | awk '/Default Sink: / {print $3}')
+    local curSinkName
+
+    curSinkName=$(pactl info | awk '/Default Sink: / {print $3}')
     curSink=$(pactl list sinks | grep -B 4 "Name: $curSinkName" | sed -nE 's/Sink #([0-9]+)/\1/p')
 }
 
