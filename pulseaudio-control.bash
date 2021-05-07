@@ -33,7 +33,7 @@ function getCurSink() {
     local curSinkName
 
     curSinkName=$(pactl info | awk '/Default Sink: / {print $3}')
-    curSink=$(pactl list sinks | grep -B 4 -E "^Name: $curSinkName\$" | sed -nE 's/^Sink #([0-9]+)$/\1/p')
+    curSink=$(pactl list sinks | grep -B 4 -E "Name: $curSinkName\$" | sed -nE 's/^Sink #([0-9]+)$/\1/p')
 }
 
 
