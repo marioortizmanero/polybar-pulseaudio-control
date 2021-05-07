@@ -10,6 +10,8 @@ A feature-full volume control module for PulseAudio. Also known as Pavolume. Mai
 
 ![example](screenshots/example.png)
 
+NOTE: this script works with PipeWire as well, as long as your system has something like [`pipewire-pulse`](https://archlinux.org/packages/extra/x86_64/pipewire-pulse/).
+
 
 ## Installation
 
