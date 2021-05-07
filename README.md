@@ -51,46 +51,62 @@ exec = pulseaudio-control [option...] <action>
 where `action`, and (optionally) `option`s are as specified in `pulseaudio-control help`:
 
 ```
-Usage: ./pulseaudio-control.bash [OPTION...] ACTION
+Usage: pulseaudio-control [OPTION...] ACTION
 
 Options: [defaults]
-  --autosync | --no-autosync            whether to maintain same volume for all
-                                        programs [no]
-  --color-muted <rrggbb>                color in which to format when muted
-                                        [6b6b6b]
-  --notifications | --no-notifications  whether to show notifications when
-                                        changing sinks [no]
-  --osd | --no-osd                      whether to display KDE's OSD message
-                                        [no]
-  --icon-muted <icon>                   icon to use when muted [none]
-  --icon-sink <icon>                    icon to use for sink [none]
-  --format <string>                     use a format string to control the output
-                                        Available variables: $VOL_ICON,
-                                        $VOL_LEVEL, $ICON_SINK, and
-                                        $SINK_NICKNAME
-                                        [$VOL_ICON ${VOL_LEVEL}%  $ICON_SINK $SINK_NICKNAME]
-  --icons-volume <icon>[,<icon>...]     icons for volume, from lower to higher
-                                        [none]
-  --volume-max <int>                    maximum volume to which to allow
-                                        increasing [130]
-  --volume-step <int>                   step size when inc/decrementing volume
-                                        [2]
-  --sink-blacklist <name>[,<name>...]   sinks to ignore when switching [none]
-  --sink-nicknames-from <prop>          pacmd property to use for sink names,
-                                        unless overriden by --sink-nickname.
-                                        Its possible values are listed under
-                                        the 'properties' key in the output of
-                                        `pacmd list-sinks` [none]
-  --sink-nickname <name>:<nick>         nickname to assign to given sink name,
-                                        taking priority over
-                                        --sink-nicknames-from. May be given
-                                        multiple times, and 'name' is exactly as
-                                        listed in the output of
-                                        `pactl list sinks short | cut -f2`
-                                        [none]
+  --autosync | --no-autosync
+        Whether to maintain same volume for all programs.
+        Default: no
+  --color-muted <rrggbb>
+        Color in which to format when muted.
+        Default: 6b6b6b
+  --notifications | --no-notifications
+        Whether to show notifications when changing sinks.
+        Default: no
+  --osd | --no-osd
+        Whether to display KDE's OSD message.
+        Default: no
+  --icon-muted <icon>
+        Icon to use when muted.
+        Default: none
+  --icon-sink <icon>
+        Icon to use for sink.
+        Default: none
+  --format <string>
+        Use a format string to control the output.
+        Available variables:
+        * $VOL_ICON
+        * $VOL_LEVEL
+        * $ICON_SINK
+        * $SINK_NICKNAME
+        Default: $VOL_ICON ${VOL_LEVEL}%  $ICON_SINK $SINK_NICKNAME
+  --icons-volume <icon>[,<icon>...]
+        Icons for volume, from lower to higher.
+        Default: none
+  --volume-max <int>
+        Maximum volume to which to allow increasing.
+        Default: 130
+  --volume-step <int>
+        Step size when inc/decrementing volume.
+        Default: 2
+  --sink-blacklist <name>[,<name>...]
+        Sinks to ignore when switching.
+        Default: none
+  --sink-nicknames-from <prop>
+        pactl property to use for sink names, unless overriden by
+        --sink-nickname. Its possible values are listed under the 'Properties'
+        key in the output of `pactl list sinks`
+        Default: none
+  --sink-nickname <name>:<nick>
+        Nickname to assign to given sink name, taking priority over
+        --sink-nicknames-from. May be given multiple times, and 'name' is
+        exactly as listed in the output of `pactl list sinks short | cut -f2`.
+        Note that you can also specify a port name for the sink with
+        `<name>/<port>`.
+        Default: none
 
 Actions:
-  help              display this help and exit
+  help              display this message and exit
   output            print the PulseAudio status once
   listen            listen for changes in PulseAudio to automatically update
                     this script's output
@@ -98,8 +114,8 @@ Actions:
   mute, unmute      mute or unmute the default sink's audio
   togmute           switch between muted and unmuted
   next-sink         switch to the next available sink
-  sync              synchronize all the output streams volume to be the same
-                    as the current sink's volume
+  sync              synchronize all the output streams volume to be the same as
+                    the current sink's volume
 ```
 
 See the [Module](#module) section for an example, or the [Useful icons](#useful-icons) section for some packs of icons.
