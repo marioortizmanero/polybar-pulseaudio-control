@@ -29,7 +29,7 @@ LANGUAGE=en_US  # Some calls depend on English outputs of pactl
 # Saves the currently default sink into a variable named `curSink`. It will
 # return an error code when pulseaudio isn't running.
 function getCurSink() {
-    if ! pulseaudio --check; then return 1; fi
+    if ! pactl info &>/dev/null; then return 1; fi
     curSink=$(pacmd list-sinks | awk '/\* index:/{print $3}')
 }
 
