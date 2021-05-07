@@ -159,4 +159,4 @@ Part of the script and of this README's info was taken from [customlinux.blogspo
 
 ## Development
 
-Any PRs and issues are welcome! The tests can be ran with `bats tests.bats`.
+Any PRs and issues are welcome! The tests can be ran with `bats tests.bats`, preferrably with the Dockerfile in this repository.

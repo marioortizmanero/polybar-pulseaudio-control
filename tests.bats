@@ -6,7 +6,9 @@
 # Simple test script to make sure the most basic functions in this script
 # always work as intended. The tests will modify the system's PulseAudio
 # setup until it's restarted, so either do that after running the test, or
-# launch the tests inside a container.
+# launch the tests inside a container (see the Dockerfile in the main
+# repository).
+#
 # The tests can be run with BATS. See the README.md for more info.
 
 function restartPulseaudio() {
