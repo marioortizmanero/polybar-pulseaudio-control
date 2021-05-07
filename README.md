@@ -10,8 +10,6 @@ A feature-full volume control module for PulseAudio. Also known as Pavolume. Mai
 
 ![example](screenshots/example.png)
 
-NOTE: this script works with PipeWire as well, as long as your system has something like [`pipewire-pulse`](https://archlinux.org/packages/extra/x86_64/pipewire-pulse/).
-
 
 ## Installation
 
@@ -28,7 +26,9 @@ Download the [bash script](https://github.com/marioortizmanero/polybar-pulseaudi
 
 #### Dependencies
 
-[`pulseaudio`](https://www.freedesktop.org/wiki/Software/PulseAudio/) with `pactl` and `pacmd` in your `$PATH`. You might want to have [`pavucontrol`](https://freedesktop.org/software/pulseaudio/pavucontrol/) installed to easily control pulseaudio with a GUI. The script can send notifications if enabled, for which you'll need a notification daemon like [`dunst`](https://github.com/dunst-project/dunst).
+[`pulseaudio`](https://www.freedesktop.org/wiki/Software/PulseAudio/) with `pactl` in your `$PATH`. You might want to have [`pavucontrol`](https://freedesktop.org/software/pulseaudio/pavucontrol/) installed to easily control pulseaudio with a GUI. The script can send notifications if enabled, for which you'll need a notification daemon like [`dunst`](https://github.com/dunst-project/dunst).
+
+This script works with PipeWire as well, as long as your system has something like [`pipewire-pulse`](https://archlinux.org/packages/extra/x86_64/pipewire-pulse/).
 
 To be able to switch the default sinks from this script you might need to disable stream target device restore by editing the corresponing line in `/etc/pulse/default.pa` to:
 
