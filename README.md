@@ -51,9 +51,9 @@ exec = pulseaudio-control [option...] <action>
 where `action`, and (optionally) `option`s are as specified in `pulseaudio-control help`:
 
 ```
-Usage: ./pulseaudio-control.bash [OPTION...] ACTION
+Usage: pulseaudio-control [OPTION...] ACTION
 
-Options:
+Options: [defaults]
   --autosync | --no-autosync
         Whether to maintain same volume for all programs.
         Default: no
@@ -61,16 +61,16 @@ Options:
         Color in which to format when muted.
         Default: 6b6b6b
   --notifications | --no-notifications
-        Whether to show notifications when changing sinks
+        Whether to show notifications when changing sinks.
         Default: no
   --osd | --no-osd
-        Whether to display KDE's OSD message
+        Whether to display KDE's OSD message.
         Default: no
   --icon-muted <icon>
         Icon to use when muted.
         Default: none
   --icon-sink <icon>
-        Icon to use for sink
+        Icon to use for sink.
         Default: none
   --format <string>
         Use a format string to control the output.
@@ -84,10 +84,10 @@ Options:
         Icons for volume, from lower to higher.
         Default: none
   --volume-max <int>
-        Maximum volume to which to allow increasing
+        Maximum volume to which to allow increasing.
         Default: 130
   --volume-step <int>
-        Step size when inc/decrementing volume
+        Step size when inc/decrementing volume.
         Default: 2
   --sink-blacklist <name>[,<name>...]
         Sinks to ignore when switching.

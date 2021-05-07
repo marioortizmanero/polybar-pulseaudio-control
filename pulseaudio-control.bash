@@ -337,44 +337,56 @@ function usage() {
 Usage: $0 [OPTION...] ACTION
 
 Options: [defaults]
-  --autosync | --no-autosync            
-        Whether to maintain same volume for all programs [$AUTOSYNC]
-  --color-muted <rrggbb>                
-        Color in which to format when muted [${COLOR_MUTED:4:-1}]
-  --notifications | --no-notifications  
-        Whether to show notifications when changing sinks [$NOTIFICATIONS]
-  --osd | --no-osd                      
-        Whether to display KDE's OSD message [$OSD]
-  --icon-muted <icon>                   
-        Icon to use when muted [none]
-  --icon-sink <icon>                    
-        Icon to use for sink [none]
-  --format <string>                     
+  --autosync | --no-autosync
+        Whether to maintain same volume for all programs.
+        Default: $AUTOSYNC
+  --color-muted <rrggbb>
+        Color in which to format when muted.
+        Default: ${COLOR_MUTED:4:-1}
+  --notifications | --no-notifications
+        Whether to show notifications when changing sinks.
+        Default: $NOTIFICATIONS
+  --osd | --no-osd
+        Whether to display KDE's OSD message.
+        Default: $OSD
+  --icon-muted <icon>
+        Icon to use when muted.
+        Default: none
+  --icon-sink <icon>
+        Icon to use for sink.
+        Default: none
+  --format <string>
         Use a format string to control the output.
         Available variables:
         * \$VOL_ICON
         * \$VOL_LEVEL
         * \$ICON_SINK
         * \$SINK_NICKNAME
-        [$FORMAT]
-  --icons-volume <icon>[,<icon>...]     
-        Icons for volume, from lower to higher [none]
-  --volume-max <int>                    
-        Maximum volume to which to allow increasing [$VOLUME_MAX]
-  --volume-step <int>                   
-        Step size when inc/decrementing volume [$VOLUME_STEP]
-  --sink-blacklist <name>[,<name>...]   
-        Sinks to ignore when switching [none]
-  --sink-nicknames-from <prop>          
+        Default: $FORMAT
+  --icons-volume <icon>[,<icon>...]
+        Icons for volume, from lower to higher.
+        Default: none
+  --volume-max <int>
+        Maximum volume to which to allow increasing.
+        Default: $VOLUME_MAX
+  --volume-step <int>
+        Step size when inc/decrementing volume.
+        Default: $VOLUME_STEP
+  --sink-blacklist <name>[,<name>...]
+        Sinks to ignore when switching.
+        Default: none
+  --sink-nicknames-from <prop>
         pactl property to use for sink names, unless overriden by
         --sink-nickname. Its possible values are listed under the 'Properties'
-        key in the output of \`pactl list sinks\` [none]
-  --sink-nickname <name>:<nick>         
+        key in the output of \`pactl list sinks\`
+        Default: none
+  --sink-nickname <name>:<nick>
         Nickname to assign to given sink name, taking priority over
         --sink-nicknames-from. May be given multiple times, and 'name' is
         exactly as listed in the output of \`pactl list sinks short | cut -f2\`.
         Note that you can also specify a port name for the sink with
-        \`<name>/<port>\`. [none]
+        \`<name>/<port>\`.
+        Default: none
 
 Actions:
   help              display this message and exit
