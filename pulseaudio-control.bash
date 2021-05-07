@@ -360,7 +360,7 @@ Options: [defaults]
   --sink-nicknames-from <prop>          pactl property to use for sink names,
                                         unless overriden by --sink-nickname.
                                         Its possible values are listed under
-                                        the 'properties' key in the output of
+                                        the 'Properties' key in the output of
                                         \`pactl list sinks\` [none]
   --sink-nickname <name>:<nick>         nickname to assign to given sink name,
                                         taking priority over
