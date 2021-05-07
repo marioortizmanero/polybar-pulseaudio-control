@@ -33,13 +33,13 @@ function getCurSink() {
     local curSinkName
 
     curSinkName=$(pactl info | awk '/Default Sink: / {print $3}')
-    curSink=$(pactl list sinks | grep -B 4 -E "Name: $curSinkName\$" | sed -nE 's/Sink #([0-9]+)/\1/p')
+    curSink=$(pactl list sinks | grep -B 4 -E "^Name: $curSinkName\$" | sed -nE 's/^Sink #([0-9]+)$/\1/p')
 }
 
 
 # Saves the sink passed by parameter's volume into a variable named `VOL_LEVEL`.
 function getCurVol() {
-    VOL_LEVEL=$(pactl list sinks | grep -A 15 -E "Sink #$1\$" | grep 'Volume:' | grep -E -v 'Base Volume:'  | awk -F : '{print $3; exit}' | grep -o -P '.{0,3}%' | sed 's/.$//' | tr -d ' ')
+    VOL_LEVEL=$(pactl list sinks | grep -A 15 -E "^Sink #$1\$" | grep 'Volume:' | grep -E -v 'Base Volume:'  | awk -F : '{print $3; exit}' | grep -o -P '.{0,3}%' | sed 's/.$//' | tr -d ' ')
 }
 
 
@@ -47,7 +47,7 @@ function getCurVol() {
 # `sinkName`.
 function getSinkName() {
     sinkName=$(pactl list sinks short | awk -v sink="$1" '{ if ($1 == sink) {print $2} }')
-    portName=$(pactl list sinks | grep -e 'Sink #' -e 'Active Port: ' | sed -n "/Sink #$1\$/,+1p" | awk '/Active Port: / {print $3}')
+    portName=$(pactl list sinks | grep -e 'Sink #' -e 'Active Port: ' | sed -n "/^Sink #$1\$/,+1p" | awk '/Active Port: / {print $3}')
 }
 
 
@@ -100,14 +100,14 @@ function getNicknameFromProp() {
 # Saves the status of the sink passed by parameter into a variable named
 # `isMuted`.
 function getIsMuted() {
-    isMuted=$(pactl list sinks | grep "Sink #$1" -A 15 | awk '/Mute: / {print $2}')
+    isMuted=$(pactl list sinks | grep -E "^Sink #$1\$" -A 15 | awk '/Mute: / {print $2}')
 }
 
 
 # Saves all the sink inputs of the sink passed by parameter into a string
 # named `sinkInputs`.
 function getSinkInputs() {
-    sinkInputs=$(pactl list sink-inputs | grep -B 4 "Sink: $1" | sed -nE 's/Sink Input #([0-9]+)/\1/p')
+    sinkInputs=$(pactl list sink-inputs | grep -B 4 "Sink: $1" | sed -nE 's/^Sink Input #([0-9]+)$/\1/p')
 }
 
 
