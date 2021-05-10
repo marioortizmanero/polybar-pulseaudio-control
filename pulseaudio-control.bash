@@ -22,8 +22,8 @@ declare -a ICONS_VOLUME
 declare -a SINK_BLACKLIST
 
 # Environment & global constants for the script
+export LANG=en_US  # Some calls depend on English outputs of pactl
 END_COLOR="%{F-}"  # For Polybar colors
-LANGUAGE=en_US  # Some calls depend on English outputs of pactl
 
 
 # Saves the currently default sink into a variable named `curSink`. It will
@@ -39,7 +39,7 @@ function getCurSink() {
 
 # Saves the sink passed by parameter's volume into a variable named `VOL_LEVEL`.
 function getCurVol() {
-    VOL_LEVEL=$(pactl list sinks | grep -A 15 -E "^Sink #$1\$" | grep 'Volume:' | grep -E -v 'Base Volume:'  | awk -F : '{print $3; exit}' | grep -o -P '.{0,3}%' | sed 's/.$//' | tr -d ' ')
+    VOL_LEVEL=$(pactl list sinks | grep -A 15 -E "^Sink #$1\$" | grep 'Volume:' | grep -E -v 'Base Volume:' | awk -F : '{print $3; exit}' | grep -o -P '.{0,3}%' | sed 's/.$//' | tr -d ' ')
 }
 
 
@@ -275,7 +275,7 @@ function listen() {
 
     # Listen for changes and immediately create new output for the bar.
     # This is faster than having the script on an interval.
-    LANG=$LANGUAGE pactl subscribe 2>/dev/null | {
+    pactl subscribe 2>/dev/null | {
         while true; do
             {
                 # If this is the first time just continue and print the current
