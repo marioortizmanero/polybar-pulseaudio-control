@@ -213,7 +213,7 @@ function nextSink() {
 
         sinks[$i]="$index"
         i=$((i + 1))
-    done < <(pactl list short sinks)
+    done < <(pactl list short sinks | sort -n)
 
     # If the resulting list is empty, nothing is done
     if [ ${#sinks[@]} -eq 0 ]; then return; fi
