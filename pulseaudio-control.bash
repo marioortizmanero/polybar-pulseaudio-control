@@ -336,7 +336,7 @@ function usage() {
     echo "\
 Usage: $0 [OPTION...] ACTION
 
-Options: [defaults]
+Options:
   --autosync | --no-autosync
         Whether to maintain same volume for all programs.
         Default: $AUTOSYNC

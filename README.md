@@ -53,7 +53,7 @@ where `action`, and (optionally) `option`s are as specified in `pulseaudio-contr
 ```
 Usage: pulseaudio-control [OPTION...] ACTION
 
-Options: [defaults]
+Options:
   --autosync | --no-autosync
         Whether to maintain same volume for all programs.
         Default: no
