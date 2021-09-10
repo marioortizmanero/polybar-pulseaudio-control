@@ -453,7 +453,7 @@ while [[ "$1" = --* ]]; do
             ICON_SINK="$val"
             ;;
         --icons-volume)
-            IFS=, read -r -a ICONS_VOLUME <<< "$val"
+            IFS=, read -r -a ICONS_VOLUME <<< "${val//[[:space:]]/}"
             ;;
         --volume-max)
             VOLUME_MAX="$val"
@@ -462,7 +462,7 @@ while [[ "$1" = --* ]]; do
             VOLUME_STEP="$val"
             ;;
         --sink-blacklist)
-            IFS=, read -r -a SINK_BLACKLIST <<< "$val"
+            IFS=, read -r -a SINK_BLACKLIST <<< "${val//[[:space:]]/}"
             ;;
         --sink-nicknames-from)
             SINK_NICKNAMES_PROP="$val"
