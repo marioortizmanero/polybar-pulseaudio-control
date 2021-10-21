@@ -22,7 +22,7 @@ declare -a ICONS_VOLUME
 declare -a SINK_BLACKLIST
 
 # Environment & global constants for the script
-export LANG=en_US  # Some calls depend on English outputs of pactl
+export LC_ALL=C  # Some calls depend on English outputs of pactl
 END_COLOR="%{F-}"  # For Polybar colors
 
 
