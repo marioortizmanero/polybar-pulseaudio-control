@@ -98,9 +98,9 @@ function getNicknameFromProp() {
 }
 
 # Saves the status of the sink passed by parameter into a variable named
-# `isMuted`.
+# `IS_MUTED`.
 function getIsMuted() {
-    isMuted=$(pactl list sinks | grep -E "^Sink #$1\$" -A 15 | awk '/Mute: / {print $2}')
+    IS_MUTED=$(pactl list sinks | grep -E "^Sink #$1\$" -A 15 | awk '/Mute: / {print $2}')
 }
 
 
@@ -172,7 +172,7 @@ function volMute() {
     fi
     if [ "$1" = "toggle" ]; then
         getIsMuted "$curSink"
-        if [ "$isMuted" = "yes" ]; then
+        if [ "$IS_MUTED" = "yes" ]; then
             pactl set-sink-mute "$curSink" "no"
         else
             pactl set-sink-mute "$curSink" "yes"
@@ -266,7 +266,7 @@ function showOSD() {
     fi
     getCurVol "$curSink"
     getIsMuted "$curSink"
-    qdbus org.kde.kded /modules/kosd showVolume "$VOL_LEVEL" "$isMuted"
+    qdbus org.kde.kded /modules/kosd showVolume "$VOL_LEVEL" "$IS_MUTED"
 }
 
 
@@ -322,7 +322,7 @@ function output() {
     getNickname "$curSink"
 
     # Showing the formatted message
-    if [ "$isMuted" = "yes" ]; then
+    if [ "$IS_MUTED" = "yes" ]; then
         # shellcheck disable=SC2034
         VOL_ICON=$ICON_MUTED
         echo "${COLOR_MUTED}$(eval echo "$FORMAT")${END_COLOR}"
@@ -362,6 +362,7 @@ Options:
         * \$VOL_LEVEL
         * \$ICON_SINK
         * \$SINK_NICKNAME
+        * \$IS_MUTED (yes/no)
         Default: $FORMAT
   --icons-volume <icon>[,<icon>...]
         Icons for volume, from lower to higher.

@@ -79,6 +79,7 @@ Options:
         * $VOL_LEVEL
         * $ICON_SINK
         * $SINK_NICKNAME
+        * $IS_MUTED (yes/no)
         Default: $VOL_ICON ${VOL_LEVEL}%  $ICON_SINK $SINK_NICKNAME
   --icons-volume <icon>[,<icon>...]
         Icons for volume, from lower to higher.
