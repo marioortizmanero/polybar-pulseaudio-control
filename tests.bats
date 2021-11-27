@@ -127,31 +127,31 @@ function setup() {
         volMute toggle
         getIsMuted "$curSink"
         if [ "$expected" = "no" ]; then expected="yes"; else expected="no"; fi
-        echo "Real status is '$isMuted', expected '$expected'"
-        [ "$isMuted" = "$expected" ]
+        echo "Real status is '$IS_MUTED', expected '$expected'"
+        [ "$IS_MUTED" = "$expected" ]
     done
 
     # Testing that muting once or more results in a muted sink
     volMute mute
     getIsMuted "$curSink"
-    [ "$isMuted" = "yes" ]
+    [ "$IS_MUTED" = "yes" ]
     volMute mute
     getIsMuted "$curSink"
-    [ "$isMuted" = "yes" ]
+    [ "$IS_MUTED" = "yes" ]
     volMute mute
     getIsMuted "$curSink"
-    [ "$isMuted" = "yes" ]
+    [ "$IS_MUTED" = "yes" ]
 
     # Same for unmuting
     volMute unmute
     getIsMuted "$curSink"
-    [ "$isMuted" = "no" ]
+    [ "$IS_MUTED" = "no" ]
     volMute unmute
     getIsMuted "$curSink"
-    [ "$isMuted" = "no" ]
+    [ "$IS_MUTED" = "no" ]
     volMute unmute
     getIsMuted "$curSink"
-    [ "$isMuted" = "no" ]
+    [ "$IS_MUTED" = "no" ]
 }
 
 
