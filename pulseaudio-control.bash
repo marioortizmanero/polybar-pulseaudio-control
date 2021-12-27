@@ -63,13 +63,23 @@ function getNickname() {
         SINK_NICKNAME="${SINK_NICKNAMES[$sinkName/$portName]}"
     elif [ -n "$sinkName" ] && [ -n "${SINK_NICKNAMES[$sinkName]}" ]; then
         SINK_NICKNAME="${SINK_NICKNAMES[$sinkName]}"
-    elif [ -n "$sinkName" ] && [ -n "$SINK_NICKNAMES_PROP" ]; then
+    elif [ -n "$sinkName" ]; then
+        # No exact match could be found, try a Glob Match
+        for glob in "${!SINK_NICKNAMES[@]}"; do
+            if [[ "$sinkName/$portName" == $glob ]] || [[ "$sinkName" == $glob ]]; then
+                SINK_NICKNAME="${SINK_NICKNAMES[$glob]}"
+                # Cache that result for next time
+                SINK_NICKNAMES["$sinkName"]="$SINK_NICKNAME"
+                break
+            fi
+        done
+    fi
+
+    if [ -z "$SINK_NICKNAME" ] && [ -n "$sinkName" ] && [ -n "$SINK_NICKNAMES_PROP" ]; then
         getNicknameFromProp "$SINK_NICKNAMES_PROP" "$sinkName"
         # Cache that result for next time
         SINK_NICKNAMES["$sinkName"]="$SINK_NICKNAME"
-    fi
-
-    if [ -z "$SINK_NICKNAME" ]; then
+    elif [ -z "$SINK_NICKNAME" ]; then
         SINK_NICKNAME="Sink #$1"
     fi
 }
