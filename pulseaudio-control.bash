@@ -66,6 +66,7 @@ function getNickname() {
     elif [ -n "$sinkName" ]; then
         # No exact match could be found, try a Glob Match
         for glob in "${!SINK_NICKNAMES[@]}"; do
+	    # shellcheck disable=SC2053 # Disable Shellcheck warning for Glob-Matching
             if [[ "$sinkName/$portName" == $glob ]] || [[ "$sinkName" == $glob ]]; then
                 SINK_NICKNAME="${SINK_NICKNAMES[$glob]}"
                 # Cache that result for next time
