@@ -339,16 +339,16 @@ Usage: $0 [OPTION...] ACTION
 Options:
   --autosync | --no-autosync
         Whether to maintain same volume for all programs.
-        Default: $AUTOSYNC
+        Default: \"$AUTOSYNC\"
   --color-muted <rrggbb>
         Color in which to format when muted.
-        Default: ${COLOR_MUTED:4:-1}
+        Default: \"${COLOR_MUTED:4:-1}\"
   --notifications | --no-notifications
         Whether to show notifications when changing sinks.
-        Default: $NOTIFICATIONS
+        Default: \"$NOTIFICATIONS\"
   --osd | --no-osd
         Whether to display KDE's OSD message.
-        Default: $OSD
+        Default: \"$OSD\"
   --icon-muted <icon>
         Icon to use when muted.
         Default: none
@@ -357,22 +357,25 @@ Options:
         Default: none
   --format <string>
         Use a format string to control the output.
+        Remember to pass this argument wrapped in single quotes (\`'\`) instead
+        of double quotes (\`\"\`) to avoid your shell from evaluating the
+        variables early.
         Available variables:
         * \$VOL_ICON
         * \$VOL_LEVEL
         * \$ICON_SINK
         * \$SINK_NICKNAME
         * \$IS_MUTED (yes/no)
-        Default: $FORMAT
+        Default: '$FORMAT'
   --icons-volume <icon>[,<icon>...]
         Icons for volume, from lower to higher.
         Default: none
   --volume-max <int>
         Maximum volume to which to allow increasing.
-        Default: $VOLUME_MAX
+        Default: \"$VOLUME_MAX\"
   --volume-step <int>
         Step size when inc/decrementing volume.
-        Default: $VOLUME_STEP
+        Default: \"$VOLUME_STEP\"
   --sink-blacklist <name>[,<name>...]
         Sinks to ignore when switching.
         Default: none
@@ -472,7 +475,13 @@ while [[ "$1" = --* ]]; do
             SINK_NICKNAMES["${val//:*/}"]="${val//*:}"
             ;;
         --format)
-	    FORMAT="$val"
+            FORMAT="$val"
+            ;;
+        # Undocumented because the `help` action already exists, but makes the
+        # help message more accessible.
+        --help)
+            usage
+            exit 0
             ;;
         *)
             echo "Unrecognised option: $arg" >&2
