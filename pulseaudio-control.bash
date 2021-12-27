@@ -66,7 +66,7 @@ function getNickname() {
     elif [ -n "$sinkName" ]; then
         # No exact match could be found, try a Glob Match
         for glob in "${!SINK_NICKNAMES[@]}"; do
-	    # shellcheck disable=SC2053 # Disable Shellcheck warning for Glob-Matching
+            # shellcheck disable=SC2053 # Disable Shellcheck warning for Glob-Matching
             if [[ "$sinkName/$portName" == $glob ]] || [[ "$sinkName" == $glob ]]; then
                 SINK_NICKNAME="${SINK_NICKNAMES[$glob]}"
                 # Cache that result for next time
@@ -401,6 +401,9 @@ Options:
         exactly as listed in the output of \`pactl list sinks short | cut -f2\`.
         Note that you can also specify a port name for the sink with
         \`<name>/<port>\`.
+        It is also possible to use glob matching to match sink and port names.
+        Exact matches are prioritized. Don't forget to quote the string when
+        using globs, to avoid unwanted shell glob extension.
         Default: none
 
 Actions:

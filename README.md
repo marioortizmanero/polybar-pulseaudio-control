@@ -104,6 +104,9 @@ Options:
         exactly as listed in the output of `pactl list sinks short | cut -f2`.
         Note that you can also specify a port name for the sink with
         `<name>/<port>`.
+        It is also possible to use glob matching to match sink and port names.
+        Exact matches are prioritized. Don't forget to quote the string when
+        using globs, to avoid unwanted shell glob extension.
         Default: none
 
 Actions:
