@@ -217,7 +217,8 @@ function nextSink() {
         # If it's in the blacklist, continue the main loop. Otherwise, add
         # it to the list.
         for sink in "${SINK_BLACKLIST[@]}"; do
-            if [ "$sink" = "$name" ]; then
+            # shellcheck disable=SC2053 # Disable Shellcheck warning for Glob-Matching
+            if [[ "$name" == $sink ]]; then
                 continue 2
             fi
         done
@@ -388,7 +389,9 @@ Options:
         Step size when inc/decrementing volume.
         Default: \"$VOLUME_STEP\"
   --sink-blacklist <name>[,<name>...]
-        Sinks to ignore when switching.
+        Sinks to ignore when switching. You can use globs. Don't forget to
+        quote the string when using globs, to avoid unwanted shell glob
+        extension.
         Default: none
   --sink-nicknames-from <prop>
         pactl property to use for sink names, unless overriden by

@@ -91,7 +91,9 @@ Options:
         Step size when inc/decrementing volume.
         Default: 2
   --sink-blacklist <name>[,<name>...]
-        Sinks to ignore when switching.
+        Sinks to ignore when switching. You can use globs. Don't forget to
+        quote the string when using globs, to avoid unwanted shell glob
+        extension.
         Default: none
   --sink-nicknames-from <prop>
         pactl property to use for sink names, unless overriden by
