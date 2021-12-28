@@ -63,13 +63,24 @@ function getNickname() {
         SINK_NICKNAME="${SINK_NICKNAMES[$sinkName/$portName]}"
     elif [ -n "$sinkName" ] && [ -n "${SINK_NICKNAMES[$sinkName]}" ]; then
         SINK_NICKNAME="${SINK_NICKNAMES[$sinkName]}"
-    elif [ -n "$sinkName" ] && [ -n "$SINK_NICKNAMES_PROP" ]; then
+    elif [ -n "$sinkName" ]; then
+        # No exact match could be found, try a Glob Match
+        for glob in "${!SINK_NICKNAMES[@]}"; do
+            # shellcheck disable=SC2053 # Disable Shellcheck warning for Glob-Matching
+            if [[ "$sinkName/$portName" == $glob ]] || [[ "$sinkName" == $glob ]]; then
+                SINK_NICKNAME="${SINK_NICKNAMES[$glob]}"
+                # Cache that result for next time
+                SINK_NICKNAMES["$sinkName"]="$SINK_NICKNAME"
+                break
+            fi
+        done
+    fi
+
+    if [ -z "$SINK_NICKNAME" ] && [ -n "$sinkName" ] && [ -n "$SINK_NICKNAMES_PROP" ]; then
         getNicknameFromProp "$SINK_NICKNAMES_PROP" "$sinkName"
         # Cache that result for next time
         SINK_NICKNAMES["$sinkName"]="$SINK_NICKNAME"
-    fi
-
-    if [ -z "$SINK_NICKNAME" ]; then
+    elif [ -z "$SINK_NICKNAME" ]; then
         SINK_NICKNAME="Sink #$1"
     fi
 }
@@ -206,7 +217,8 @@ function nextSink() {
         # If it's in the blacklist, continue the main loop. Otherwise, add
         # it to the list.
         for sink in "${SINK_BLACKLIST[@]}"; do
-            if [ "$sink" = "$name" ]; then
+            # shellcheck disable=SC2053 # Disable Shellcheck warning for Glob-Matching
+            if [[ "$name" == $sink ]]; then
                 continue 2
             fi
         done
@@ -377,7 +389,9 @@ Options:
         Step size when inc/decrementing volume.
         Default: \"$VOLUME_STEP\"
   --sink-blacklist <name>[,<name>...]
-        Sinks to ignore when switching.
+        Sinks to ignore when switching. You can use globs. Don't forget to
+        quote the string when using globs, to avoid unwanted shell glob
+        extension.
         Default: none
   --sink-nicknames-from <prop>
         pactl property to use for sink names, unless overriden by
@@ -390,6 +404,9 @@ Options:
         exactly as listed in the output of \`pactl list sinks short | cut -f2\`.
         Note that you can also specify a port name for the sink with
         \`<name>/<port>\`.
+        It is also possible to use glob matching to match sink and port names.
+        Exact matches are prioritized. Don't forget to quote the string when
+        using globs, to avoid unwanted shell glob extension.
         Default: none
 
 Actions:

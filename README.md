@@ -91,7 +91,9 @@ Options:
         Step size when inc/decrementing volume.
         Default: 2
   --sink-blacklist <name>[,<name>...]
-        Sinks to ignore when switching.
+        Sinks to ignore when switching. You can use globs. Don't forget to
+        quote the string when using globs, to avoid unwanted shell glob
+        extension.
         Default: none
   --sink-nicknames-from <prop>
         pactl property to use for sink names, unless overriden by
@@ -104,6 +106,9 @@ Options:
         exactly as listed in the output of `pactl list sinks short | cut -f2`.
         Note that you can also specify a port name for the sink with
         `<name>/<port>`.
+        It is also possible to use glob matching to match sink and port names.
+        Exact matches are prioritized. Don't forget to quote the string when
+        using globs, to avoid unwanted shell glob extension.
         Default: none
 
 Actions:
