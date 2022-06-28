@@ -427,23 +427,21 @@ More info on GitHub:
     https://github.com/marioortizmanero/polybar-pulseaudio-control"
 }
 
+function getArgVal() {
+    if [[ "$1" = *=* ]]; then
+        val="${1//*=/}"
+    else
+        val="$2"
+        shift
+    fi
+}
+
+# Parsing the options from the arguments
 while [[ "$1" = --* ]]; do
     unset arg
     unset val
-    if [[ "$1" = *=* ]]; then
-        arg="${1//=*/}"
-        val="${1//*=/}"
-        shift
-    else
-        arg="$1"
-        # Support space-separated values, but also value-less flags
-        if [[ "$2" != --* ]]; then
-            val="$2"
-            shift
-        fi
-        shift
-    fi
 
+    arg="$1"
     case "$arg" in
         --autosync)
             AUTOSYNC=yes
@@ -452,6 +450,7 @@ while [[ "$1" = --* ]]; do
             AUTOSYNC=no
             ;;
         --color-muted|--colour-muted)
+            getArgVal "$@"
             COLOR_MUTED="%{F#$val}"
             ;;
         --notifications)
@@ -467,31 +466,40 @@ while [[ "$1" = --* ]]; do
             OSD=no
             ;;
         --icon-muted)
+            getArgVal "$@"
             ICON_MUTED="$val"
             ;;
         --icon-sink)
+            getArgVal "$@"
             # shellcheck disable=SC2034
             ICON_SINK="$val"
             ;;
         --icons-volume)
+            getArgVal "$@"
             IFS=, read -r -a ICONS_VOLUME <<< "${val//[[:space:]]/}"
             ;;
         --volume-max)
+            getArgVal "$@"
             VOLUME_MAX="$val"
             ;;
         --volume-step)
+            getArgVal "$@"
             VOLUME_STEP="$val"
             ;;
         --sink-blacklist)
+            getArgVal "$@"
             IFS=, read -r -a SINK_BLACKLIST <<< "${val//[[:space:]]/}"
             ;;
         --sink-nicknames-from)
+            getArgVal "$@"
             SINK_NICKNAMES_PROP="$val"
             ;;
         --sink-nickname)
+            getArgVal "$@"
             SINK_NICKNAMES["${val//:*/}"]="${val//*:}"
             ;;
         --format)
+            getArgVal "$@"
             FORMAT="$val"
             ;;
         # Undocumented because the `help` action already exists, but makes the
@@ -505,8 +513,10 @@ while [[ "$1" = --* ]]; do
             exit 1
             ;;
     esac
+    shift
 done
 
+# Parsing the action from the arguments
 case "$1" in
     up)
         volUp
@@ -537,6 +547,9 @@ case "$1" in
         ;;
     help)
         usage
+        ;;
+    "")
+        echo "No action specified. Run \`$0 help\` for more information." >&2
         ;;
     *)
         echo "Unrecognised action: $1" >&2
