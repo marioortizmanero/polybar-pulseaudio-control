@@ -427,13 +427,14 @@ More info on GitHub:
     https://github.com/marioortizmanero/polybar-pulseaudio-control"
 }
 
-function getArgVal() {
+# Obtains the value for an option and returns 1 if no shift is needed.
+function getOptVal() {
     if [[ "$1" = *=* ]]; then
         val="${1//*=/}"
-    else
-        val="$2"
-        shift
+        return 1
     fi
+
+    val="$2"
 }
 
 # Parsing the options from the arguments
@@ -450,7 +451,7 @@ while [[ "$1" = --* ]]; do
             AUTOSYNC=no
             ;;
         --color-muted|--colour-muted)
-            getArgVal "$@"
+            if getOptVal "$@"; then shift; fi
             COLOR_MUTED="%{F#$val}"
             ;;
         --notifications)
@@ -466,40 +467,40 @@ while [[ "$1" = --* ]]; do
             OSD=no
             ;;
         --icon-muted)
-            getArgVal "$@"
+            if getOptVal "$@"; then shift; fi
             ICON_MUTED="$val"
             ;;
         --icon-sink)
-            getArgVal "$@"
+            if getOptVal "$@"; then shift; fi
             # shellcheck disable=SC2034
             ICON_SINK="$val"
             ;;
         --icons-volume)
-            getArgVal "$@"
+            if getOptVal "$@"; then shift; fi
             IFS=, read -r -a ICONS_VOLUME <<< "${val//[[:space:]]/}"
             ;;
         --volume-max)
-            getArgVal "$@"
+            if getOptVal "$@"; then shift; fi
             VOLUME_MAX="$val"
             ;;
         --volume-step)
-            getArgVal "$@"
+            if getOptVal "$@"; then shift; fi
             VOLUME_STEP="$val"
             ;;
         --sink-blacklist)
-            getArgVal "$@"
+            if getOptVal "$@"; then shift; fi
             IFS=, read -r -a SINK_BLACKLIST <<< "${val//[[:space:]]/}"
             ;;
         --sink-nicknames-from)
-            getArgVal "$@"
+            if getOptVal "$@"; then shift; fi
             SINK_NICKNAMES_PROP="$val"
             ;;
         --sink-nickname)
-            getArgVal "$@"
+            if getOptVal "$@"; then shift; fi
             SINK_NICKNAMES["${val//:*/}"]="${val//*:}"
             ;;
         --format)
-            getArgVal "$@"
+            if getOptVal "$@"; then shift; fi
             FORMAT="$val"
             ;;
         # Undocumented because the `help` action already exists, but makes the
