@@ -283,26 +283,18 @@ function showOSD() {
 
 
 function listen() {
-    local firstRun=0
+    # If this is the first time start by printing the current state. Otherwise,
+    # directly wait for events. This is to prevent the module being empty until
+    # an event occurs.
+    output
 
     # Listen for changes and immediately create new output for the bar.
     # This is faster than having the script on an interval.
-    pactl subscribe 2>/dev/null | {
-        while true; do
-            {
-                # If this is the first time just continue and print the current
-                # state. Otherwise wait for events. This is to prevent the
-                # module being empty until an event occurs.
-                if [ $firstRun -eq 0 ]; then
-                    firstRun=1
-                else
-                    read -r event || break
-                    # Avoid double events
-                    if ! echo "$event" | grep -e "on card" -e "on sink" -e "on server"; then
-                        continue
-                    fi
-                fi
-            } &>/dev/null
+    pactl subscribe 2>/dev/null | grep --line-buffered -e "on card" -e "on sink" -e "on server" | {
+        while read -r; do
+            # Read all stdin to flush unwanted pending events, i.e. if there are
+            # 15 events at the same time (100ms window), output is called once.
+            read -r -d '' -t 0.1 -n 10000
             output
         done
     }
