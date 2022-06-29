@@ -419,23 +419,22 @@ More info on GitHub:
     https://github.com/marioortizmanero/polybar-pulseaudio-control"
 }
 
+# Obtains the value for an option and returns 1 if no shift is needed.
+function getOptVal() {
+    if [[ "$1" = *=* ]]; then
+        val="${1//*=/}"
+        return 1
+    fi
+
+    val="$2"
+}
+
+# Parsing the options from the arguments
 while [[ "$1" = --* ]]; do
     unset arg
     unset val
-    if [[ "$1" = *=* ]]; then
-        arg="${1//=*/}"
-        val="${1//*=/}"
-        shift
-    else
-        arg="$1"
-        # Support space-separated values, but also value-less flags
-        if [[ "$2" != --* ]]; then
-            val="$2"
-            shift
-        fi
-        shift
-    fi
 
+    arg="$1"
     case "$arg" in
         --autosync)
             AUTOSYNC=yes
@@ -444,6 +443,7 @@ while [[ "$1" = --* ]]; do
             AUTOSYNC=no
             ;;
         --color-muted|--colour-muted)
+            if getOptVal "$@"; then shift; fi
             COLOR_MUTED="%{F#$val}"
             ;;
         --notifications)
@@ -459,31 +459,40 @@ while [[ "$1" = --* ]]; do
             OSD=no
             ;;
         --icon-muted)
+            if getOptVal "$@"; then shift; fi
             ICON_MUTED="$val"
             ;;
         --icon-sink)
+            if getOptVal "$@"; then shift; fi
             # shellcheck disable=SC2034
             ICON_SINK="$val"
             ;;
         --icons-volume)
+            if getOptVal "$@"; then shift; fi
             IFS=, read -r -a ICONS_VOLUME <<< "${val//[[:space:]]/}"
             ;;
         --volume-max)
+            if getOptVal "$@"; then shift; fi
             VOLUME_MAX="$val"
             ;;
         --volume-step)
+            if getOptVal "$@"; then shift; fi
             VOLUME_STEP="$val"
             ;;
         --sink-blacklist)
+            if getOptVal "$@"; then shift; fi
             IFS=, read -r -a SINK_BLACKLIST <<< "${val//[[:space:]]/}"
             ;;
         --sink-nicknames-from)
+            if getOptVal "$@"; then shift; fi
             SINK_NICKNAMES_PROP="$val"
             ;;
         --sink-nickname)
+            if getOptVal "$@"; then shift; fi
             SINK_NICKNAMES["${val//:*/}"]="${val//*:}"
             ;;
         --format)
+            if getOptVal "$@"; then shift; fi
             FORMAT="$val"
             ;;
         # Undocumented because the `help` action already exists, but makes the
@@ -497,8 +506,10 @@ while [[ "$1" = --* ]]; do
             exit 1
             ;;
     esac
+    shift
 done
 
+# Parsing the action from the arguments
 case "$1" in
     up)
         volUp
@@ -529,6 +540,9 @@ case "$1" in
         ;;
     help)
         usage
+        ;;
+    "")
+        echo "No action specified. Run \`$0 help\` for more information." >&2
         ;;
     *)
         echo "Unrecognised action: $1" >&2
