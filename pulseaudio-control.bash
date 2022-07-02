@@ -292,9 +292,16 @@ function listen() {
     # This is faster than having the script on an interval.
     pactl subscribe 2>/dev/null | grep --line-buffered -e "on card" -e "on sink" -e "on server" | {
         while read -r; do
+            # Output the new state
+            output
+
             # Read all stdin to flush unwanted pending events, i.e. if there are
-            # 15 events at the same time (100ms window), output is called once.
+            # 15 events at the same time (100ms window), output is only called
+            # twice.
             read -r -d '' -t 0.1 -n 10000
+
+            # After the 100ms waiting time, output again the state, as it may
+            # have changed if the user did an action during the 100ms window.
             output
         done
     }
