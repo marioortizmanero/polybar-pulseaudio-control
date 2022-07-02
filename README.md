@@ -179,7 +179,8 @@ format-underline = ${colors.cyan}
 label-padding = 2
 label-foreground = ${colors.foreground}
 
-exec = pulseaudio-control  --node-type input --icons-volume "" --icon-muted "" --node-nickname "alsa_output.pci-0000_0c_00.3.analog-stereo:  Webcam" --node-nickname "alsa_output.usb-Kingston_HyperX_Virtual_Surround_Sound_00000000-00.analog-stereo:  Headphones" listen
+# Use --node-blacklist to remove the unwanted PulseAudio .monitor that are child of sinks
+exec = pulseaudio-control  --node-type input --icons-volume "" --icon-muted "" --node-nickname "alsa_output.pci-0000_0c_00.3.analog-stereo:  Webcam" --node-nickname "alsa_output.usb-Kingston_HyperX_Virtual_Surround_Sound_00000000-00.analog-stereo:  Headphones" --node-blacklist "*.monitor" listen
 click-right = exec pavucontrol &
 click-left = pulseaudio-control --node-type input togmute
 click-middle = pulseaudio-control --node-type input next-node
