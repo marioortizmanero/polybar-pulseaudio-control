@@ -9,6 +9,7 @@
 # be displayed for users using it in custom FORMAT
 # shellcheck disable=SC2034
 ICON_SINK="Replaced by ICON_NODE, see https://github.com/marioortizmanero/polybar-pulseaudio-control/releases/tag/v3.0.0"
+SINK_NICKNAME="Replaced by NODE_NICKNAME, see https://github.com/marioortizmanero/polybar-pulseaudio-control/releases/tag/v3.0.0"
 
 # Defaults for configurable values, expected to be set by command-line arguments
 AUTOSYNC="no"
@@ -29,13 +30,16 @@ declare -a NODE_BLACKLIST
 
 # Special variable: within the script, pactl, grep, and awk commands are used
 # on sinks or sources, depending on NODE_TYPE.
+#
 # The commands are almost always the same, except for the sink/source part.
 # In order to reduce duplication, this variable is used for commands that behave
 # the same, regardless of the NODE_TYPE.
+#
 # Having only the "radix" (ink/ource) and omitting the first letter enables us
-# to use that single variable.
-# S-ink  , s-ink  , s-ink  -s, S-ink -s
-# S-ource, s-ource, s-ource-s, S-ource-s
+# to use that single variable:
+#
+#   S-ink  , s-ink  , s-ink  -s, S-ink -s
+#   S-ource, s-ource, s-ource-s, S-ource-s
 SINK_OR_SOURCE="ink"
 
 # Environment & global constants for the script
@@ -432,8 +436,8 @@ Options:
   --node-type <node_type>
         Whether to consider PulseAudio sinks (output) or sources (input).
         All the operations of pulseaudio-control will apply to one of the two.
-        Pass \`input\` for the sources, e.g. a microphone
-        Pass \`output\` for the sinks, e.g. speakers, headphones
+        Pass \`input\` for the sources, e.g. a microphone.
+        Pass \`output\` for the sinks, e.g. speakers, headphones.
         Default: \"$NODE_TYPE\"
   --volume-max <int>
         Maximum volume to which to allow increasing.
@@ -449,7 +453,7 @@ Options:
   --node-nicknames-from <prop>
         pactl property to use for node names, unless overriden by
         --node-nickname. Its possible values are listed under the 'Properties'
-        key in the output of \`pactl list sinks\` and \`pactl list sources\`
+        key in the output of \`pactl list sinks\` and \`pactl list sources\`.
         Default: none
   --node-nickname <name>:<nick>
         Nickname to assign to given node name, taking priority over

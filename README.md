@@ -92,8 +92,8 @@ Options:
   --node-type <node_type>
         Whether to consider PulseAudio sinks (output) or sources (input).
         All the operations of pulseaudio-control will apply to one of the two.
-        Pass `input` for the sources, e.g. a microphone
-        Pass `output` for the sinks, e.g. speakers, headphones
+        Pass `input` for the sources, e.g. a microphone.
+        Pass `output` for the sinks, e.g. speakers, headphones.
         Default: "output"
   --volume-max <int>
         Maximum volume to which to allow increasing.
@@ -109,7 +109,7 @@ Options:
   --node-nicknames-from <prop>
         pactl property to use for node names, unless overriden by
         --node-nickname. Its possible values are listed under the 'Properties'
-        key in the output of `pactl list sinks` and `pactl list sources`
+        key in the output of `pactl list sinks` and `pactl list sources`.
         Default: none
   --node-nickname <name>:<nick>
         Nickname to assign to given node name, taking priority over
@@ -189,14 +189,14 @@ scroll-down = pulseaudio-control --node-type input --volume-max 130 down
 
 ## Useful icons
 
-Here's a list with some icons from different fonts you can copy-paste. Most have an space afterwards so that the module has a bit of spacing. They may appear bugged on your browser if the font isn't available there. Please add yours if they aren't in the list.
+Here's a list with some icons from different fonts you can copy-paste. Most have a space afterwards so that the module has a bit of spacing. They may appear bugged on your browser if the font isn't available there. Please add yours if they aren't in the list.
 
-| Font name                                       | Volumes         | Muted            | Output icons               | Input icons   |
-| ----------------------------------------------- | :-------------: | :--------------: | :------------------------: | :-----------: |
-| [FontAwesome](https://fontawesome.com)          | `" , "`       | `" "` or `" "`  | `" "` or `" "`           | `", "`      |
-| [Material](https://material.io/resources/icons) | `" , , "`    | `" "` or `"󰍭 "` | `" "` or `" "` or `" "` | `"󰍬, 󰍮"`      |
-| Emoji                                           | `"🔈 ,🔉 ,🔊 "` | `"🔇 "`          | `"🔈 "` or `"🎧 "`         | `"🎙️ "`        |
-| Emoji v2                                        | `"🕨 ,🕩 ,🕪 "`    | `"🔇 "`          | `"🕨 "` or `"🎧 "`          | `"🎤 "`       |
+| Font name                                       | Volumes         | Muted            | Output icons               | Input icons |
+| ----------------------------------------------- | :-------------: | :--------------: | :------------------------: | :---------: |
+| [FontAwesome](https://fontawesome.com)          | `" , "`       | `" "` or `" "` | `" "` or `" "`           | `", "`    |
+| [Material](https://material.io/resources/icons) | `" , , "`    | `" "` or `"󰍭 "` | `" "` or `" "` or `" "` | `"󰍬, 󰍮"`    |
+| Emoji                                           | `"🔈 ,🔉 ,🔊 "` | `"🔇 "`          | `"🔈 "` or `"🎧 "`         | `"🎙️ "`      |
+| Emoji v2                                        | `"🕨 ,🕩 ,🕪 "`    | `"🔇 "`          | `"🕨 "` or `"🎧 "`          | `"🎤 "`     |
 
 Most of these can be used after downloading a [Nerd Font](https://www.nerdfonts.com/) and including it in your [Polybar config](https://github.com/polybar/polybar/wiki/Fonts). For example:
 
