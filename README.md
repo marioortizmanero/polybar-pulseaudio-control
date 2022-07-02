@@ -193,7 +193,7 @@ Here's a list with some icons from different fonts you can copy-paste. Most have
 
 | Font name                                       | Volumes         | Muted            | Output icons               | Input icons |
 | ----------------------------------------------- | :-------------: | :--------------: | :------------------------: | :---------: |
-| [FontAwesome](https://fontawesome.com)          | `" , "`       | `" "` or `" "` | `" "` or `" "`           | `", "`    |
+| [FontAwesome](https://fontawesome.com)          | `" , , "`    | `" "` or `" "` | `" "` or `" "` or ``    | `", "`    |
 | [Material](https://material.io/resources/icons) | `" , , "`    | `" "` or `"󰍭 "` | `" "` or `" "` or `" "` | `"󰍬, 󰍮"`    |
 | Emoji                                           | `"🔈 ,🔉 ,🔊 "` | `"🔇 "`          | `"🔈 "` or `"🎧 "`         | `"🎙️ "`      |
 | Emoji v2                                        | `"🕨 ,🕩 ,🕪 "`    | `"🔇 "`          | `"🕨 "` or `"🎧 "`          | `"🎤 "`     |
