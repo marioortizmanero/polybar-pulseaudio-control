@@ -338,15 +338,9 @@ function listen() {
     # an event occurs.
     output
 
-    if [[ "$NODE_TYPE" == "output" ]]; then
-        events_regex="on \(card\|sink\|server\|client\)"
-    else
-        events_regex="on \(card\|source\|server\|client\)"
-    fi
-
     # Listen for changes and immediately create new output for the bar.
     # This is faster than having the script on an interval.
-    pactl subscribe 2>/dev/null | grep --line-buffered -e "$events_regex" | {
+    pactl subscribe 2>/dev/null | grep --line-buffered -e "on \(card\|s${SINK_OR_SOURCE}\|server\)" | {
         while read -r; do
             # Output the new state
             output
