@@ -34,7 +34,7 @@ function setup() {
 }
 
 
-@test "nextSink()" {
+@test "nextNode()" {
     # This test will only work if there is currently only one sink. It's
     # kind of hardcoded to avoid excessive complexity.
     numSinks=$(pactl list short sinks | wc -l)
@@ -50,10 +50,10 @@ function setup() {
 
     # The blacklist has valid and invalid sinks. The switching will be in
     # the same order as the array.
-    # This test assumes that `getCurSink` works properly, and tries it 50
+    # This test assumes that `getCurNode` works properly, and tries it 50
     # times. The sink with ID zero must always be ignored, because it's
     # reserved to special sinks, and it might cause issues in the test.
-    SINK_BLACKLIST=(
+    NODE_BLACKLIST=(
         "null-sink-0"
         "null-sink-8"
         "null-sink-4"
@@ -67,10 +67,10 @@ function setup() {
     )
     local order=(1 3 5 6 7 9 11 12 14 15)
     for i in {1..50}; do
-        nextSink
-        getCurSink
-        echo "Real sink is $curSink, expected ${order[$((i % ${#order[@]}))]} at iteration $i"
-        [ "$curSink" -eq "${order[$((i % ${#order[@]}))]}" ]
+        nextNode
+        getCurNode
+        echo "Real sink is $curNode, expected ${order[$((i % ${#order[@]}))]} at iteration $i"
+        [ "$curNode" -eq "${order[$((i % ${#order[@]}))]}" ]
     done
 }
 
@@ -81,11 +81,11 @@ function setup() {
     VOLUME_MAX=350
     VOLUME_STEP=5
     local vol=0
-    getCurSink
-    pactl set-sink-volume "$curSink" "$vol%"
+    getCurNode
+    pactl set-sink-volume "$curNode" "$vol%"
     for i in {1..100}; do
         volUp
-        getCurVol "$curSink"
+        getCurVol "$curNode"
         if [ "$vol" -lt $VOLUME_MAX ]; then
             vol=$((vol + VOLUME_STEP))
         fi
@@ -102,11 +102,11 @@ function setup() {
     VOLUME_STEP=5
     # It shouldn't matter that the current volume exceeds the maximum volume
     local vol=375
-    getCurSink
-    pactl set-sink-volume "$curSink" "$vol%"
+    getCurNode
+    pactl set-sink-volume "$curNode" "$vol%"
     for i in {1..100}; do
         volDown
-        getCurVol "$curSink"
+        getCurVol "$curNode"
         if [ "$vol" -gt 0 ]; then
             vol=$((vol - VOLUME_STEP))
         fi
@@ -120,12 +120,12 @@ function setup() {
     # Very simple tests to make sure that volume muting works. The sink starts
     # muted, and its state is changed to check that the function doesn't fail.
     # First of all, the toggle mode is tested.
-    getCurSink
+    getCurNode
     local expected="no"
-    pactl set-sink-mute "$curSink" "$expected"
+    pactl set-sink-mute "$curNode" "$expected"
     for i in {1..50}; do
         volMute toggle
-        getIsMuted "$curSink"
+        getIsMuted "$curNode"
         if [ "$expected" = "no" ]; then expected="yes"; else expected="no"; fi
         echo "Real status is '$IS_MUTED', expected '$expected'"
         [ "$IS_MUTED" = "$expected" ]
@@ -133,24 +133,24 @@ function setup() {
 
     # Testing that muting once or more results in a muted sink
     volMute mute
-    getIsMuted "$curSink"
+    getIsMuted "$curNode"
     [ "$IS_MUTED" = "yes" ]
     volMute mute
-    getIsMuted "$curSink"
+    getIsMuted "$curNode"
     [ "$IS_MUTED" = "yes" ]
     volMute mute
-    getIsMuted "$curSink"
+    getIsMuted "$curNode"
     [ "$IS_MUTED" = "yes" ]
 
     # Same for unmuting
     volMute unmute
-    getIsMuted "$curSink"
+    getIsMuted "$curNode"
     [ "$IS_MUTED" = "no" ]
     volMute unmute
-    getIsMuted "$curSink"
+    getIsMuted "$curNode"
     [ "$IS_MUTED" = "no" ]
     volMute unmute
-    getIsMuted "$curSink"
+    getIsMuted "$curNode"
     [ "$IS_MUTED" = "no" ]
 }
 
@@ -165,32 +165,32 @@ function setup() {
         pactl load-module module-null-sink sink_name="null-sink-$i"
     done
 
-    unset SINK_NICKNAMES
-    declare -A SINK_NICKNAMES
+    unset NODE_NICKNAMES
+    declare -A NODE_NICKNAMES
     # Checking with an empty map.
     for i in {0..9}; do
         getNickname "$((i + offset))"
-        [ "$SINK_NICKNAME" = "Sink #$((i + offset))" ]
+        [ "$NODE_NICKNAME" = "Sink #$((i + offset))" ]
     done
 
     # Populating part of the map.
-    SINK_NICKNAMES["does-not-exist"]="null"
+    NODE_NICKNAMES["does-not-exist"]="null"
     for i in {0..4}; do
-        SINK_NICKNAMES["null-sink-$i"]="Null Sink $i"
+        NODE_NICKNAMES["null-sink-$i"]="Null Sink $i"
         getNickname "$((i + offset))"
-        [ "$SINK_NICKNAME" = "Null Sink $i" ]
+        [ "$NODE_NICKNAME" = "Null Sink $i" ]
     done
     for i in {5..9}; do
         getNickname "$((i + offset))"
-        [ "$SINK_NICKNAME" = "Sink #$((i + offset))" ]
+        [ "$NODE_NICKNAME" = "Sink #$((i + offset))" ]
     done
 
-    # Testing empty $sinkName.
+    # Testing empty $nodeName.
     # Observed to happen when a sink is removed (e.g. Bluetooth disconnect)
-    # possibly only with unlucky timing of when `getSinkName` runs. cf. #41
-    function getSinkName() {
-        sinkName=''
+    # possibly only with unlucky timing of when `getNodeName` runs. cf. #41
+    function getNodeName() {
+        nodeName=''
     }
     getNickname "$((10 + offset))" # beyond what exists
-    [ "$SINK_NICKNAME" = "Sink #$((10 + offset))" ]
+    [ "$NODE_NICKNAME" = "Sink #$((10 + offset))" ]
 }
