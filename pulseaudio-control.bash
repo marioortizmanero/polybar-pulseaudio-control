@@ -22,6 +22,7 @@ OSD="no"
 NODE_NICKNAMES_PROP=
 VOLUME_STEP=2
 VOLUME_MAX=130
+LISTEN_TIMEOUT=0.1
 # shellcheck disable=SC2016
 FORMAT='$VOL_ICON ${VOL_LEVEL}%  $ICON_NODE $NODE_NICKNAME'
 declare -A NODE_NICKNAMES
@@ -348,7 +349,7 @@ function listen() {
             # Read all stdin to flush unwanted pending events, i.e. if there are
             # 15 events at the same time (100ms window), output is only called
             # twice.
-            read -r -d '' -t 0.1 -n 10000
+            read -r -d '' -t "$LISTEN_TIMEOUT" -n 10000
 
             # After the 100ms waiting time, output again the state, as it may
             # have changed if the user did an action during the 100ms window.
@@ -466,6 +467,17 @@ Options:
         Exact matches are prioritized. Don't forget to quote the string when
         using globs, to avoid unwanted shell glob extension.
         Default: none
+  --listen-timeout-secs
+        The listen command updates the output as soon as it receives an event
+        from PulseAudio. However, events are often accompanied by many other
+        useless ones, which may result in unnecessary consecutive output
+        updates. This script buffers the following events until a timeout is
+        reached to avoid this scenario, which lessens the CPU load on events.
+        However, this may result in noticeable latency when performing many
+        actions quickly (e.g., updating the volume with the mouse wheel). You
+        can specify what timeout to use to control the responsiveness, in
+        seconds.
+        Default: \"$LISTEN_TIMEOUT\"
 
 Actions:
   help              display this message and exit
@@ -569,6 +581,10 @@ while [[ "$1" = --* ]]; do
             fi
             NODE_TYPE="$val"
             SINK_OR_SOURCE=$([ "$NODE_TYPE" == "output" ] && echo "ink" || echo "ource")
+            ;;
+        --listen-timeout-secs)
+            if getOptVal "$@"; then shift; fi
+            LISTEN_TIMEOUT="$val"
             ;;
         # Deprecated options, to be removed in a next release
         --icon-sink)
