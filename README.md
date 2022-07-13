@@ -122,6 +122,17 @@ Options:
         Exact matches are prioritized. Don't forget to quote the string when
         using globs, to avoid unwanted shell glob extension.
         Default: none
+  --listen-timeout-secs
+        The listen command updates the output as soon as it receives an event
+        from PulseAudio. However, events are often accompanied by many other
+        useless ones, which may result in unnecessary consecutive output
+        updates. This script buffers the following events until a timeout is
+        reached to avoid this scenario, which lessens the CPU load on events.
+        However, this may result in noticeable latency when performing many
+        actions quickly (e.g., updating the volume with the mouse wheel). You
+        can specify what timeout to use to control the responsiveness, in
+        seconds.
+        Default: "0.05"
 
 Actions:
   help              display this message and exit
