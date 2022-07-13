@@ -207,6 +207,55 @@ font-Y = Font Awesome 5 Brands: pixelsize=11
 font-Z = Material Icons: style=Regular: pixelsize=13; 2
 ```
 
+## FAQ
+
+### Can I use this with a status bar other than Polybar?
+
+The only part of this script that's tied to Polybar is the color formatting.
+When muted, the dimmed color will probably not work. Please [let us know in this
+issue](https://github.com/marioortizmanero/polybar-pulseaudio-control/issues/36)
+if you want support for a new status bar. I'd strongly recommend you to open a
+PR yourself, as it should be relatively easy!
+
+### Does this work with PipeWire?
+
+Yes! You only need to install the pulseaudio client on your machine. On Arch
+Linux, that's
+[`pipewire-pulse`](https://archlinux.org/packages/extra/x86_64/pipewire-pulse/),
+for example.
+
+It won't work with other audio servers like JACK, though.
+
+### This script uses too much CPU
+
+We use the `pactl subscribe` command to get notified of new events that may
+occur in order to refresh the output. However, the command often outputs *a lot*
+of events for a simple action, like increasing the volume. Instead of refreshing
+for every single line it prints, we:
+
+1. Wait for one event
+2. Update the output first
+3. Continue to listen for events until a timeout ends, or until we reach a large
+   enough number of them
+4. Update the output again
+5. Go back to step 1
+
+This way, the first event will update quickly, and the following ones, which are
+most likely unnecessary, will be ignored until some time passes. This reduces
+the CPU usage, but it's not really perfect, as everyone percieves latency
+differently, and it depends on the use-case.
+
+The timer can be configured with `--listen-timeout-secs`, which has a default
+value of `0.05` (50 ms). If you want less CPU usage, i.e., ignore more duplicate
+events, you can bump it to, for example, `0.1` (100 ms). Or for faster refreshes
+when performing multiple actions quickly, e.g., updating the volume with your
+mousewheel, you can even use a smaller value.
+
+### This script feels laggy when performing multiple actions quickly
+
+Please refer to the previous question, as you can fix this by setting a smaller
+refresh delay with `--listen-timeout-secs`.
+
 ## Sources
 
 Part of the script and of this README's info was taken from [customlinux.blogspot.com](http://customlinux.blogspot.com/2013/02/pavolumesh-control-active-sink-volume.html), the creator. It was later adapted to fit polybar. It is also mixed with [the ArcoLinux version](https://github.com/arcolinux/arcolinux-polybar/blob/master/etc/skel/.config/polybar/scripts/pavolume.sh), which implemented the `listen` action to use less resources.
