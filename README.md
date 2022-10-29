@@ -134,6 +134,25 @@ Options:
         can specify what timeout to use to control the responsiveness, in
         seconds.
         Default: "0.05"
+  --icons-bluetooth-battery <icon>[,<icon>...]
+        Icons for battery level of connected bluetooth headphones.
+        If no icons are provided, the feature is disabled.
+        Requires bluez experimental features to be enabled.
+        For details, see:
+          https://wiki.archlinux.org/title/Bluetooth_headset
+        Default: none
+  --hide-bluetooth-battery-level
+        Hide the integer battery level representation.
+        Requires bluez experimental features to be enabled.
+        For details, see:
+          https://wiki.archlinux.org/title/Bluetooth_headset
+        Default: none
+  --battery-max <int>
+        Set the maximum device battery level.
+        Requires bluez experimental features to be enabled.
+        For details, see:
+          https://wiki.archlinux.org/title/Bluetooth_headset
+        Default: \"$BAT_MAX\"
 
 Actions:
   help              display this message and exit

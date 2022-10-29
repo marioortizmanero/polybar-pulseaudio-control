@@ -1,8 +1,8 @@
 #!/usr/bin/env bats
 # vim: filetype=sh
-# 
+#
 # Polybar PulseAudio Control - tests.bats
-# 
+#
 # Simple test script to make sure the most basic functions in this script
 # always work as intended. The tests will modify the system's PulseAudio
 # setup until it's restarted, so either do that after running the test, or
@@ -31,6 +31,10 @@ function setup() {
     restartPulseaudio
     echo "Loading script"
     source pulseaudio-control.bash output &>/dev/null
+
+    # In case there's a Bluetooth device connected, 3 seconds are well enough
+    # to reestalish the connection after restarting PulseAudio.
+    sleep 3
 }
 
 
@@ -193,4 +197,20 @@ function setup() {
     }
     getNickname "$((10 + offset))" # beyond what exists
     [ "$NODE_NICKNAME" = "Sink #$((10 + offset))" ]
+}
+
+
+@test "getCurCharge()" {
+    getCurNode
+    getCurCharge "$curNode"
+
+    local bluetoothIsExperimental=$(grep -Eo "$BLUETOOTH_EXPERIMENTAL_REGEX" "$BLUETOOTH_CONFIG")
+    local bluetoothDeviceMac=$(echo "$nodeName" | sed -e 's/^[a-z_]*\.//' -e 's/\..*$//' | tr '_' ':')
+
+    if [ "$bluetoothIsExperimental" ] && [ "$bluetoothDeviceMac" ]; then
+        local expectedBatLevel=$(bluetoothctl info "$bluetoothDeviceMac" | grep Battery | sed -E 's/.*\((.*)\)/\1/')
+        [ "$BAT_LEVEL" == "$expectedBatLevel" ]
+    else
+        [ "$BAT_LEVEL" == '' ]
+    fi
 }
