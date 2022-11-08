@@ -61,6 +61,7 @@ Options:
         Default: "no"
   --color-muted <rrggbb>
         Color in which to format when muted.
+        Pass empty string to disable.
         Default: "6b6b6b"
   --notifications | --no-notifications
         Whether to show notifications when changing nodes.
