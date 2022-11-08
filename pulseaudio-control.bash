@@ -22,11 +22,13 @@ OSD="no"
 NODE_NICKNAMES_PROP=
 VOLUME_STEP=2
 VOLUME_MAX=130
+BAT_MAX=100
 LISTEN_TIMEOUT=0.05
 # shellcheck disable=SC2016
-FORMAT='$VOL_ICON ${VOL_LEVEL}%  $ICON_NODE $NODE_NICKNAME'
+FORMAT='$VOL_ICON ${VOL_LEVEL}% $ICON_NODE $NODE_NICKNAME $BAT_ICON ${BAT_LEVEL}${B_PERC}'
 declare -A NODE_NICKNAMES
 declare -a ICONS_VOLUME
+declare -a ICONS_BLUETOOTH_BATTERY
 declare -a NODE_BLACKLIST
 
 # Special variable: within the script, pactl, grep, and awk commands are used
@@ -46,6 +48,8 @@ SINK_OR_SOURCE="ink"
 # Environment & global constants for the script
 export LC_ALL=C  # Some calls depend on English outputs of pactl
 END_COLOR="%{F-}"  # For Polybar colors
+BLUETOOTH_CONFIG="/etc/bluetooth/main.conf" # For Bluetooth configuration file.
+IS_EXPERIMENTAL="^Experimental = true" # Regex to tell whether battery level can be fetched.
 
 
 # Saves the currently default node into a variable named `curNode`. It will
@@ -72,6 +76,11 @@ function getNodeName() {
     portName=$(pactl list s${SINK_OR_SOURCE}s | grep -e "S${SINK_OR_SOURCE} #" -e 'Active Port: ' | sed -n "/^S${SINK_OR_SOURCE} #$1\$/,+1p" | awk '/Active Port: / {print $3}')
 }
 
+# Saves the current battery level of connected Bluetooth headphones
+# into a variable named `BAT_LEVEL`.
+function getCurCharge() {
+    BAT_LEVEL=$(bluetoothctl info $1 | grep Battery | sed -E 's/.*\((.*)\)/\1/')  
+}
 
 # Saves the name to be displayed for the node passed by parameter into a
 # variable called `NODE_NICKNAME`.
@@ -383,6 +392,37 @@ function output() {
 
     getNickname "$curNode"
 
+    if [[ $(grep -Eo "$IS_EXPERIMENTAL" "$BLUETOOTH_CONFIG") ]]; then
+        local deviceMac=$(pactl list sinks | grep -m 1 -A 17 "$nodeName" | grep -Eo '(..:){5}..')
+        if [[ ! -z "$deviceMac" ]]; then
+            getCurCharge "$deviceMac"
+            local iconsLen=${#ICONS_BLUETOOTH_BATTERY[@]}
+            if [ "$iconsLen" -ne 0 ]; then
+                local batSplit=$((BAT_MAX / iconsLen))
+                for i in $(seq 1 "$iconsLen"); do
+                    if [ $((i * batSplit)) -ge "$BAT_LEVEL" ]; then
+                        BAT_ICON="${ICONS_BLUETOOTH_BATTERY[$((i-1))]}"
+                        break
+                    fi
+                done
+                B_PERC="%"
+            else 
+                BAT_ICON=""
+                BAT_LEVEL=""
+                B_PERC=""
+            fi
+        else
+            BAT_ICON=""
+            BAT_LEVEL=""
+            B_PERC=""
+        fi
+    fi
+
+    if [ "$HIDE_BAT" = "yes" ]; then
+        BAT_LEVEL=""
+        B_PERC=""
+    fi
+
     # Showing the formatted message
     if [ "$IS_MUTED" = "yes" ]; then
         # shellcheck disable=SC2034
@@ -484,6 +524,25 @@ Options:
         can specify what timeout to use to control the responsiveness, in
         seconds.
         Default: \"$LISTEN_TIMEOUT\"
+  --icons-bluetooth-battery <icon>[,<icon>...]
+        Icons for battery level of connected bluetooth headphones.
+        If no icons are provided, the feature is disabled.
+        Requires bluez experimental features to be enabled.
+        For details, see:
+          https://wiki.archlinux.org/title/Bluetooth_headset
+        Default: none
+  --hide-bluetooth-battery-level 
+        Hide the integer battery level representation.
+        Requires bluez experimental features to be enabled.
+        For details, see:
+          https://wiki.archlinux.org/title/Bluetooth_headset
+        Default: none
+  --battery-max <int>
+        Set the maximum device battery level.
+        Requires bluez experimental features to be enabled.
+        For details, see:
+          https://wiki.archlinux.org/title/Bluetooth_headset
+        Default: \"$BAT_MAX\"
 
 Actions:
   help              display this message and exit
@@ -550,6 +609,17 @@ while [[ "$1" = --* ]]; do
             if getOptVal "$@"; then shift; fi
             # shellcheck disable=SC2034
             ICON_NODE="$val"
+            ;;
+        --hide-bluetooth-battery-level)
+            HIDE_BAT=yes
+            ;;
+        --icons-bluetooth-battery)
+            if getOptVal "$@"; then shift; fi
+            IFS=, read -r -a ICONS_BLUETOOTH_BATTERY <<< "${val//[[:space:]]/}"
+            ;;
+        --battery-max)
+            if getOptVal "$@"; then shift; fi
+            BAT_MAX="$val"
             ;;
         --icons-volume)
             if getOptVal "$@"; then shift; fi
