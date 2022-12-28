@@ -25,7 +25,7 @@ VOLUME_MAX=130
 BAT_MAX=100
 LISTEN_TIMEOUT=0.05
 # shellcheck disable=SC2016
-FORMAT='$VOL_ICON ${VOL_LEVEL}% $ICON_NODE $NODE_NICKNAME $BAT_ICON ${BAT_LEVEL}${B_PERC}'
+FORMAT='$VOL_ICON ${VOL_LEVEL}%  $ICON_NODE $NODE_NICKNAME'
 declare -A NODE_NICKNAMES
 declare -a ICONS_VOLUME
 declare -a ICONS_BLUETOOTH_BATTERY
@@ -48,8 +48,8 @@ SINK_OR_SOURCE="ink"
 # Environment & global constants for the script
 export LC_ALL=C  # Some calls depend on English outputs of pactl
 END_COLOR="%{F-}"  # For Polybar colors
-BLUETOOTH_CONFIG="/etc/bluetooth/main.conf" # For Bluetooth configuration file.
-IS_EXPERIMENTAL="^Experimental = true" # Regex to tell whether battery level can be fetched.
+BLUETOOTH_CONFIG="/etc/bluetooth/main.conf" # For Bluetooth configuration file
+BLUETOOTH_EXPERIMENTAL_REGEX="^Experimental = true" # Regex to tell whether battery level can be fetched
 
 
 # Saves the currently default node into a variable named `curNode`. It will
@@ -76,11 +76,22 @@ function getNodeName() {
     portName=$(pactl list s${SINK_OR_SOURCE}s | grep -e "S${SINK_OR_SOURCE} #" -e 'Active Port: ' | sed -n "/^S${SINK_OR_SOURCE} #$1\$/,+1p" | awk '/Active Port: / {print $3}')
 }
 
-# Saves the current battery level of connected Bluetooth headphones
-# into a variable named `BAT_LEVEL`.
+
+# Saves the current battery level of a connected Bluetooth device for the node
+# passed by parameter into a variable named `BAT_LEVEL`.
+# If a node is not a Bluetooth device, `BAT_LEVEL` would be an empty string.
+# Requires bluez experimental features to be enabled.
+# For details, see: https://wiki.archlinux.org/title/Bluetooth_headset
 function getCurCharge() {
-    BAT_LEVEL=$(bluetoothctl info $1 | grep Battery | sed -E 's/.*\((.*)\)/\1/')  
+    local bluetoothIsExperimental=$(grep -Eo "$BLUETOOTH_EXPERIMENTAL_REGEX" "$BLUETOOTH_CONFIG")
+    if [ "$bluetoothIsExperimental" ]; then
+        getNodeName "$1"
+
+        local bluetoothDeviceMac=$(echo "$nodeName" | sed -e 's/^[a-z_]*\.//' -e 's/\..*$//' | tr '_' ':')
+        BAT_LEVEL=$(bluetoothctl info "$bluetoothDeviceMac" | grep Battery | sed -E 's/.*\((.*)\)/\1/')  
+    fi
 }
+
 
 # Saves the name to be displayed for the node passed by parameter into a
 # variable called `NODE_NICKNAME`.
@@ -391,45 +402,33 @@ function output() {
     fi
 
     getNickname "$curNode"
+    getCurCharge "$curNode"
 
-    if [[ $(grep -Eo "$IS_EXPERIMENTAL" "$BLUETOOTH_CONFIG") ]]; then
-        local deviceMac=$(pactl list sinks | grep -m 1 -A 17 "$nodeName" | grep -Eo '(..:){5}..')
-        if [[ ! -z "$deviceMac" ]]; then
-            getCurCharge "$deviceMac"
-            local iconsLen=${#ICONS_BLUETOOTH_BATTERY[@]}
-            if [ "$iconsLen" -ne 0 ]; then
-                local batSplit=$((BAT_MAX / iconsLen))
-                for i in $(seq 1 "$iconsLen"); do
-                    if [ $((i * batSplit)) -ge "$BAT_LEVEL" ]; then
-                        BAT_ICON="${ICONS_BLUETOOTH_BATTERY[$((i-1))]}"
-                        break
-                    fi
-                done
-                B_PERC="%"
-            else 
-                BAT_ICON=""
-                BAT_LEVEL=""
-                B_PERC=""
+    local iconsLen=${#ICONS_BLUETOOTH_BATTERY[@]}
+    if [ "$iconsLen" -ne 0 ] && [ "$BAT_LEVEL" != "" ]; then
+        local batSplit=$((BAT_MAX / iconsLen))
+        for i in $(seq 1 "$iconsLen"); do
+            if [ $((i * batSplit)) -ge "$BAT_LEVEL" ]; then
+                BAT_ICON="${ICONS_BLUETOOTH_BATTERY[$((i-1))]}"
+                break
             fi
-        else
-            BAT_ICON=""
-            BAT_LEVEL=""
-            B_PERC=""
-        fi
-    fi
+        done
 
-    if [ "$HIDE_BAT" = "yes" ]; then
-        BAT_LEVEL=""
-        B_PERC=""
+        BLUETOOTH_FORMAT='$BAT_ICON ${BAT_LEVEL}%'
+        if [ "$HIDE_BAT" = "yes" ] && [ "$BAT_LEVEL" != '' ]; then
+            BLUETOOTH_FORMAT='$BAT_ICON'
+        fi
+    else
+        BLUETOOTH_FORMAT=''
     fi
 
     # Showing the formatted message
     if [ "$IS_MUTED" = "yes" ]; then
         # shellcheck disable=SC2034
         VOL_ICON=$ICON_MUTED
-        echo "${COLOR_MUTED}$(eval echo "$FORMAT")${END_COLOR}"
+        echo "${COLOR_MUTED}$(eval echo "$FORMAT"  "$BLUETOOTH_FORMAT")${END_COLOR}"
     else
-        eval echo "$FORMAT"
+        eval echo "$FORMAT"  "$BLUETOOTH_FORMAT"
     fi
 }
 
