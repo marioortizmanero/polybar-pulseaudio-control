@@ -1,8 +1,8 @@
 #!/usr/bin/env bats
 # vim: filetype=sh
-# 
+#
 # Polybar PulseAudio Control - tests.bats
-# 
+#
 # Simple test script to make sure the most basic functions in this script
 # always work as intended. The tests will modify the system's PulseAudio
 # setup until it's restarted, so either do that after running the test, or

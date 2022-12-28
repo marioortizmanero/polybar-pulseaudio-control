@@ -88,7 +88,7 @@ function getCurCharge() {
         getNodeName "$1"
 
         local bluetoothDeviceMac=$(echo "$nodeName" | sed -e 's/^[a-z_]*\.//' -e 's/\..*$//' | tr '_' ':')
-        BAT_LEVEL=$(bluetoothctl info "$bluetoothDeviceMac" | grep Battery | sed -E 's/.*\((.*)\)/\1/')  
+        BAT_LEVEL=$(bluetoothctl info "$bluetoothDeviceMac" | grep Battery | sed -E 's/.*\((.*)\)/\1/')
     fi
 }
 
@@ -215,9 +215,9 @@ function volSync() {
         echo "PulseAudio not running"
         return 1
     fi
-    
+
     getCurVol "$curNode"
-    
+
     if [[ "$NODE_TYPE" = "output" ]]; then
         getSinkInputs "$curNode"
 
@@ -524,7 +524,7 @@ Options:
         For details, see:
           https://wiki.archlinux.org/title/Bluetooth_headset
         Default: none
-  --hide-bluetooth-battery-level 
+  --hide-bluetooth-battery-level
         Hide the integer battery level representation.
         Requires bluez experimental features to be enabled.
         For details, see:
