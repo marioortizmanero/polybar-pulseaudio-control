@@ -458,7 +458,7 @@ Options:
         extension.
         Default: none
   --node-nicknames-from <prop>
-        pactl property to use for node names, unless overriden by
+        pactl property to use for node names, unless overridden by
         --node-nickname. Its possible values are listed under the 'Properties'
         key in the output of \`pactl list sinks\` and \`pactl list sources\`.
         Default: none
