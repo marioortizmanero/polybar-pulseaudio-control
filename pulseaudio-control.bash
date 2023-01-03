@@ -55,21 +55,21 @@ function getCurNode() {
     local curNodeName
 
     curNodeName=$(pactl info | awk "/Default S${SINK_OR_SOURCE}: / {print \$3}")
-    curNode=$(pactl list s${SINK_OR_SOURCE}s | grep -B 4 -E "Name: $curNodeName\$" | sed -nE "s/^S${SINK_OR_SOURCE} #([0-9]+)$/\1/p")
+    curNode=$(pactl list "s${SINK_OR_SOURCE}s" | grep -B 4 -E "Name: $curNodeName\$" | sed -nE "s/^S${SINK_OR_SOURCE} #([0-9]+)$/\1/p")
 }
 
 
 # Saves the node passed by parameter's volume into a variable named `VOL_LEVEL`.
 function getCurVol() {
-    VOL_LEVEL=$(pactl list s${SINK_OR_SOURCE}s | grep -A 15 -E "^S${SINK_OR_SOURCE} #$1\$" | grep 'Volume:' | grep -E -v 'Base Volume:' | awk -F : '{print $3; exit}' | grep -o -P '.{0,3}%' | sed 's/.$//' | tr -d ' ')
+    VOL_LEVEL=$(pactl list "s${SINK_OR_SOURCE}s" | grep -A 15 -E "^S${SINK_OR_SOURCE} #$1\$" | grep 'Volume:' | grep -E -v 'Base Volume:' | awk -F : '{print $3; exit}' | grep -o -P '.{0,3}%' | sed 's/.$//' | tr -d ' ')
 }
 
 
 # Saves the name of the node passed by parameter into a variable named
 # `nodeName`.
 function getNodeName() {
-    nodeName=$(pactl list s${SINK_OR_SOURCE}s short | awk -v sink="$1" "{ if (\$1 == sink) {print \$2} }")
-    portName=$(pactl list s${SINK_OR_SOURCE}s | grep -e "S${SINK_OR_SOURCE} #" -e 'Active Port: ' | sed -n "/^S${SINK_OR_SOURCE} #$1\$/,+1p" | awk '/Active Port: / {print $3}')
+    nodeName=$(pactl list "s${SINK_OR_SOURCE}s" short | awk -v sink="$1" "{ if (\$1 == sink) {print \$2} }")
+    portName=$(pactl list "s${SINK_OR_SOURCE}s" | grep -e "S${SINK_OR_SOURCE} #" -e 'Active Port: ' | sed -n "/^S${SINK_OR_SOURCE} #$1\$/,+1p" | awk '/Active Port: / {print $3}')
 }
 
 
@@ -127,13 +127,13 @@ function getNicknameFromProp() {
                 break
                 ;;
         esac
-    done < <(pactl list s${SINK_OR_SOURCE}s)
+    done < <(pactl list "s${SINK_OR_SOURCE}s")
 }
 
 # Saves the status of the node passed by parameter into a variable named
 # `IS_MUTED`.
 function getIsMuted() {
-    IS_MUTED=$(pactl list s${SINK_OR_SOURCE}s | grep -E "^S${SINK_OR_SOURCE} #$1\$" -A 15 | awk '/Mute: / {print $2}')
+    IS_MUTED=$(pactl list "s${SINK_OR_SOURCE}s" | grep -E "^S${SINK_OR_SOURCE} #$1\$" -A 15 | awk '/Mute: / {print $2}')
 }
 
 
@@ -164,9 +164,9 @@ function volUp() {
     # increase percentage was 3%, a 99% volume would top at 100% instead
     # of 102%. If the volume is above the maximum limit, nothing is done.
     if [ "$VOL_LEVEL" -le "$VOLUME_MAX" ] && [ "$VOL_LEVEL" -ge "$maxLimit" ]; then
-        pactl set-s${SINK_OR_SOURCE}-volume "$curNode" "$VOLUME_MAX%"
+        pactl "set-s${SINK_OR_SOURCE}-volume" "$curNode" "$VOLUME_MAX%"
     elif [ "$VOL_LEVEL" -lt "$maxLimit" ]; then
-        pactl set-s${SINK_OR_SOURCE}-volume "$curNode" "+$VOLUME_STEP%"
+        pactl "set-s${SINK_OR_SOURCE}-volume" "$curNode" "+$VOLUME_STEP%"
     fi
 
     if [ $OSD = "yes" ]; then showOSD "$curNode"; fi
@@ -181,7 +181,7 @@ function volDown() {
         echo "PulseAudio not running"
         return 1
     fi
-    pactl set-s${SINK_OR_SOURCE}-volume "$curNode" "-$VOLUME_STEP%"
+    pactl "set-s${SINK_OR_SOURCE}-volume" "$curNode" "-$VOLUME_STEP%"
 
     if [ $OSD = "yes" ]; then showOSD "$curNode"; fi
     if [ $AUTOSYNC = "yes" ]; then volSync; fi
@@ -227,14 +227,14 @@ function volMute() {
     if [ "$1" = "toggle" ]; then
         getIsMuted "$curNode"
         if [ "$IS_MUTED" = "yes" ]; then
-            pactl set-s${SINK_OR_SOURCE}-mute "$curNode" "no"
+            pactl "set-s${SINK_OR_SOURCE}-mute" "$curNode" "no"
         else
-            pactl set-s${SINK_OR_SOURCE}-mute "$curNode" "yes"
+            pactl "set-s${SINK_OR_SOURCE}-mute" "$curNode" "yes"
         fi
     elif [ "$1" = "mute" ]; then
-        pactl set-s${SINK_OR_SOURCE}-mute "$curNode" "yes"
+        pactl "set-s${SINK_OR_SOURCE}-mute" "$curNode" "yes"
     elif [ "$1" = "unmute" ]; then
-        pactl set-s${SINK_OR_SOURCE}-mute "$curNode" "no"
+        pactl "set-s${SINK_OR_SOURCE}-mute" "$curNode" "no"
     fi
 
     if [ $OSD = "yes" ]; then showOSD "$curNode"; fi
@@ -268,7 +268,7 @@ function nextNode() {
 
         nodes[$i]="$index"
         i=$((i + 1))
-    done < <(pactl list short s${SINK_OR_SOURCE}s | sort -n)
+    done < <(pactl list short "s${SINK_OR_SOURCE}s" | sort -n)
 
     # If the resulting list is empty, nothing is done
     if [ ${#nodes[@]} -eq 0 ]; then return; fi
@@ -288,7 +288,7 @@ function nextNode() {
     fi
 
     # The new node is set
-    pactl set-default-s${SINK_OR_SOURCE} "$newNode"
+    pactl "set-default-s${SINK_OR_SOURCE}" "$newNode"
 
     # Move all audio threads to new node
     local inputs
@@ -458,7 +458,7 @@ Options:
         extension.
         Default: none
   --node-nicknames-from <prop>
-        pactl property to use for node names, unless overriden by
+        pactl property to use for node names, unless overridden by
         --node-nickname. Its possible values are listed under the 'Properties'
         key in the output of \`pactl list sinks\` and \`pactl list sources\`.
         Default: none

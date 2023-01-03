@@ -30,7 +30,7 @@ Download the [bash script](https://github.com/marioortizmanero/polybar-pulseaudi
 
 This script works with PipeWire as well, as long as your system has something like [`pipewire-pulse`](https://archlinux.org/packages/extra/x86_64/pipewire-pulse/).
 
-To be able to switch the default sinks from this script you might need to disable stream target device restore by editing the corresponing line in `/etc/pulse/default.pa` to:
+To be able to switch the default sinks from this script you might need to disable stream target device restore by editing the corresponding line in `/etc/pulse/default.pa` to:
 
 ```
 load-module module-stream-restore restore_device=false
@@ -108,7 +108,7 @@ Options:
         extension.
         Default: none
   --node-nicknames-from <prop>
-        pactl property to use for node names, unless overriden by
+        pactl property to use for node names, unless overridden by
         --node-nickname. Its possible values are listed under the 'Properties'
         key in the output of `pactl list sinks` and `pactl list sources`.
         Default: none
@@ -274,4 +274,4 @@ Part of the script and of this README's info was taken from [customlinux.blogspo
 
 ## Development
 
-Any PRs and issues are welcome! The tests can be ran with `bats tests.bats`, preferrably with the Dockerfile in this repository.
+Any PRs and issues are welcome! The tests can be ran with `bats tests.bats`, preferably with the Dockerfile in this repository.
