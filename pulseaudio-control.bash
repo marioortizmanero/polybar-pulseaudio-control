@@ -266,7 +266,7 @@ function nextNode() {
             fi
         done
 
-        nodes[$i]="$index"
+        nodes[i]="$index"
         i=$((i + 1))
     done < <(pactl list short "s${SINK_OR_SOURCE}s" | sort -n)
 
