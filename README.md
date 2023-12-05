@@ -22,7 +22,7 @@ $ yay -S pulseaudio-control
 
 ### Other Linux
 
-Download the [bash script](https://github.com/marioortizmanero/polybar-pulseaudio-control/blob/master/pulseaudio-control.bash) from this repository, or extract it from [the latest release](https://github.com/marioortizmanero/polybar-pulseaudio-control/releases/latest), and put it somewhere in your `$PATH`.
+Download the [bash script](https://github.com/marioortizmanero/polybar-pulseaudio-control/blob/master/pulseaudio-control) from this repository, or extract it from [the latest release](https://github.com/marioortizmanero/polybar-pulseaudio-control/releases/latest), and put it somewhere in your `$PATH`.
 
 #### Dependencies
 
@@ -51,7 +51,7 @@ exec = pulseaudio-control [option...] <action>
 where `action`, and (optionally) `option`s are as specified in `pulseaudio-control help`:
 
 ```
-Usage: ./pulseaudio-control.bash [OPTION...] ACTION
+Usage: ./pulseaudio-control [OPTION...] ACTION
 
 Terminology: A node represents either a sink (output) or source (input).
 
