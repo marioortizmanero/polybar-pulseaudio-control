@@ -528,7 +528,11 @@ while [[ "$1" = --* ]]; do
             ;;
         --color-muted|--colour-muted)
             if getOptVal "$@"; then shift; fi
-            COLOR_MUTED="%{F#$val}"
+            if [ -n "$val" ]; then
+                COLOR_MUTED="%{F#$val}"
+            else
+                COLOR_MUTED=""
+            fi
             ;;
         --notifications)
             NOTIFICATIONS=yes
