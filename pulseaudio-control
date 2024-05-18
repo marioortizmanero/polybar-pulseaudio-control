@@ -69,7 +69,7 @@ function getCurVol() {
 # `nodeName`.
 function getNodeName() {
     nodeName=$(pactl list "s${SINK_OR_SOURCE}s" short | awk -v sink="$1" "{ if (\$1 == sink) {print \$2} }")
-    portName=$(pactl list "s${SINK_OR_SOURCE}s" | grep -e "S${SINK_OR_SOURCE} #" -e 'Active Port: ' | sed -n "/^S${SINK_OR_SOURCE} #$1\$/,+1p" | awk '/Active Port: / {print $3}')
+    portName=$(pactl list "s${SINK_OR_SOURCE}s" | grep -e "S${SINK_OR_SOURCE} #" -e 'Active Port: ' | sed -n "/^S${SINK_OR_SOURCE} #$1\$/,+1p" | awk -F ": " '/Active Port: / {print $2}')
 }
 
 
