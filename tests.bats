@@ -30,7 +30,7 @@ function restartPulseaudio() {
 function setup() {
     restartPulseaudio
     echo "Loading script"
-    source pulseaudio-control.bash output &>/dev/null
+    source pulseaudio-control output &>/dev/null
 }
 
 
